@@ -8,6 +8,7 @@ import { PhotoMealUploader } from "./PhotoMealUploader";
 import { EmptyState } from "@/components/EmptyState";
 import { Info, Utensils, Camera } from "lucide-react";
 import { todayISO } from "@/lib/format";
+import { CalorieProgressRing } from "@/components/alimentacao/CalorieProgressRing";
 import { PORTION_TABLE, explainCalorieMath } from "@/lib/nutrition";
 import { getSignedMealPhotoUrls, purgeOldMealPhotos } from "@/lib/meal-photos";
 import { cn } from "@/lib/cn";
@@ -38,6 +39,15 @@ export default async function AlimentacaoPage() {
   }
 
   const today = todayISO();
+
+  // Perfil — para a meta calórica diária.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("calorie_goal")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const calorieGoal = profile?.calorie_goal ?? null;
 
   const { data: meals } = await supabase
     .from("meals")
@@ -78,24 +88,12 @@ export default async function AlimentacaoPage() {
       />
 
       <Card padded={false} className="overflow-hidden">
-        <div className="flex flex-col gap-4 p-6 sm:p-7 sm:flex-row sm:items-center sm:justify-between bg-ember-gradient text-white">
-          <div>
-            <p className="text-sm text-white/85">Hoje você consumiu</p>
-            <p className="font-mono text-3xl sm:text-4xl font-bold leading-tight">
-              {totalCalories.toLocaleString("pt-BR")} kcal
-            </p>
-          </div>
-          <div className="flex gap-6 sm:gap-8">
-            <div>
-              <p className="text-[12px] text-white/80">Refeições</p>
-              <p className="font-mono text-lg font-semibold">{mealCount}</p>
-            </div>
-            <div>
-              <p className="text-[12px] text-white/80">Média</p>
-              <p className="font-mono text-lg font-semibold">{avgPerMeal} kcal</p>
-            </div>
-          </div>
-        </div>
+        <CalorieProgressRing
+          consumed={totalCalories}
+          goal={calorieGoal}
+          mealCount={mealCount}
+          avgPerMeal={avgPerMeal}
+        />
       </Card>
 
       <Card>

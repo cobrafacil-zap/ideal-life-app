@@ -2,16 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light;
+/* ─────────────────────────────────────────────
+   TOKENS DE TEMA
+   Os valores hex ficam aqui; o Tailwind referencia
+   via `var(--token)`. Trocar o `data-theme` no <html>
+   troca a paleta inteira — base de dark mode.
+   ───────────────────────────────────────────── */
+
+:root,
+[data-theme="light"] {
+  /* superfícies */
+  --bg-base: #FAFAF8;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+
+  /* texto */
+  --ink: #161C1A;
+  --ink-soft: #4B5550;
+  --ink-faint: #8A9490;
+
+  /* bordas */
+  --line: #E7E2D8;
+
+  /* acentos principais */
+  --ember: #FF6A39;
+  --ember-soft: #FFE4D9;
+  --ember-dark: #E6501F;
+  --ember-tint: #FF8F5C;
+
+  --moss: #2F6B4F;
+  --moss-soft: #DCEBE2;
+  --moss-dark: #204B37;
+  --moss-tint: #3F8863;
+
+  /* tons do ciclo menstrual */
+  --rose: #E5446D;
+  --rose-soft: #FCD9E1;
+  --lilac: #8B6BB1;
+  --lilac-soft: #E7DDF1;
+  --gold: #D9A227;
+  --gold-soft: #F8EAC4;
+
+  /* sombras */
   --shadow-card: 0 1px 2px rgba(22, 28, 26, 0.04), 0 8px 24px -12px rgba(22, 28, 26, 0.10);
   --shadow-floating: 0 12px 32px -8px rgba(22, 28, 26, 0.18);
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg-base: #0E1413;
+  --bg-surface: #161D1B;
+  --bg-elevated: #1C2522;
+
+  --ink: #ECE7DC;
+  --ink-soft: #B7B0A4;
+  --ink-faint: #807A70;
+
+  --line: #2A322F;
+
+  --ember: #FF8A5C;
+  --ember-soft: #3A1F15;
+  --ember-dark: #FFB89A;
+  --ember-tint: #FFA579;
+
+  --moss: #4E9279;
+  --moss-soft: #1E3329;
+  --moss-dark: #7FBE9F;
+  --moss-tint: #6BAA8E;
+
+  --rose: #FF6F8F;
+  --rose-soft: #3F1825;
+  --lilac: #B292D6;
+  --lilac-soft: #251C32;
+  --gold: #E6BC5A;
+  --gold-soft: #33291A;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.20), 0 8px 24px -12px rgba(0, 0, 0, 0.40);
+  --shadow-floating: 0 12px 32px -8px rgba(0, 0, 0, 0.50);
+
+  color-scheme: dark;
 }
 
 html,
 body {
-  background-color: #FAFAF8;
-  color: #161C1A;
+  background-color: var(--bg-base);
+  color: var(--ink);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -66,7 +142,7 @@ body {
 
 /* Foco visível, discreto mas presente */
 :focus-visible {
-  outline: 2px solid #FF6A39;
+  outline: 2px solid var(--ember);
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -91,4 +167,12 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Inputs nativos herdam a cor de texto */
+input,
+textarea,
+select,
+button {
+  color: inherit;
 }

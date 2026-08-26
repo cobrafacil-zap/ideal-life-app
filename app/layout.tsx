@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Sora, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -80,11 +81,28 @@ export const viewport: Viewport = {
   maximumScale: 5,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FAFAF8" },
-    { media: "(prefers-color-scheme: dark)", color: "#FAFAF8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0E1413" },
   ],
-  colorScheme: "light",
+  colorScheme: "light dark",
   viewportFit: "cover",
 };
+
+/**
+ * Aplica o tema persistido (ou preferência do SO) ANTES da hidratação para
+ * evitar flash claro→escuro. Mantém o resto do app livre desse cuidado.
+ */
+const themeInitScript = `
+(function(){
+  try {
+    var stored = localStorage.getItem('vitta-theme');
+    var sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored === 'light' || stored === 'dark'
+      ? stored
+      : (sysDark ? 'dark' : 'light');
+    document.documentElement.dataset.theme = theme;
+  } catch (_) {}
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -95,9 +113,13 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={`${sora.variable} ${inter.variable} ${plexMono.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="font-body bg-base text-ink antialiased min-h-screen">
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

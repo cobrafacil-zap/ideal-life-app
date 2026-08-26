@@ -63,7 +63,7 @@ export default async function HojePage() {
       .maybeSingle(),
     supabase
       .from("cardio_sessions")
-      .select("duration_min")
+      .select("duration_min, duration_h, kcal_burned")
       .eq("user_id", user.id)
       .gte("performed_at", startOfWeekISO()),
     supabase
@@ -93,6 +93,10 @@ export default async function HojePage() {
 
   const cardioMinutes = (cardioThisWeek ?? []).reduce((sum, c) => sum + c.duration_min, 0);
   const cardioGoal = profile?.cardio_weekly_goal_min ?? 150;
+  const cardioKcalWeek = (cardioThisWeek ?? []).reduce(
+    (sum, c) => sum + (c.kcal_burned ?? 0),
+    0,
+  );
 
   const caloriesToday = (mealsToday ?? []).reduce(
     (sum, m) => sum + (m.total_calories ?? 0),

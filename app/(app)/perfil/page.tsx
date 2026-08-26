@@ -3,10 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 import { GoalsForm } from "./GoalsForm";
+import { AvatarUploader } from "./AvatarUploader";
 import { signOut, updateProfileName } from "./actions";
 import { CircleUserRound, LogOut, Compass, Save } from "lucide-react";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
+import { getAvatarSignedUrl } from "@/lib/avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +26,8 @@ export default async function PerfilPage() {
     .eq("id", user.id)
     .maybeSingle();
 
+  const avatarSignedUrl = await getAvatarSignedUrl(supabase, profile?.avatar_url);
+
   const displayName =
     profile?.full_name ?? user.user_metadata?.full_name ?? "";
 
@@ -38,8 +42,17 @@ export default async function PerfilPage() {
         <div className="space-y-6 lg:col-span-2">
           <Card>
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ember-gradient text-white shadow-floating">
-                <CircleUserRound size={28} aria-hidden="true" />
+              <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-ember-gradient text-white shadow-floating">
+                {avatarSignedUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={avatarSignedUrl}
+                    alt="Sua foto de perfil"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <CircleUserRound size={28} aria-hidden="true" />
+                )}
               </div>
               <div className="min-w-0">
                 <h2 className="font-display text-lg font-bold text-ink truncate">
@@ -48,6 +61,8 @@ export default async function PerfilPage() {
                 <p className="text-sm text-ink-soft truncate">{user?.email}</p>
               </div>
             </div>
+
+            <AvatarUploader currentSignedUrl={avatarSignedUrl} />
 
             <form
               action={async (formData) => {

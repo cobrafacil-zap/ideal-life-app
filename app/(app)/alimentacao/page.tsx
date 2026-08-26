@@ -4,11 +4,19 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 import { MealLogForm } from "./MealLogForm";
 import { MealItem } from "./MealItem";
+import { PhotoMealUploader } from "./PhotoMealUploader";
 import { EmptyState } from "@/components/EmptyState";
-import { Utensils } from "lucide-react";
+import { Info, Utensils } from "lucide-react";
 import { todayISO } from "@/lib/format";
+import { PORTION_TABLE, explainCalorieMath } from "@/lib/nutrition";
+import { getSignedMealPhotoUrls, purgeOldMealPhotos } from "@/lib/meal-photos";
+import { cn } from "@/lib/cn";
 
 export const dynamic = "force-dynamic";
+
+// Throttle do purge de fotos antigas — evita stampede entre abas.
+let lastPurge = 0;
+const PURGE_INTERVAL_MS = 60 * 60 * 1000; // 1 h
 
 export default async function AlimentacaoPage() {
   const supabase = createClient();
@@ -18,6 +26,13 @@ export default async function AlimentacaoPage() {
 
   if (!user) redirect("/login");
 
+  // Phase 8: limpa fotos com 7+ dias, no máximo 1× por hora.
+  const now = Date.now();
+  if (now - lastPurge > PURGE_INTERVAL_MS) {
+    lastPurge = now;
+    void purgeOldMealPhotos(supabase, user.id);
+  }
+
   const today = todayISO();
 
   const { data: meals } = await supabase
@@ -26,6 +41,23 @@ export default async function AlimentacaoPage() {
     .eq("user_id", user.id)
     .eq("meal_date", today)
     .order("logged_at", { ascending: false });
+
+  // Pega as fotos das refeições de hoje (se houver) para exibir thumbnail.
+  const mealIds = (meals ?? []).map((m) => m.id);
+  const photoByMeal = new Map<string, string>();
+  if (mealIds.length > 0) {
+    const { data: photos } = await supabase
+      .from("meal_photos")
+      .select("meal_id, storage_path")
+      .in("meal_id", mealIds)
+      .order("created_at", { ascending: false });
+    const paths = (photos ?? []).map((p) => p.storage_path);
+    const signed = await getSignedMealPhotoUrls(supabase, paths);
+    for (const p of photos ?? []) {
+      const url = signed.get(p.storage_path);
+      if (url) photoByMeal.set(p.meal_id, url);
+    }
+  }
 
   const totalCalories = (meals ?? []).reduce(
     (s, m) => s + (m.total_calories ?? 0),
@@ -62,8 +94,60 @@ export default async function AlimentacaoPage() {
         </div>
       </Card>
 
+      <Card>
+        <CardHeader
+          title="Como calculamos as calorias"
+          description="Referência rápida para suas estimativas."
+        />
+        <div className="flex items-start gap-3">
+          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ember-soft text-ember">
+            <Info size={16} aria-hidden="true" />
+          </span>
+          <p className="text-[13px] leading-relaxed text-ink-soft">
+            {explainCalorieMath()}
+          </p>
+        </div>
+        <details className="mt-4 group">
+          <summary
+            className={cn(
+              "cursor-pointer text-sm font-semibold text-ink hover:text-ember",
+              "list-none [&::-webkit-details-marker]:hidden",
+            )}
+          >
+            ▸ Ver tabela de calorias por porção comum
+          </summary>
+          <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            {PORTION_TABLE.map((p) => (
+              <li
+                key={p.label}
+                className="rounded-2xl bg-surface p-3 ring-1 ring-line/60"
+              >
+                <p className="text-[12px] font-semibold text-ink">{p.label}</p>
+                <p className="mt-0.5 text-[11px] text-ink-soft">{p.unit}</p>
+                <p className="mt-1 font-mono text-base font-bold text-ember-dark">
+                  {p.kcal} kcal
+                </p>
+                {(p.protein != null || p.carbs != null || p.fat != null) && (
+                  <p className="mt-0.5 text-[10px] text-ink-faint">
+                    P {p.protein ?? 0}g · C {p.carbs ?? 0}g · G {p.fat ?? 0}g
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </details>
+      </Card>
+
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3 space-y-6">
+          <Card>
+            <CardHeader
+              title="Foto do prato (IA)"
+              description="Tire uma foto e a Gemini estima calorias e macros. A foto fica salva por 7 dias."
+            />
+            <PhotoMealUploader />
+          </Card>
+
           <Card>
             <CardHeader
               title="Registrar refeição"
@@ -88,14 +172,24 @@ export default async function AlimentacaoPage() {
             ) : (
               <ul className="space-y-2">
                 {meals!.map((m) => (
-                  <li key={m.id}>
-                    <MealItem
-                      id={m.id}
-                      type={m.meal_type}
-                      notes={m.notes}
-                      calories={m.total_calories}
-                      loggedAt={m.logged_at}
-                    />
+                  <li key={m.id} className="flex items-center gap-3">
+                    {photoByMeal.get(m.id) && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={photoByMeal.get(m.id)!}
+                        alt=""
+                        className="h-12 w-12 shrink-0 rounded-xl object-cover ring-1 ring-line/60"
+                      />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <MealItem
+                        id={m.id}
+                        type={m.meal_type}
+                        notes={m.notes}
+                        calories={m.total_calories}
+                        loggedAt={m.logged_at}
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -6,6 +6,7 @@ import { TextField } from "@/components/ui/TextField";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { logCardio } from "./actions";
 import { cn } from "@/lib/cn";
+import { formatHours } from "@/lib/format";
 import { Activity, Flame, HeartPulse } from "lucide-react";
 
 const types = [
@@ -27,9 +28,11 @@ const intensityOptions = [
 export function CardioSection({
   minutesThisWeek,
   goalMinutes,
+  kcalThisWeek = 0,
 }: {
   minutesThisWeek: number;
   goalMinutes: number;
+  kcalThisWeek?: number;
 }) {
   const [type, setType] = useState(types[0].value);
   const [duration, setDuration] = useState("");
@@ -40,25 +43,26 @@ export function CardioSection({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const dur = parseInt(duration, 10);
-    if (!dur || dur <= 0 || dur > 600) {
-      setError("Informe uma duração entre 1 e 600 minutos.");
+    const dur = parseFloat(duration.replace(",", "."));
+    if (!Number.isFinite(dur) || dur <= 0 || dur > 10) {
+      setError("Informe uma duração entre 0,25 e 10 horas.");
       return;
     }
     startTransition(async () => {
-      await logCardio({ type, duration_min: dur, intensity });
+      await logCardio({ type, duration_h: dur, intensity });
       setDuration("");
     });
   }
 
   const completed = minutesThisWeek >= goalMinutes;
+  const hoursThisWeek = minutesThisWeek / 60;
 
   return (
     <div>
       <div className="mb-2 flex items-center justify-between text-sm">
         <span className="font-medium text-ink-soft">Meta semanal</span>
         <span className="font-mono text-ink">
-          {minutesThisWeek} / {goalMinutes} min
+          {formatHours(hoursThisWeek)} / {formatHours(goalMinutes / 60)}
         </span>
       </div>
       <ProgressBar
@@ -66,6 +70,11 @@ export function CardioSection({
         max={goalMinutes}
         colorClass={completed ? "bg-moss-gradient" : "bg-ember-gradient"}
       />
+      {kcalThisWeek > 0 && (
+        <p className="mt-2 text-[12px] text-ink-soft">
+          ≈ <span className="font-mono font-semibold text-ember-dark">{kcalThisWeek} kcal</span> queimadas nesta semana
+        </p>
+      )}
       {completed && (
         <p className="mt-2 inline-flex items-center gap-1.5 rounded-pill bg-moss-soft px-2.5 py-1 text-[12px] font-semibold text-moss-dark">
           Meta semanal atingida
@@ -142,14 +151,14 @@ export function CardioSection({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="flex-1">
             <TextField
-              label="Duração (min)"
+              label="Duração (h)"
               type="text"
-              inputMode="numeric"
-              placeholder="30"
+              inputMode="decimal"
+              placeholder="0,5"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               error={error ?? undefined}
-              trailingAdornment="min"
+              trailingAdornment="h"
             />
           </div>
           <Button
@@ -162,6 +171,10 @@ export function CardioSection({
           </Button>
         </div>
       </form>
+      <p className="mt-2 text-[11px] text-ink-faint">
+        Duração em horas. Ex.: 0,5 = 30 min · 1 = 1 h · 1,5 = 1 h 30 min.
+        A queima calórica é calculada automaticamente (MET × peso × horas).
+      </p>
     </div>
   );
 }

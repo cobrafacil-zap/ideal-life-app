@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { uploadAvatar } from "@/lib/storage";
 
 export async function updateGoals(input: {
   water_goal_ml: number;
@@ -66,4 +67,42 @@ export async function signOut() {
     console.error("signOut failed:", err);
   }
   redirect("/login");
+}
+
+const AVATAR_MIMES = ["image/png", "image/jpeg", "image/webp"];
+const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+
+/**
+ * Server Action: recebe FormData com `avatar: File`, valida tipo/tamanho,
+ * sobe para o bucket `avatars` (sobrescrevendo o anterior) e grava o
+ * `storage_path` em `profiles.avatar_url`.
+ */
+export async function uploadAvatarAction(formData: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const file = formData.get("avatar");
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Selecione uma imagem primeiro.");
+  }
+  if (!AVATAR_MIMES.includes(file.type)) {
+    throw new Error("Use PNG, JPG ou WebP.");
+  }
+  if (file.size > AVATAR_MAX_BYTES) {
+    throw new Error("Arquivo maior que 2 MB.");
+  }
+
+  const path = await uploadAvatar(supabase, user.id, file, file.type);
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ avatar_url: path })
+    .eq("id", user.id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/perfil");
+  revalidatePath("/hoje");
 }

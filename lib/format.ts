@@ -62,3 +62,17 @@ export function startOfWeekISO(date: Date = nowInBR()): string {
 export function todayISO(): string {
   return todayBR();
 }
+
+/**
+ * Formata horas decimais em pt-BR: "1h 30min", "45min", "2h".
+ * Aceita `null` e retorna "—".
+ */
+export function formatHours(hours: number | null | undefined): string {
+  if (hours == null || !Number.isFinite(hours) || hours <= 0) return "—";
+  const totalMin = Math.round(hours * 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  if (h === 0) return `${m}min`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}min`;
+}

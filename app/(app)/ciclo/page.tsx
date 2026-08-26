@@ -6,16 +6,9 @@ import { NewCycleForm, DailySymptomsForm } from "./CycleForms";
 import { differenceInCalendarDays } from "date-fns";
 import { Droplets, Heart, Sparkles } from "lucide-react";
 import { nowInBR, todayBR } from "@/lib/datetime";
+import { getPhase, getAvgCycleLength, PHASE_META, type CyclePhase } from "@/lib/cycle";
 
 export const dynamic = "force-dynamic";
-
-function dayBadge(day: number | null) {
-  if (!day) return null;
-  if (day <= 5) return { label: "Menstruação", tone: "ember" as const };
-  if (day <= 13) return { label: "Fase folicular", tone: "moss" as const };
-  if (day <= 16) return { label: "Ovulação", tone: "moss" as const };
-  return { label: "Fase lútea", tone: "ember" as const };
-}
 
 export default async function CicloPage() {
   const supabase = createClient();
@@ -47,22 +40,10 @@ export default async function CicloPage() {
     ? differenceInCalendarDays(nowInBR(), new Date(latest.start_date)) + 1
     : null;
 
-  let avgCycleLength: number | null = null;
-  if (cycles && cycles.length > 1) {
-    const gaps: number[] = [];
-    for (let i = 0; i < cycles.length - 1; i++) {
-      gaps.push(
-        differenceInCalendarDays(
-          new Date(cycles[i].start_date),
-          new Date(cycles[i + 1].start_date)
-        )
-      );
-    }
-    avgCycleLength = Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length);
-  }
+  const avgCycleLength = getAvgCycleLength(cycles ?? []);
 
   const nextPredicted =
-    latest && avgCycleLength
+    latest
       ? differenceInCalendarDays(
           new Date(
             new Date(latest.start_date).getTime() + avgCycleLength * 86400000
@@ -71,7 +52,8 @@ export default async function CicloPage() {
         )
       : null;
 
-  const phase = dayBadge(cycleDay);
+  const phaseKey = getPhase(cycleDay, avgCycleLength) as CyclePhase | null;
+  const phase = phaseKey ? PHASE_META[phaseKey] : null;
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -115,6 +97,23 @@ export default async function CicloPage() {
                 {phase.label}
               </span>
             )}
+            {phase && phase.description && (
+              <p className="mt-2 text-[12px] text-white/75">{phase.description}</p>
+            )}
+            {phaseKey && (
+              <ul className="mt-3 flex flex-wrap gap-1.5 text-[11px] text-white/85">
+                {(["menstrual", "fertil", "ovulacao", "tpm", "folicular", "lutea"] as CyclePhase[])
+                  .filter((p) => p === phaseKey)
+                  .map((p) => (
+                    <li
+                      key={p}
+                      className="rounded-pill bg-white/10 px-2.5 py-1"
+                    >
+                      {PHASE_META[p].label}
+                    </li>
+                  ))}
+              </ul>
+            )}
           </Card>
 
           <Card>
@@ -135,7 +134,7 @@ export default async function CicloPage() {
             <ul className="grid grid-cols-2 gap-3">
               <li className="rounded-2xl bg-moss-soft/60 p-3 text-center">
                 <p className="font-mono text-2xl font-semibold text-moss-dark">
-                  {avgCycleLength ?? "—"}
+                  {avgCycleLength}
                 </p>
                 <p className="text-[12px] text-ink-soft">dias em média</p>
               </li>

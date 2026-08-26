@@ -14,6 +14,11 @@ export interface Profile {
   cardio_weekly_goal_min: number;
   workout_weekly_goal: number;
   calorie_goal: number | null;
+  /**
+   * Meta semanal de gasto calórico derivada do peso atual vs peso-meta.
+   * Recalculada em lib/goals (regra 7700 kcal/kg, 0.5 kg/semana).
+   */
+  weekly_burn_goal_kcal: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -48,6 +53,10 @@ export interface CardioSession {
   user_id: string;
   type: string;
   duration_min: number;
+  /** Duração em horas (preferida na UI). Mantida em sincronia com `duration_min`. */
+  duration_h: number | null;
+  /** kcal queimadas calculadas no momento do insert (MET × peso × duração). */
+  kcal_burned: number | null;
   distance_km: number | null;
   intensity: string | null;
   performed_at: string;
@@ -64,6 +73,31 @@ export interface Meal {
   total_fat_g: number | null;
 }
 
+export interface MealItem {
+  id: string;
+  meal_id: string;
+  user_id: string;
+  food_name: string;
+  quantity_g: number | null;
+  calories: number | null;
+  protein_g: number | null;
+  carbs_g: number | null;
+  fat_g: number | null;
+  source: "manual" | "foto_ia";
+  created_at: string;
+}
+
+export interface MealPhoto {
+  id: string;
+  meal_id: string;
+  user_id: string;
+  /** Key do objeto no bucket `meal-photos`. */
+  storage_path: string;
+  /** Resposta crua da IA usada para gerar os macros (auditoria). */
+  ai_raw_response: unknown;
+  created_at: string;
+}
+
 export interface WorkoutSession {
   id: string;
   user_id: string;
@@ -78,6 +112,16 @@ export interface MenstrualCycle {
   start_date: string;
   end_date: string | null;
   flow_intensity: "leve" | "moderado" | "intenso" | null;
+}
+
+export interface MenstrualDailyLog {
+  id: string;
+  user_id: string;
+  log_date: string;
+  pain_level: number | null;
+  mood: string | null;
+  symptoms: string[];
+  notes: string | null;
 }
 
 // Placeholder genérico para satisfazer @supabase/ssr<Database>.

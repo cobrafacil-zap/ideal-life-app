@@ -1,8 +1,9 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 import { GoalsForm } from "./GoalsForm";
-import { signOut, updateProfile } from "./actions";
+import { signOut, updateProfileName } from "./actions";
 import { CircleUserRound, LogOut, Compass, Save } from "lucide-react";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
@@ -15,14 +16,16 @@ export default async function PerfilPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) redirect("/login");
+
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", user!.id)
+    .eq("id", user.id)
     .maybeSingle();
 
   const displayName =
-    profile?.full_name ?? user?.user_metadata?.full_name ?? "";
+    profile?.full_name ?? user.user_metadata?.full_name ?? "";
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -49,9 +52,7 @@ export default async function PerfilPage() {
             <form
               action={async (formData) => {
                 "use server";
-                await updateProfile({
-                  full_name: String(formData.get("full_name") ?? ""),
-                });
+                await updateProfileName(String(formData.get("full_name") ?? ""));
               }}
               className="mt-5 space-y-3"
             >

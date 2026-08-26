@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -15,12 +16,14 @@ export default async function AlimentacaoPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) redirect("/login");
+
   const today = todayISO();
 
   const { data: meals } = await supabase
     .from("meals")
     .select("id, meal_type, notes, total_calories, logged_at")
-    .eq("user_id", user!.id)
+    .eq("user_id", user.id)
     .eq("meal_date", today)
     .order("logged_at", { ascending: false });
 

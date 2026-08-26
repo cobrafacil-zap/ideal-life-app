@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -21,19 +22,21 @@ export default async function CicloPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) redirect("/login");
+
   const today = new Date().toISOString().slice(0, 10);
 
   const [{ data: cycles }, { data: todayLog }] = await Promise.all([
     supabase
       .from("menstrual_cycles")
       .select("start_date, end_date")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .order("start_date", { ascending: false })
       .limit(12),
     supabase
       .from("menstrual_daily_logs")
       .select("pain_level, symptoms")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .eq("log_date", today)
       .maybeSingle(),
   ]);

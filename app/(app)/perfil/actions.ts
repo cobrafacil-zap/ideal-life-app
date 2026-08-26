@@ -24,23 +24,32 @@ export async function updateGoals(input: {
 }
 
 export async function updateProfile(input: { full_name: string }) {
+  return updateProfileName(input.full_name);
+}
+
+/**
+ * Server action exposto ao form inline de perfil. Encapsula
+ * a atualização de nome + user_metadata num único ponto para
+ * evitar duplicação e facilitar revogação futura.
+ */
+export async function updateProfileName(fullName: string) {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado.");
 
-  const fullName = input.full_name.trim().slice(0, 80);
+  const cleanName = fullName.trim().slice(0, 80);
 
   const { error } = await supabase
     .from("profiles")
-    .update({ full_name: fullName || null })
+    .update({ full_name: cleanName || null })
     .eq("id", user.id);
   if (error) throw new Error(error.message);
 
   // também atualiza o user_metadata para o greeting do "Hoje"
   await supabase.auth.updateUser({
-    data: { full_name: fullName },
+    data: { full_name: cleanName },
   });
 
   revalidatePath("/perfil");
@@ -49,6 +58,12 @@ export async function updateProfile(input: { full_name: string }) {
 
 export async function signOut() {
   const supabase = createClient();
-  await supabase.auth.signOut();
+  try {
+    await supabase.auth.signOut();
+  } catch (err) {
+    // Mesmo que o signOut falhe no servidor, garantimos o redirect
+    // para que o usuário não fique preso em uma página autenticada.
+    console.error("signOut failed:", err);
+  }
   redirect("/login");
 }

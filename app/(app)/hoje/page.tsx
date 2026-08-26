@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -26,8 +27,13 @@ export default async function HojePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Defesa em profundidade: se o middleware falhar em redirecionar
+  // (ex.: cookie expirado no meio do request), joga para /login em vez
+  // de explodir com "Cannot read properties of null".
+  if (!user) redirect("/login");
+
   const today = todayISO();
-  const firstName = user?.user_metadata?.full_name?.split(" ")[0] ?? "";
+  const firstName = user.user_metadata?.full_name?.split(" ")[0] ?? "";
 
   const [
     { data: profile },
@@ -39,35 +45,35 @@ export default async function HojePage() {
     { data: openSession },
     { data: latestCycle },
   ] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user!.id).maybeSingle(),
+    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase
       .from("daily_checkins")
       .select("*")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .eq("checkin_date", today)
       .maybeSingle(),
-    supabase.from("water_logs").select("amount_ml").eq("user_id", user!.id).eq("log_date", today),
+    supabase.from("water_logs").select("amount_ml").eq("user_id", user.id).eq("log_date", today),
     supabase
       .from("body_measurements")
       .select("weight_kg, measured_at")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .order("measured_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
     supabase
       .from("cardio_sessions")
       .select("duration_min")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .gte("performed_at", startOfWeekISO()),
     supabase
       .from("meals")
       .select("total_calories")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .eq("meal_date", today),
     supabase
       .from("workout_sessions")
       .select("workout_name, started_at")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .is("finished_at", null)
       .order("started_at", { ascending: false })
       .limit(1)
@@ -75,7 +81,7 @@ export default async function HojePage() {
     supabase
       .from("menstrual_cycles")
       .select("start_date")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .order("start_date", { ascending: false })
       .limit(1)
       .maybeSingle(),

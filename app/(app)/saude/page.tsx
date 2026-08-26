@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -22,19 +23,21 @@ export default async function SaudePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) redirect("/login");
+
   const [{ data: profile }, { data: weightHistory }, { data: cardioThisWeek }] =
     await Promise.all([
-      supabase.from("profiles").select("*").eq("id", user!.id).maybeSingle(),
+      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
       supabase
         .from("body_measurements")
         .select("weight_kg, measured_at")
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
         .order("measured_at", { ascending: false })
         .limit(30),
       supabase
         .from("cardio_sessions")
         .select("duration_min")
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
         .gte("performed_at", startOfWeekISO()),
     ]);
 

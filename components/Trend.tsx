@@ -1,5 +1,13 @@
 import { cn } from "@/lib/cn";
-import { TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus, type LucideIcon } from "lucide-react";
+
+export type TrendTone =
+  | "good" // moss = bom (default se mode bater)
+  | "bad" // ember = ruim
+  | "neutral" // line = neutro (delta zero / sem juízo)
+  | "gold" // gold-soft / gold-dark — destaque neutro positivo
+  | "rose" // rose-soft / rose-dark — destaque negativo/delicado
+  | "lilac"; // lilac-soft / lilac-dark — destaque alternativo
 
 export interface TrendProps {
   /** Delta numérico. Ex.: -0.4 (perda = bom em modo "down-good"). */
@@ -11,12 +19,18 @@ export interface TrendProps {
   /** Formato do número. Default: `${n>0?'+':''}${n.toFixed(1)} kg`. */
   formatter?: (n: number) => string;
   size?: "sm" | "md";
+  /** Cor fixa do pill (sobrescreve o cálculo baseado em mode).
+   *  Útil quando o juízo de "bom/ruim" já vem de fora ou é neutro. */
+  tone?: TrendTone;
+  /** Ícone customizado (default: TrendingUp/Down/Minus conforme sinal). */
+  icon?: LucideIcon;
   className?: string;
 }
 
 /**
  * Pill de variação reutilizável. Mostra ícone (cima/baixo/igual) + delta + rótulo,
- * colorido segundo `mode` (moss = bom, ember = ruim, line = neutro).
+ * colorido segundo `mode` (moss = bom, ember = ruim, line = neutro) ou
+ * `tone` (quando passado, tem precedência).
  */
 export function Trend({
   value,
@@ -24,6 +38,8 @@ export function Trend({
   mode = "down-good",
   formatter,
   size = "md",
+  tone,
+  icon,
   className,
 }: TrendProps) {
   const isPositive = value > 0;
@@ -34,12 +50,30 @@ export function Trend({
     formatter ??
     ((n: number) => `${n > 0 ? "+" : ""}${n.toFixed(1)} kg`);
 
-  const toneClass = (() => {
-    if (!isPositive && !isNegative) return "bg-line/50 text-ink-soft";
-    return isGood ? "bg-moss-soft text-moss-dark" : "bg-ember-soft text-ember-dark";
+  const resolvedTone: TrendTone = (() => {
+    if (tone) return tone;
+    if (!isPositive && !isNegative) return "neutral";
+    return isGood ? "good" : "bad";
   })();
 
-  const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus;
+  const toneClass = (() => {
+    switch (resolvedTone) {
+      case "good":
+        return "bg-moss-soft text-moss-dark";
+      case "bad":
+        return "bg-ember-soft text-ember-dark";
+      case "neutral":
+        return "bg-line/50 text-ink-soft";
+      case "gold":
+        return "bg-gold-soft text-gold-dark";
+      case "rose":
+        return "bg-rose-soft text-rose-dark";
+      case "lilac":
+        return "bg-lilac-soft text-lilac-dark";
+    }
+  })();
+
+  const Icon = icon ?? (isPositive ? TrendingUp : isNegative ? TrendingDown : Minus);
   const iconSize = size === "sm" ? 12 : 14;
 
   return (

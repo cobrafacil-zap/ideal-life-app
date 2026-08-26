@@ -1,18 +1,16 @@
 import Link from "next/link";
-import { differenceInCalendarDays } from "date-fns";
 import { Heart } from "lucide-react";
-import { WellBeingRing } from "@/components/home/WellBeingRing";
-import { Trend } from "@/components/Trend";
 import { Card, CardHeader } from "@/components/ui/Card";
-import { nowInBR } from "@/lib/datetime";
+import { Trend } from "@/components/Trend";
 import { cn } from "@/lib/cn";
 
 /**
- * Card de bem-estar — usa o `WellBeingRing` (que estava órfão) como
- * protagonista. Mostra a média de hoje + delta vs último check-in anterior.
+ * Card de bem-estar — versão compacta. Apenas 1 indicador (a %), sem
+ * redundância com o DaySummaryPanel.
  *
- * Se o usuário ainda não fez check-in hoje, oferece um CTA em vez de mostrar
- * ring vazio.
+ * Mostra a média de hoje + delta vs último check-in (quando existe). Sem
+ * check-in → CTA explícito. Sem ring aqui — o DaySummaryPanel já mostra
+ * o ring geral.
  */
 
 interface WellBeingCardProps {
@@ -36,90 +34,68 @@ export function WellBeingCard({
       ? Math.round((todayAvg - lastAvg) * 10)
       : null;
 
-  const daysSinceLast = lastCheckinDate
-    ? differenceInCalendarDays(nowInBR(), new Date(lastCheckinDate))
-    : null;
-
-  const compareLabel =
-    daysSinceLast == null
-      ? "sem check-in anterior"
-      : daysSinceLast === 0
-        ? "hoje"
-        : daysSinceLast === 1
-          ? "ontem"
-          : `${daysSinceLast} dias atrás`;
+  const compareLabel = (() => {
+    if (!lastCheckinDate) return "sem check-in anterior";
+    const d = new Date(lastCheckinDate);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000);
+    if (diffDays === 0) return "hoje (manhã)";
+    if (diffDays === 1) return "ontem";
+    if (diffDays < 7) return `${diffDays} dias atrás`;
+    return lastCheckinDate;
+  })();
 
   return (
     <Card>
       <CardHeader
-        title="Como você está hoje?"
-        description="Energia, humor e disposição em um único número."
+        title="Bem-estar de hoje"
+        description="Média de energia, humor e disposição."
       />
 
-      <div className="flex items-center gap-5">
-        <div className="shrink-0">
-          <WellBeingRing
-            value={todayAvg ?? 0}
-            size={120}
-            label="bem-estar hoje"
-          />
-        </div>
-
-        <div className="min-w-0 flex-1">
-          {todayAvg == null ? (
-            <>
-              <p className="text-[13px] leading-relaxed text-ink-soft">
-                Você ainda não fez o check-in de hoje.
-              </p>
-              <Link
-                href="/saude"
-                className={cn(
-                  "mt-3 inline-flex items-center gap-2 rounded-pill px-4 py-2",
-                  "bg-ember text-white text-[13px] font-semibold",
-                  "hover:bg-ember-dark transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base",
-                )}
-              >
-                Fazer check-in
-                <span aria-hidden="true">→</span>
-              </Link>
-            </>
-          ) : (
-            <>
-              <p className="font-display text-2xl font-semibold leading-tight text-ink">
-                {todayPct}%
-                <span className="ml-2 text-[13px] font-normal text-ink-soft">
-                  bem-estar hoje
-                </span>
-              </p>
-              {deltaPp != null && lastPct != null ? (
-                <div className="mt-2">
-                  <Trend
-                    value={deltaPp}
-                    label={`vs. ${compareLabel} (${lastPct}%)`}
-                    mode="up-good"
-                    formatter={(n) =>
-                      `${n > 0 ? "+" : ""}${Math.round(n)} pp`
-                    }
-                    size="sm"
-                  />
-                </div>
-              ) : (
-                <p className="mt-2 inline-flex items-center gap-1.5 text-[12px] text-ink-faint">
-                  <Heart size={12} className="text-ember" aria-hidden="true" />
-                  Primeiro check-in — referência para os próximos.
-                </p>
+      {todayAvg == null ? (
+        <div className="flex items-center gap-3">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-ember-soft text-ember">
+            <Heart size={16} aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[13px] font-semibold text-ink">
+              Você ainda não fez o check-in de hoje.
+            </p>
+            <Link
+              href="/saude"
+              className={cn(
+                "mt-1 inline-block text-[12px] font-medium text-ember underline-offset-4 hover:underline",
               )}
-              <Link
-                href="/saude"
-                className="mt-4 inline-block text-[12px] font-medium text-ink-soft underline-offset-4 hover:text-ember hover:underline"
-              >
-                Ver detalhes em /saude →
-              </Link>
-            </>
+            >
+              Fazer agora →
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-baseline justify-between gap-3">
+          <div>
+            <p className="font-display text-4xl font-bold leading-none tabular-nums text-ink">
+              {todayPct}%
+            </p>
+            <p className="mt-2 text-[12px] text-ink-soft">
+              Energia · humor · disposição
+            </p>
+          </div>
+          {deltaPp != null && lastPct != null ? (
+            <Trend
+              value={deltaPp}
+              label={`vs. ${compareLabel} (${lastPct}%)`}
+              mode="up-good"
+              formatter={(n) =>
+                `${n > 0 ? "+" : ""}${Math.round(n)} pp`
+              }
+              size="sm"
+            />
+          ) : (
+            <span className="text-[11px] text-ink-faint">Primeiro check-in</span>
           )}
         </div>
-      </div>
+      )}
     </Card>
   );
 }

@@ -6,7 +6,7 @@ import { MealLogForm } from "./MealLogForm";
 import { MealItem } from "./MealItem";
 import { PhotoMealUploader } from "./PhotoMealUploader";
 import { EmptyState } from "@/components/EmptyState";
-import { Info, Utensils } from "lucide-react";
+import { Info, Utensils, Camera } from "lucide-react";
 import { todayISO } from "@/lib/format";
 import { PORTION_TABLE, explainCalorieMath } from "@/lib/nutrition";
 import { getSignedMealPhotoUrls, purgeOldMealPhotos } from "@/lib/meal-photos";
@@ -17,6 +17,10 @@ export const dynamic = "force-dynamic";
 // Throttle do purge de fotos antigas — evita stampede entre abas.
 let lastPurge = 0;
 const PURGE_INTERVAL_MS = 60 * 60 * 1000; // 1 h
+
+// Recurso de análise por foto via IA. Se a chave não estiver configurada,
+// escondemos o card no front e a rota retorna 503 amigável.
+const aiEnabled = !!process.env.GOOGLE_API_KEY;
 
 export default async function AlimentacaoPage() {
   const supabase = createClient();
@@ -74,7 +78,7 @@ export default async function AlimentacaoPage() {
       />
 
       <Card padded={false} className="overflow-hidden">
-        <div className="flex flex-col gap-4 p-5 sm:p-6 sm:flex-row sm:items-center sm:justify-between bg-ember-gradient text-white">
+        <div className="flex flex-col gap-4 p-6 sm:p-7 sm:flex-row sm:items-center sm:justify-between bg-ember-gradient text-white">
           <div>
             <p className="text-sm text-white/85">Hoje você consumiu</p>
             <p className="font-mono text-3xl sm:text-4xl font-bold leading-tight">
@@ -140,13 +144,32 @@ export default async function AlimentacaoPage() {
 
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3 space-y-6">
-          <Card>
-            <CardHeader
-              title="Foto do prato (IA)"
-              description="Tire uma foto e a Gemini estima calorias e macros. A foto fica salva por 7 dias."
-            />
-            <PhotoMealUploader />
-          </Card>
+          {aiEnabled ? (
+            <Card>
+              <CardHeader
+                title="Foto do prato (IA)"
+                description="Tire uma foto e a Gemini estima calorias e macros. A foto fica salva por 7 dias."
+              />
+              <PhotoMealUploader />
+            </Card>
+          ) : (
+            <Card className="border-dashed">
+              <CardHeader
+                title="Foto do prato (IA)"
+                description="Disponível em breve"
+              />
+              <div className="flex items-start gap-3">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-line/60 text-ink-soft">
+                  <Camera size={16} aria-hidden="true" />
+                </span>
+                <p className="text-[13px] leading-relaxed text-ink-soft">
+                  A análise de fotos por IA está em configuração. Quando estiver
+                  ativa, você conseguirá tirar uma foto do prato e receber uma
+                  estimativa automática de calorias e macros.
+                </p>
+              </div>
+            </Card>
+          )}
 
           <Card>
             <CardHeader

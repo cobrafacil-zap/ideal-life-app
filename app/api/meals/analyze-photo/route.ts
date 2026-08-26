@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { todayBR } from "@/lib/datetime";
-import { analyzeMealImage } from "@/lib/gemini";
+import { analyzeMealImage, isGeminiConfigured } from "@/lib/gemini";
 import { uploadMealPhoto } from "@/lib/storage";
 import { getSignedFileUrl } from "@/lib/storage";
 
@@ -17,7 +17,30 @@ const MEAL_TYPES = new Set([
   "outra",
 ]);
 
+/**
+ * Resposta amigável única para erros genéricos — nunca vaza detalhes
+ * internos (mensagens de lib, stack, etc.) pro cliente.
+ */
+const FRIENDLY_ERROR = "Não foi possível analisar a foto agora. Tente novamente em alguns instantes.";
+
 export async function POST(request: NextRequest) {
+  // Se a chave nem existe, retornamos 503 imediato sem tocar no Gemini.
+  if (!isGeminiConfigured()) {
+    return NextResponse.json(
+      { error: "Análise por IA indisponível no momento." },
+      { status: 503 },
+    );
+  }
+
+  try {
+    return await handle(request);
+  } catch (err) {
+    console.error("analyze-photo route:", err);
+    return NextResponse.json({ error: FRIENDLY_ERROR }, { status: 500 });
+  }
+}
+
+async function handle(request: NextRequest) {
   const supabase = createClient();
   const {
     data: { user },
@@ -75,12 +98,8 @@ export async function POST(request: NextRequest) {
       file.type as "image/png" | "image/jpeg" | "image/webp",
     );
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Falha na IA.";
     console.error("analyzeMealImage:", err);
-    return NextResponse.json(
-      { error: message.includes("GOOGLE_API_KEY") ? message : "Não foi possível analisar a foto." },
-      { status: message.includes("GOOGLE_API_KEY") ? 500 : 502 },
-    );
+    return NextResponse.json({ error: FRIENDLY_ERROR }, { status: 502 });
   }
 
   // Upload para o Storage (depois da IA, para não salvar foto se a IA falhar).
@@ -109,10 +128,8 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (mealErr || !mealRow) {
-    return NextResponse.json(
-      { error: `Falha ao salvar refeição: ${mealErr?.message ?? "sem id"}` },
-      { status: 500 },
-    );
+    console.error("meals insert:", mealErr);
+    return NextResponse.json({ error: FRIENDLY_ERROR }, { status: 500 });
   }
 
   // Itens detectados pela IA.

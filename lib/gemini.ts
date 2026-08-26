@@ -12,6 +12,15 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 let cachedClient: GoogleGenerativeAI | null = null;
 
+/**
+ * Indica se a chave do Gemini está configurada no ambiente.
+ * A UI / API usam isso para esconder o card de "Foto por IA" antes
+ * do usuário tentar usar — sem precisar instanciar o cliente.
+ */
+export function isGeminiConfigured(): boolean {
+  return !!process.env.GOOGLE_API_KEY;
+}
+
 export function getGeminiClient(): GoogleGenerativeAI {
   const key = process.env.GOOGLE_API_KEY;
   if (!key) {

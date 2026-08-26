@@ -7,7 +7,7 @@ export interface TextFieldProps
   hint?: ReactNode;
   error?: string;
   trailingAdornment?: ReactNode;
-  size?: "md" | "lg";
+  size?: "sm" | "md" | "lg";
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -36,7 +36,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
               "w-full rounded-xl border bg-surface text-ink placeholder:text-ink-faint",
               "border-line focus:border-ember focus:ring-2 focus:ring-ember/20 outline-none",
               "transition-colors",
-              size === "lg" ? "px-4 py-3.5 text-[15px]" : "px-4 py-3 text-[15px]",
+              size === "lg"
+              ? "px-4 py-3.5 text-[15px]"
+              : size === "sm"
+                ? "px-3 py-2 text-[14px]"
+                : "px-4 py-3 text-[15px]",
               error && "border-ember focus:border-ember focus:ring-ember/30",
               trailingAdornment && "pr-12",
               className

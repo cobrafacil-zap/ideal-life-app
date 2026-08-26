@@ -24,6 +24,33 @@ export async function updateGoals(input: {
   revalidatePath("/hoje");
 }
 
+/**
+ * Server action específico pra aplicar a sugestão de meta calórica
+ * sem precisar carregar/preservar os outros goals.
+ * Mantém o `updateGoals` original intacto (form completo).
+ */
+export async function updateCalorieGoal(calorieGoal: number) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  if (!Number.isFinite(calorieGoal) || calorieGoal < 800 || calorieGoal > 6000) {
+    throw new Error("Meta calórica deve estar entre 800 e 6.000 kcal.");
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ calorie_goal: Math.round(calorieGoal) })
+    .eq("id", user.id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/perfil");
+  revalidatePath("/alimentacao");
+  revalidatePath("/hoje");
+}
+
 export async function updateProfile(input: { full_name: string }) {
   return updateProfileName(input.full_name);
 }

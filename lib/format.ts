@@ -2,6 +2,7 @@
  * Helpers de formatação e data usados em todo o app.
  * Centraliza decisões de locale (pt-BR) e evita drift entre páginas.
  */
+import { nowInBR, todayBR } from "@/lib/datetime";
 
 const LOCALE = "pt-BR";
 
@@ -48,9 +49,9 @@ export function formatLiters(ml: number): string {
 
 /**
  * Início da semana (segunda) em ISO, usado para agregações semanais.
- * Mantido aqui para evitar duplicação entre páginas.
+ * Ancorado no fuso de Brasília para que a "semana" bata com o dia local.
  */
-export function startOfWeekISO(date: Date = new Date()): string {
+export function startOfWeekISO(date: Date = nowInBR()): string {
   const d = new Date(date);
   const day = d.getDay(); // 0 = domingo
   d.setDate(d.getDate() - ((day + 6) % 7));
@@ -59,5 +60,5 @@ export function startOfWeekISO(date: Date = new Date()): string {
 }
 
 export function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  return todayBR();
 }

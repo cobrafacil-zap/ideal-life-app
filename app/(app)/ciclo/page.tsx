@@ -5,6 +5,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { NewCycleForm, DailySymptomsForm } from "./CycleForms";
 import { differenceInCalendarDays } from "date-fns";
 import { Droplets, Heart, Sparkles } from "lucide-react";
+import { nowInBR, todayBR } from "@/lib/datetime";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export default async function CicloPage() {
 
   if (!user) redirect("/login");
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayBR();
 
   const [{ data: cycles }, { data: todayLog }] = await Promise.all([
     supabase
@@ -43,7 +44,7 @@ export default async function CicloPage() {
 
   const latest = cycles?.[0];
   const cycleDay = latest
-    ? differenceInCalendarDays(new Date(), new Date(latest.start_date)) + 1
+    ? differenceInCalendarDays(nowInBR(), new Date(latest.start_date)) + 1
     : null;
 
   let avgCycleLength: number | null = null;
@@ -66,7 +67,7 @@ export default async function CicloPage() {
           new Date(
             new Date(latest.start_date).getTime() + avgCycleLength * 86400000
           ),
-          new Date()
+          nowInBR()
         )
       : null;
 

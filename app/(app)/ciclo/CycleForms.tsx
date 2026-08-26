@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import { startNewCycle, logDailySymptoms } from "./actions";
 import { cn } from "@/lib/cn";
+import { todayBR } from "@/lib/datetime";
 
 const flowOptions = [
   { value: "leve", label: "Leve" },
@@ -24,7 +25,7 @@ const symptomOptions = [
 ];
 
 export function NewCycleForm() {
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(todayBR());
   const [flow, setFlow] = useState(flowOptions[1].value);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export function NewCycleForm() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (date > new Date().toISOString().slice(0, 10)) {
+    if (date > todayBR()) {
       setError("A data não pode estar no futuro.");
       return;
     }
@@ -52,7 +53,7 @@ export function NewCycleForm() {
         type="date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
-        max={new Date().toISOString().slice(0, 10)}
+        max={todayBR()}
         error={error ?? undefined}
       />
       <div>

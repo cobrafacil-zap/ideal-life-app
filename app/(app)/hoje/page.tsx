@@ -17,7 +17,8 @@ import {
 import { differenceInCalendarDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Link from "next/link";
-import { startOfWeekISO, todayISO } from "@/lib/format";
+import { startOfWeekISO } from "@/lib/format";
+import { nowInBR, todayBR } from "@/lib/datetime";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,7 @@ export default async function HojePage() {
   // de explodir com "Cannot read properties of null".
   if (!user) redirect("/login");
 
-  const today = todayISO();
+  const today = todayBR();
   const firstName = user.user_metadata?.full_name?.split(" ")[0] ?? "";
 
   const [
@@ -99,7 +100,7 @@ export default async function HojePage() {
   );
 
   const cycleDay = latestCycle?.start_date
-    ? differenceInCalendarDays(new Date(), new Date(latestCycle.start_date)) + 1
+    ? differenceInCalendarDays(nowInBR(), new Date(latestCycle.start_date)) + 1
     : null;
 
   const goalsCompleted = [
@@ -111,13 +112,13 @@ export default async function HojePage() {
   ].filter(Boolean).length;
 
   const greeting = (() => {
-    const h = new Date().getHours();
+    const h = nowInBR().getHours();
     if (h < 12) return "Bom dia";
     if (h < 18) return "Boa tarde";
     return "Boa noite";
   })();
 
-  const todayLabel = format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR });
+  const todayLabel = format(nowInBR(), "EEEE, d 'de' MMMM", { locale: ptBR });
 
   return (
     <div className="space-y-6 md:space-y-8">

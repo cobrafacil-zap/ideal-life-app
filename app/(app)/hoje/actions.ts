@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { todayBR } from "@/lib/datetime";
 
 export async function saveCheckin(input: {
   energy: number;
@@ -14,7 +15,7 @@ export async function saveCheckin(input: {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado.");
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayBR();
 
   const { error } = await supabase.from("daily_checkins").upsert(
     {
@@ -39,7 +40,7 @@ export async function addWater(amountMl: number) {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado.");
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayBR();
 
   const { error } = await supabase.from("water_logs").insert({
     user_id: user.id,

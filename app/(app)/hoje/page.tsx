@@ -48,9 +48,9 @@ export default async function HojePage() {
     { data: workoutsThisWeek },
     { data: weight7dAgo },
     { data: waterLast7 },
-    { data: lastMealRow },
-    { data: lastWaterRow },
-    { data: lastCheckinRow },
+    lastMealRow,
+    lastWaterRow,
+    lastCheckinRow,
     { data: todaySummary },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),

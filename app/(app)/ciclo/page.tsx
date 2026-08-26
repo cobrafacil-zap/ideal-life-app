@@ -5,6 +5,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { EmptyState } from "@/components/EmptyState";
 import { NewCycleForm, DailySymptomsForm } from "./CycleForms";
 import { CycleHeatmap, type CycleHeatmapLog } from "@/components/ciclo/CycleHeatmap";
+import { CommonSymptomsCard } from "@/components/ciclo/CommonSymptomsCard";
 import { differenceInCalendarDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarDays, Droplets, Heart, Sparkles } from "lucide-react";
@@ -208,6 +209,16 @@ export default async function CicloPage() {
               initialSymptoms={todayLog?.symptoms ?? []}
             />
           </Card>
+
+          {phaseKey && (
+            <Card>
+              <CardHeader
+                title="O que é comum sentir nesta fase"
+                description="Padrões gerais — não substituem avaliação médica."
+              />
+              <CommonSymptomsCard phase={phaseKey} />
+            </Card>
+          )}
         </div>
 
         <aside className="lg:col-span-2 space-y-6">

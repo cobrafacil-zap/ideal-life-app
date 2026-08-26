@@ -7,9 +7,6 @@ import { getExerciseProgression } from "../../../actions";
 import { formatShortDate } from "@/lib/format";
 import { fmtKg } from "@/lib/workout-volume";
 import { cn } from "@/lib/cn";
-import { evaluateLoadReview } from "@/lib/workout-rpe";
-import { LoadReviewSuggestion } from "../../../LoadReviewSuggestion";
-import { targetRepsMin } from "@/lib/workout";
 
 export const dynamic = "force-dynamic";
 
@@ -66,45 +63,6 @@ export default async function HistoricoExercicioPage({
     ? Math.round((last.top_load_kg - first.top_load_kg) * 100) / 100
     : null;
 
-  // Busca target do plano pra esse exercício (se existir).
-  let planTarget: {
-    target_sets: number;
-    target_reps_min: number | null;
-    target_load: number | null;
-    load_unit: "kg" | "lb";
-  } | null = null;
-  if (!params.id.startsWith("orphan:")) {
-    const { data: planRow } = await supabase
-      .from("workout_plan_exercises")
-      .select("target_sets, target_reps, target_load, load_unit")
-      .eq("exercise_id", params.id)
-      .eq("user_id", user.id)
-      .order("target_load", { ascending: false, nullsFirst: false })
-      .limit(1)
-      .maybeSingle();
-    if (planRow) {
-      planTarget = {
-        target_sets: planRow.target_sets,
-        target_reps_min: targetRepsMin(planRow.target_reps),
-        target_load: planRow.target_load,
-        load_unit: planRow.load_unit as "kg" | "lb",
-      };
-    }
-  }
-
-  const verdict = evaluateLoadReview(
-    points.map((p) => ({
-      top_load_kg: p.top_load_kg,
-      reps_at_top: p.reps_at_top,
-      total_sets: p.total_sets,
-      total_volume_kg: p.total_volume_kg,
-      avg_rpe: p.avg_rpe,
-      avg_discomfort: p.avg_discomfort,
-      session_id: p.session_id,
-    })),
-    planTarget,
-  );
-
   return (
     <div className="mx-auto max-w-2xl space-y-5">
       <div className="flex items-center gap-2">
@@ -146,14 +104,6 @@ export default async function HistoricoExercicioPage({
           tone={topDelta == null ? "neutral" : topDelta > 0 ? "good" : topDelta < 0 ? "bad" : "neutral"}
         />
       </div>
-
-      <LoadReviewSuggestion
-        exerciseName={exerciseName}
-        unit={planTarget?.load_unit ?? "kg"}
-        currentTargetLoad={planTarget?.target_load ?? null}
-        lastTopLoadKg={last.top_load_kg}
-        verdict={verdict}
-      />
 
       <Card>
         <CardHeader

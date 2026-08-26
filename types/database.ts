@@ -135,6 +135,10 @@ export interface Exercise {
   substitutes: string[];
   /** Storage path no bucket `workout-images` (privado). NULL → placeholder SVG. */
   image_url: string | null;
+  /** Storage path opcional para GIF/vídeo curto. Tem prioridade sobre image_url quando presente. */
+  animation_url: string | null;
+  /** Instruções curtas de execução (texto neutro, sem diagnóstico). */
+  execution_notes: string | null;
   created_at: string;
 }
 

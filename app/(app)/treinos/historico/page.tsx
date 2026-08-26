@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { History as HistoryIcon, Dumbbell, ChevronRight, AlertTriangle } from "lucide-react";
+import { History as HistoryIcon, Dumbbell, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -39,15 +39,6 @@ export default async function HistoricoPage({
       <SectionHeader
         title="Histórico de treinos"
         subtitle="Veja sessões finalizadas e progressão por exercício."
-        action={
-          <Link
-            href="/treinos/feedback"
-            className="inline-flex h-9 items-center gap-1.5 rounded-pill border border-line bg-surface px-3 text-[12px] font-medium text-ink-soft hover:text-ink"
-          >
-            <AlertTriangle size={12} aria-hidden="true" />
-            Feedback de desconforto
-          </Link>
-        }
       />
 
       <HistoryClient rangeDays={rangeDays} />

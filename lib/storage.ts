@@ -17,6 +17,7 @@ const WORKOUT_IMAGES_BUCKET = "workout-images";
 export type AvatarExt = "png" | "jpg" | "jpeg" | "webp";
 export type MealPhotoExt = "png" | "jpg" | "jpeg" | "webp";
 export type WorkoutImageExt = "png" | "jpg" | "jpeg" | "webp";
+export type WorkoutAnimationExt = "gif" | "mp4" | "webm";
 
 export const WORKOUT_IMAGE_BUCKET = WORKOUT_IMAGES_BUCKET;
 
@@ -28,6 +29,12 @@ function extFromMime(type: string): string | null {
       return "jpg";
     case "image/webp":
       return "webp";
+    case "image/gif":
+      return "gif";
+    case "video/mp4":
+      return "mp4";
+    case "video/webm":
+      return "webm";
     default:
       return null;
   }
@@ -118,7 +125,7 @@ export async function uploadExerciseImage(
   mimeType: string,
 ): Promise<string> {
   const ext = extFromMime(mimeType);
-  if (!ext) throw new Error("Tipo de imagem não suportado (use PNG, JPG ou WebP).");
+  if (!ext) throw new Error("Tipo de mídia não suportado.");
 
   const path = `${userId}/${exerciseId}.${ext}`;
   const { error } = await supabase.storage
@@ -126,5 +133,30 @@ export async function uploadExerciseImage(
     .upload(path, file, { upsert: true, contentType: mimeType, cacheControl: "3600" });
 
   if (error) throw new Error(`Falha no upload da imagem do exercício: ${error.message}`);
+  return path;
+}
+
+/**
+ * Upload de animação demonstrativa (gif/mp4/webm). Mesma pasta do
+ * exercício, sufixo `-anim` para coexistir com image_url estática.
+ */
+export async function uploadExerciseAnimation(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  exerciseId: string,
+  file: File | Blob,
+  mimeType: string,
+): Promise<string> {
+  const ext = extFromMime(mimeType);
+  if (!ext || !["gif", "mp4", "webm"].includes(ext)) {
+    throw new Error("Tipo de animação não suportado (use GIF, MP4 ou WebM).");
+  }
+
+  const path = `${userId}/${exerciseId}-anim.${ext}`;
+  const { error } = await supabase.storage
+    .from(WORKOUT_IMAGES_BUCKET)
+    .upload(path, file, { upsert: true, contentType: mimeType, cacheControl: "3600" });
+
+  if (error) throw new Error(`Falha no upload da animação: ${error.message}`);
   return path;
 }

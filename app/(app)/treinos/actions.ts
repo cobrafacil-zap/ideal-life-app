@@ -1079,6 +1079,8 @@ export type ExerciseProgressionPoint = {
   reps_at_top: number | null;
   total_volume_kg: number;
   total_sets: number;
+  avg_rpe: number | null;
+  avg_discomfort: number | null;
 };
 
 export async function getExerciseProgression(
@@ -1106,7 +1108,7 @@ export async function getExerciseProgression(
   const bySession = new Map<string, {
     session_id: string;
     started_at: string;
-    sets: { reps: number | null; load: number | null; load_unit: "kg" | "lb" }[];
+    sets: { reps: number | null; load: number | null; load_unit: "kg" | "lb"; rpe: number | null; discomfort: number | null }[];
   }>();
 
   for (const row of data ?? []) {
@@ -1124,6 +1126,8 @@ export async function getExerciseProgression(
       reps: row.reps,
       load: row.load,
       load_unit: row.load_unit,
+      rpe: (row as any).rpe ?? null,
+      discomfort: (row as any).discomfort ?? null,
     });
   }
 
@@ -1132,14 +1136,27 @@ export async function getExerciseProgression(
     let topLoadKg: number | null = null;
     let repsAtTop = 0;
     let totalVol = 0;
+    let rpeSum = 0;
+    let rpeN = 0;
+    let discomfortSum = 0;
+    let discomfortN = 0;
     for (const s of v.sets) {
-      if (s.load == null) continue;
-      const kg = s.load_unit === "lb" ? s.load * 0.4536 : s.load;
-      if (topLoadKg == null || kg > topLoadKg) {
-        topLoadKg = Math.round(kg * 100) / 100;
-        repsAtTop = s.reps ?? 0;
+      if (s.load != null) {
+        const kg = s.load_unit === "lb" ? s.load * 0.4536 : s.load;
+        if (topLoadKg == null || kg > topLoadKg) {
+          topLoadKg = Math.round(kg * 100) / 100;
+          repsAtTop = s.reps ?? 0;
+        }
+        if (s.reps != null && s.reps > 0) totalVol += s.reps * kg;
       }
-      if (s.reps != null && s.reps > 0) totalVol += s.reps * kg;
+      if (s.rpe != null) {
+        rpeSum += s.rpe;
+        rpeN++;
+      }
+      if (s.discomfort != null) {
+        discomfortSum += s.discomfort;
+        discomfortN++;
+      }
     }
     points.push({
       session_id: v.session_id,
@@ -1148,6 +1165,8 @@ export async function getExerciseProgression(
       reps_at_top: repsAtTop,
       total_volume_kg: Math.round(totalVol * 100) / 100,
       total_sets: v.sets.length,
+      avg_rpe: rpeN > 0 ? Math.round((rpeSum / rpeN) * 10) / 10 : null,
+      avg_discomfort: discomfortN > 0 ? Math.round((discomfortSum / discomfortN) * 10) / 10 : null,
     });
   }
 
@@ -1296,4 +1315,39 @@ export async function listDiscomfortHistory(opts?: {
       } satisfies DiscomfortEntry;
     })
     .filter((x): x is DiscomfortEntry => x != null);
+}
+
+/* =========================================================================
+   FASE 8 — Aplicar sugestão de carga
+   ========================================================================= */
+
+export async function applyLoadSuggestion(input: {
+  exercise_name: string;
+  new_target_load: number;
+  load_unit: "kg" | "lb";
+}): Promise<{ updated: number }> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  if (!Number.isFinite(input.new_target_load) || input.new_target_load < 0 || input.new_target_load > 1000) {
+    throw new Error("Carga inválida.");
+  }
+
+  // Atualiza todos os itens do plano com esse nome (o exercício pode estar em
+  // mais de um plano). Mantém o load_unit consistente — se o usuário
+  // confirmou kg, gravamos kg.
+  const { data, error } = await supabase
+    .from("workout_plan_exercises")
+    .update({
+      target_load: Math.round(input.new_target_load * 100) / 100,
+      load_unit: input.load_unit === "lb" ? "lb" : "kg",
+    })
+    .eq("user_id", user.id)
+    .eq("exercise_name", input.exercise_name)
+    .select("id");
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/treinos");
+  return { updated: (data ?? []).length };
 }

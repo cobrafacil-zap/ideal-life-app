@@ -39,6 +39,7 @@ const config: Config = {
       boxShadow: {
         card: "0 1px 2px rgba(22,28,26,0.04), 0 8px 24px -12px rgba(22,28,26,0.10)",
         floating: "0 12px 32px -8px rgba(22,28,26,0.18)",
+        inset: "inset 0 1px 2px rgba(22,28,26,0.06)",
       },
       backgroundImage: {
         "ember-gradient": "linear-gradient(135deg, #FF6A39 0%, #FF8F5C 100%)",
@@ -49,6 +50,10 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(6px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
         "ring-fill": {
           "0%": { strokeDashoffset: "var(--ring-start)" },
           "100%": { strokeDashoffset: "var(--ring-end)" },
@@ -56,6 +61,7 @@ const config: Config = {
       },
       animation: {
         "fade-up": "fade-up 0.35s ease-out both",
+        "fade-in": "fade-in 0.4s ease-out both",
         "ring-fill": "ring-fill 0.9s cubic-bezier(0.22,1,0.36,1) both",
       },
     },

@@ -1,8 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
-import { Card } from "@/components/ui/Card";
+import { Card, CardHeader } from "@/components/ui/Card";
+import { SectionHeader } from "@/components/SectionHeader";
 import { GoalsForm } from "./GoalsForm";
-import { signOut } from "./actions";
-import { CircleUserRound, LogOut } from "lucide-react";
+import { signOut, updateProfile } from "./actions";
+import { CircleUserRound, LogOut, Compass, Save } from "lucide-react";
+import { TextField } from "@/components/ui/TextField";
+import { Button } from "@/components/ui/Button";
+
+export const dynamic = "force-dynamic";
 
 export default async function PerfilPage() {
   const supabase = createClient();
@@ -16,47 +21,113 @@ export default async function PerfilPage() {
     .eq("id", user!.id)
     .maybeSingle();
 
+  const displayName =
+    profile?.full_name ?? user?.user_metadata?.full_name ?? "";
+
   return (
-    <div className="space-y-6 animate-fade-up">
-      <header className="flex items-center gap-3">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ember-soft">
-          <CircleUserRound size={28} className="text-ember-dark" />
+    <div className="space-y-6 md:space-y-8">
+      <SectionHeader
+        title="Perfil"
+        subtitle="Metas, conta e preferências."
+      />
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          <Card>
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ember-gradient text-white shadow-floating">
+                <CircleUserRound size={28} aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <h2 className="font-display text-lg font-bold text-ink truncate">
+                  {displayName || "Sem nome ainda"}
+                </h2>
+                <p className="text-sm text-ink-soft truncate">{user?.email}</p>
+              </div>
+            </div>
+
+            <form
+              action={async (formData) => {
+                "use server";
+                await updateProfile({
+                  full_name: String(formData.get("full_name") ?? ""),
+                });
+              }}
+              className="mt-5 space-y-3"
+            >
+              <TextField
+                label="Nome"
+                name="full_name"
+                defaultValue={displayName}
+                placeholder="Como podemos te chamar?"
+                maxLength={80}
+                autoComplete="name"
+              />
+              <Button
+                type="submit"
+                leadingIcon={<Save size={14} />}
+                variant="secondary"
+              >
+                Salvar nome
+              </Button>
+            </form>
+          </Card>
+
+          <Card>
+            <CardHeader
+              title="Suas metas"
+              description="Defina metas diárias e semanais. O Resumo do dia usa esses números."
+            />
+            <GoalsForm
+              waterGoalMl={profile?.water_goal_ml ?? 3000}
+              cardioGoalMin={profile?.cardio_weekly_goal_min ?? 150}
+              workoutGoal={profile?.workout_weekly_goal ?? 4}
+              calorieGoal={profile?.calorie_goal ?? null}
+            />
+          </Card>
         </div>
-        <div>
-          <h1 className="font-display text-xl font-bold">
-            {profile?.full_name ?? user?.email}
-          </h1>
-          <p className="text-sm text-ink-soft">{user?.email}</p>
-        </div>
-      </header>
 
-      <Card>
-        <h2 className="mb-3 font-display text-base font-semibold">Suas metas</h2>
-        <GoalsForm
-          waterGoalMl={profile?.water_goal_ml ?? 3000}
-          cardioGoalMin={profile?.cardio_weekly_goal_min ?? 150}
-          workoutGoal={profile?.workout_weekly_goal ?? 4}
-          calorieGoal={profile?.calorie_goal ?? null}
-        />
-      </Card>
+        <aside className="space-y-6">
+          <Card className="border-dashed">
+            <div className="flex items-start gap-3">
+              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ember-soft text-ember">
+                <Compass size={16} aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-ink">Minha vida (em breve)</p>
+                <p className="mt-1 text-[12px] text-ink-soft">
+                  Espaço reservado para os próximos módulos: finanças,
+                  relacionamento, casa, trabalho, estudos, espiritualidade e
+                  metas pessoais.
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-1.5 text-[11px] text-ink-soft">
+                  {["Finanças", "Relacionamento", "Casa", "Trabalho", "Estudos", "Espiritualidade"].map(
+                    (m) => (
+                      <li
+                        key={m}
+                        className="rounded-pill border border-line/70 bg-base/50 px-2.5 py-1"
+                      >
+                        {m}
+                      </li>
+                    )
+                  )}
+                </ul>
+              </div>
+            </div>
+          </Card>
 
-      <Card className="opacity-70">
-        <p className="text-sm font-semibold">Minha vida (em breve)</p>
-        <p className="mt-1 text-[12px] text-ink-faint">
-          Espaço reservado para os próximos módulos: finanças, relacionamento, casa,
-          trabalho, estudos, espiritualidade e metas.
-        </p>
-      </Card>
-
-      <form action={signOut}>
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-line py-3 text-sm font-medium text-ink-soft"
-        >
-          <LogOut size={16} />
-          Sair da conta
-        </button>
-      </form>
+          <form action={signOut}>
+            <Button
+              type="submit"
+              variant="outline"
+              fullWidth
+              leadingIcon={<LogOut size={16} />}
+            >
+              Sair da conta
+            </Button>
+          </form>
+        </aside>
+      </div>
     </div>
   );
 }

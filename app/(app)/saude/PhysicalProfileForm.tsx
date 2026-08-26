@@ -19,10 +19,12 @@ export function PhysicalProfileForm({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const h = parseFloat(height.replace(",", "."));
+    const g = parseFloat(goal.replace(",", "."));
     startTransition(async () => {
       await updatePhysicalProfile({
-        height_cm: parseFloat(height.replace(",", ".")),
-        weight_goal_kg: parseFloat(goal.replace(",", ".")),
+        height_cm: Number.isNaN(h) ? null : h,
+        weight_goal_kg: Number.isNaN(g) ? null : g,
       });
       setSaved(true);
     });
@@ -30,12 +32,14 @@ export function PhysicalProfileForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <TextField
           label="Altura (cm)"
           type="text"
           inputMode="decimal"
           value={height}
+          placeholder="170"
+          trailingAdornment="cm"
           onChange={(e) => {
             setHeight(e.target.value);
             setSaved(false);
@@ -46,14 +50,21 @@ export function PhysicalProfileForm({
           type="text"
           inputMode="decimal"
           value={goal}
+          placeholder="70,0"
+          trailingAdornment="kg"
           onChange={(e) => {
             setGoal(e.target.value);
             setSaved(false);
           }}
         />
       </div>
-      <Button type="submit" loading={isPending} variant="secondary" className="w-full">
-        {saved ? "Salvo" : "Salvar dados"}
+      <Button
+        type="submit"
+        loading={isPending}
+        variant={saved ? "outline" : "secondary"}
+        fullWidth
+      >
+        {saved ? "Dados salvos" : "Salvar dados"}
       </Button>
     </form>
   );

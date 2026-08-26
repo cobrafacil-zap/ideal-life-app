@@ -26,6 +26,7 @@ import {
 } from "./actions";
 import { cn } from "@/lib/cn";
 import { RPE_DESCRIPTORS, minutesToHours } from "@/lib/workout";
+import { ExerciseMedia } from "./ExerciseMedia";
 
 type PlanExerciseRow = {
   id: string;
@@ -64,6 +65,7 @@ export function WorkoutRunner({
   planExercises: PlanExerciseRow[];
   initialSets: ExistingSet[];
   library: ExerciseListItem[];
+  signedUrls?: Record<string, string | null>;
 }) {
   const router = useRouter();
   const [sets, setSets] = useState<ExistingSet[]>(initialSets);
@@ -101,6 +103,13 @@ export function WorkoutRunner({
   const planNames = useMemo(
     () => new Set(planExercises.map((p) => p.exercise_name)),
     [planExercises],
+  );
+
+  /** Exercícios avulsos: já registrados mas sem linha no plano. */
+  const adHocNames = useMemo(
+    () =>
+      Array.from(grouped.keys()).filter((name) => !planNames.has(name)),
+    [grouped, planNames],
   );
 
   function startRest(seconds: number) {
@@ -258,6 +267,14 @@ export function WorkoutRunner({
               key={row.id}
               planRow={row}
               existing={grouped.get(row.exercise_name) ?? []}
+              libraryMatch={
+                row.exercise_id
+                  ? library.find((ex) => ex.id === row.exercise_id)
+                  : undefined
+              }
+              signedUrl={
+                row.exercise_id ? (signedUrls?.[row.exercise_id] ?? null) : null
+              }
               onAdd={(payload) =>
                 addSet({
                   exerciseName: row.exercise_name,
@@ -293,6 +310,45 @@ export function WorkoutRunner({
           <p className="text-[11px] text-ink-faint">
             Adicionando exercícios avulsos (sem plano).
           </p>
+        )}
+
+        {adHocNames.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="font-display text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
+              Exercícios avulsos
+            </h3>
+            {adHocNames.map((name) => {
+              const libraryMatch = library.find(
+                (ex) => ex.name === name,
+              );
+              return (
+                <AdHocBlock
+                  key={name}
+                  exerciseName={name}
+                  existing={grouped.get(name) ?? []}
+                  libraryMatch={libraryMatch}
+                  signedUrl={
+                    libraryMatch
+                      ? (signedUrls?.[libraryMatch.id] ?? null)
+                      : null
+                  }
+                  onAdd={(payload) =>
+                    addSet({
+                      exerciseName: name,
+                      exerciseId: libraryMatch?.id ?? null,
+                      targetLoad: null,
+                      targetReps: "10",
+                      restSeconds: 60,
+                      ...payload,
+                    })
+                  }
+                  onRemove={removeOneSet}
+                  onPatchLocal={patchSetLocal}
+                  onPersist={persistPatch}
+                />
+              );
+            })}
+          </div>
         )}
 
         {planExercises.length > 0 && (
@@ -367,6 +423,8 @@ export function WorkoutRunner({
 function ExerciseBlock({
   planRow,
   existing,
+  libraryMatch,
+  signedUrl,
   onAdd,
   onRemove,
   onPatchLocal,
@@ -374,6 +432,8 @@ function ExerciseBlock({
 }: {
   planRow: PlanExerciseRow;
   existing: ExistingSet[];
+  libraryMatch?: ExerciseListItem;
+  signedUrl?: string | null;
   onAdd: (input: {
     reps: number;
     load: number | null;
@@ -387,6 +447,25 @@ function ExerciseBlock({
 }) {
   return (
     <div className="rounded-card border border-line/60 bg-surface p-4">
+      {/* Mídia grande — fundamental pra reconhecer o exercício em tempo real. */}
+      <div className="mb-3">
+        <ExerciseMedia
+          exercise={
+            libraryMatch ?? {
+              id: planRow.id,
+              name: planRow.exercise_name,
+              primary_muscle: "outro",
+              secondary_muscles: [],
+              equipment: null,
+              image_url: null,
+              animation_url: null,
+              user_id: null,
+            }
+          }
+          signedUrl={signedUrl ?? null}
+          full
+        />
+      </div>
       <div className="mb-2 flex items-baseline justify-between">
         <div>
           <p className="font-display text-sm font-bold text-ink">
@@ -785,6 +864,92 @@ function FinishDialog({
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function AdHocBlock({
+  exerciseName,
+  existing,
+  libraryMatch,
+  signedUrl,
+  onAdd,
+  onRemove,
+  onPatchLocal,
+  onPersist,
+}: {
+  exerciseName: string;
+  existing: ExistingSet[];
+  libraryMatch?: ExerciseListItem;
+  signedUrl?: string | null;
+  onAdd: (input: {
+    reps: number;
+    load: number | null;
+    loadUnit: "kg" | "lb";
+    rpe: number | null;
+    discomfort: number | null;
+  }) => void;
+  onRemove: (setId: string) => void;
+  onPatchLocal: (setId: string, patch: Partial<ExistingSet>) => void;
+  onPersist: (setId: string, patch: Partial<ExistingSet>) => Promise<void>;
+}) {
+  return (
+    <div className="rounded-card border border-line/60 bg-surface p-4">
+      {/* Mídia grande — fundamental pra reconhecer o exercício em tempo real. */}
+      <div className="mb-3">
+        <ExerciseMedia
+          exercise={
+            libraryMatch ?? {
+              id: exerciseName,
+              name: exerciseName,
+              primary_muscle: "outro",
+              secondary_muscles: [],
+              equipment: null,
+              image_url: null,
+              animation_url: null,
+              user_id: null,
+            }
+          }
+          signedUrl={signedUrl ?? null}
+          full
+        />
+      </div>
+      <div className="mb-2 flex items-baseline justify-between">
+        <div>
+          <p className="font-display text-sm font-bold text-ink">
+            {exerciseName}
+          </p>
+          <p className="text-[11px] text-ink-soft">
+            Exercício avulso · sem meta pré-definida
+          </p>
+        </div>
+        <span className="rounded-pill bg-line/60 px-2 py-0.5 text-[10px] font-semibold text-ink-soft">
+          {existing.length} {existing.length === 1 ? "série" : "séries"}
+        </span>
+      </div>
+
+      {existing.length > 0 && (
+        <ul className="mb-3 divide-y divide-line/40">
+          {existing.map((s) => (
+            <SetLine
+              key={s.id}
+              setRow={s}
+              targetReps="10"
+              onRemove={onRemove}
+              onPatchLocal={onPatchLocal}
+              onPersist={onPersist}
+            />
+          ))}
+        </ul>
+      )}
+
+      <NewSetForm
+        key={`adhoc-form-${existing.length}`}
+        unit="kg"
+        targetLoad={null}
+        targetReps="10"
+        onSubmit={onAdd}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { WorkoutRunner } from "../../WorkoutRunner";
 import { listExercises } from "../../actions";
+import { getExerciseMediaSignedUrl } from "@/lib/exercise-images";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +54,19 @@ export default async function SessaoPage({
     listExercises(),
   ]);
 
+  // Signed URLs (animation_url > image_url) para todos os exercícios da library.
+  const signedEntries = await Promise.all(
+    library.slice(0, 100).map(async (ex) => ({
+      id: ex.id,
+      url: await getExerciseMediaSignedUrl(
+        supabase,
+        ex.image_url,
+        ex.animation_url,
+      ),
+    })),
+  );
+  const urlMap = Object.fromEntries(signedEntries.map((s) => [s.id, s.url]));
+
   return (
     <div className="mx-auto max-w-3xl">
       <WorkoutRunner
@@ -62,6 +76,7 @@ export default async function SessaoPage({
         planExercises={(planExercises ?? []) as any}
         initialSets={(sets ?? []) as any}
         library={library}
+        signedUrls={urlMap}
       />
     </div>
   );

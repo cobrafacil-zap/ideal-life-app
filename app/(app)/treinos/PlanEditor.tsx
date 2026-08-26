@@ -30,6 +30,8 @@ import {
   type PlanDetail,
 } from "./actions";
 import { cn } from "@/lib/cn";
+import { ExercisePicker } from "./ExercisePicker";
+import { ExerciseMedia } from "./ExerciseMedia";
 import type {
   Exercise,
   PrimaryMuscleGroup,
@@ -41,7 +43,14 @@ import {
 
 type ExerciseLibraryItem = Pick<
   Exercise,
-  "id" | "name" | "primary_muscle" | "user_id"
+  | "id"
+  | "name"
+  | "primary_muscle"
+  | "secondary_muscles"
+  | "equipment"
+  | "image_url"
+  | "animation_url"
+  | "user_id"
 > & { signedUrl: string | null };
 
 export function PlanEditor({
@@ -289,6 +298,7 @@ export function PlanEditor({
                 row={row}
                 index={idx}
                 total={planState.exercises.length}
+                library={library}
                 onMove={moveItem}
                 onUpdate={onRowUpdated}
                 onRemove={onRowRemoved}
@@ -314,10 +324,23 @@ export function PlanEditor({
       </div>
 
       {pickerOpen && (
-        <ExercisePickerDialog
-          library={library}
+        <ExercisePicker
+          open={pickerOpen}
           onClose={() => setPickerOpen(false)}
-          onPick={async (exercise) => {
+          exercises={library}
+          signedUrls={Object.fromEntries(
+            library.map((ex) => [ex.id, ex.signedUrl])
+          )}
+          selectedIds={planState.exercises
+            .map((e) => e.exercise_id)
+            .filter((id): id is string => id != null)}
+          onAdd={async (exercise) => {
+            // Se já está adicionado, ignora silenciosamente.
+            if (
+              planState.exercises.some((e) => e.exercise_id === exercise.id)
+            ) {
+              return;
+            }
             try {
               const res = await addPlanExercise(plan.id, {
                 exercise_id: exercise.id,
@@ -329,7 +352,6 @@ export function PlanEditor({
                 rest_seconds: 60,
               });
               onExerciseAdded(res.id, exercise.id, exercise.name);
-              setPickerOpen(false);
             } catch (err) {
               setError(err instanceof Error ? err.message : "Erro ao adicionar.");
             }
@@ -344,6 +366,7 @@ function PlanExerciseRow({
   row,
   index,
   total,
+  library,
   onMove,
   onUpdate,
   onRemove,
@@ -351,10 +374,16 @@ function PlanExerciseRow({
   row: PlanDetail["exercises"][number];
   index: number;
   total: number;
+  library: ExerciseLibraryItem[];
   onMove: (id: string, dir: -1 | 1) => void;
   onUpdate: (id: string, patch: Partial<PlanDetail["exercises"][number]>) => void;
   onRemove: (id: string) => void;
 }) {
+  // Acha mídia do exercício na library (caso exercise_id referencie o catálogo).
+  const match =
+    row.exercise_id != null
+      ? library.find((ex) => ex.id === row.exercise_id)
+      : null;
   const [sets, setSets] = useState(row.target_sets.toString());
   const [reps, setReps] = useState(row.target_reps);
   const [load, setLoad] = useState(row.target_load?.toString() ?? "");
@@ -421,9 +450,26 @@ function PlanExerciseRow({
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-sm font-semibold text-ink">
-            {row.exercise_name}
-          </p>
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">
+              <ExerciseMedia
+                exercise={match ?? {
+                  id: row.id,
+                  name: row.exercise_name,
+                  primary_muscle: "outro",
+                  secondary_muscles: [],
+                  equipment: null,
+                  image_url: null,
+                  animation_url: null,
+                  user_id: null,
+                }}
+                signedUrl={match?.signedUrl ?? null}
+              />
+            </div>
+            <p className="truncate font-display text-sm font-semibold text-ink">
+              {row.exercise_name}
+            </p>
+          </div>
 
           <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <TextField
@@ -511,141 +557,13 @@ function PlanExerciseRow({
   );
 }
 
-function ExercisePickerDialog({
-  library,
-  onClose,
-  onPick,
-}: {
-  library: ExerciseLibraryItem[];
-  onClose: () => void;
-  onPick: (item: ExerciseLibraryItem) => void | Promise<void>;
-}) {
-  const [search, setSearch] = useState("");
-  const [muscle, setMuscle] = useState<PrimaryMuscleGroup | "all">("all");
-
-  const filtered = library.filter((ex) => {
-    if (muscle !== "all" && ex.primary_muscle !== muscle) return false;
-    if (search) {
-      const t = search.toLowerCase();
-      if (!ex.name.toLowerCase().includes(t)) return false;
-    }
-    return true;
-  });
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="picker-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 backdrop-blur-sm animate-fade-in sm:items-center"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md rounded-t-card bg-base shadow-floating border border-line/60 animate-fade-up sm:rounded-card"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-line/60 px-4 py-3 sm:px-6">
-          <h2 id="picker-title" className="font-display text-lg font-bold text-ink">
-            Escolher exercício
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-soft hover:bg-base/60 hover:text-ink"
-            aria-label="Fechar"
-          >
-            <X size={16} aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="space-y-3 px-4 py-4 sm:px-6 sm:py-5">
-          <TextField
-            label="Buscar"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Nome do exercício"
-            autoFocus
-          />
-
-          <div className="flex flex-wrap gap-1.5">
-            <FilterChip active={muscle === "all"} onClick={() => setMuscle("all")}>
-              Todos
-            </FilterChip>
-            {(["peito", "costas", "pernas", "ombros", "bracos", "core"] as PrimaryMuscleGroup[]).map((m) => (
-              <FilterChip key={m} active={muscle === m} onClick={() => setMuscle(m)}>
-                {PRIMARY_MUSCLE_LABEL[m]}
-              </FilterChip>
-            ))}
-          </div>
-
-          {filtered.length === 0 ? (
-            <p className="rounded-2xl bg-base/40 p-4 text-center text-[12px] text-ink-soft">
-              Nada por aqui — ajuste a busca ou crie o exercício na biblioteca.
-            </p>
-          ) : (
-            <ul className="max-h-72 space-y-1 overflow-y-auto">
-              {filtered.map((ex) => {
-                const bg = PRIMARY_MUSCLE_BG[ex.primary_muscle as keyof typeof PRIMARY_MUSCLE_BG] ?? PRIMARY_MUSCLE_BG.outro;
-                return (
-                  <li key={ex.id}>
-                    <button
-                      type="button"
-                      onClick={() => onPick(ex)}
-                      className="flex w-full items-center gap-3 rounded-xl border border-line/60 bg-surface p-2 text-left hover:border-ember/40"
-                    >
-                      <span
-                        className={cn(
-                          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[12px] font-bold text-white",
-                          bg,
-                        )}
-                      >
-                        {ex.name.slice(0, 2).toUpperCase()}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-sm">{ex.name}</span>
-                      <span className="text-[10px] text-ink-faint">
-                        {PRIMARY_MUSCLE_LABEL[ex.primary_muscle as PrimaryMuscleGroup] ?? ex.primary_muscle}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FilterChip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-pill border px-2.5 py-1 text-[12px]",
-        active
-          ? "border-ember/40 bg-ember-soft text-ember-dark"
-          : "border-line/70 bg-surface text-ink-soft hover:text-ink",
-      )}
-    >
-      {children}
-    </button>
-  );
-}
+const WEEKDAY_LABELS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"] as const;
 
 export function NewPlanForm() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [weekday, setWeekday] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -653,12 +571,16 @@ export function NewPlanForm() {
     e.preventDefault();
     setError(null);
     if (!name.trim()) {
-      setError("Dê um nome para o plano.");
+      setError("Dê um nome para o treino.");
       return;
     }
     startTransition(async () => {
       try {
-        const res = await createWorkoutPlan({ name, description: description || null });
+        const res = await createWorkoutPlan({
+          name,
+          description: description || null,
+          scheduled_weekday: weekday,
+        });
         router.push(`/treinos/meus-treinos/${res.id}`);
         router.refresh();
       } catch (err) {
@@ -668,26 +590,63 @@ export function NewPlanForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-4 rounded-card border border-line/60 bg-surface p-4 sm:p-5">
+    <form onSubmit={submit} className="space-y-5 rounded-card border border-line/60 bg-surface p-4 sm:p-5">
       <div className="flex items-center gap-2">
         <Link
-          href="/treinos"
+          href="/treinos/meus-treinos"
           className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-ink-soft hover:bg-base/60 hover:text-ink"
           aria-label="Voltar"
         >
           <ArrowLeft size={16} aria-hidden="true" />
         </Link>
-        <h1 className="font-display text-xl font-bold text-ink">Novo plano</h1>
+        <h1 className="font-display text-xl font-bold text-ink">Criar treino</h1>
       </div>
 
+      <p className="text-[13px] text-ink-soft">
+        Dê um nome e escolha o dia da semana. Você adiciona os exercícios na próxima tela.
+      </p>
+
       <TextField
-        label="Nome do plano"
+        label="Nome do treino"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Ex.: Peito + tríceps A"
+        placeholder="Ex.: Treino de Ombro"
         autoFocus
         maxLength={80}
       />
+
+      <div>
+        <span className="mb-1.5 block text-sm font-medium text-ink-soft">
+          Dia da semana
+        </span>
+        <div className="flex flex-wrap gap-2">
+          {WEEKDAY_LABELS.map((label, i) => {
+            const active = weekday === i;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setWeekday(active ? null : i)}
+                className={cn(
+                  "inline-flex h-10 min-w-[48px] items-center justify-center rounded-pill border px-3 text-[13px] font-medium transition-colors",
+                  active
+                    ? "border-ember bg-ember text-white"
+                    : "border-line bg-base/40 text-ink-soft hover:border-ember/40 hover:text-ink",
+                )}
+                aria-pressed={active}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-1.5 text-[11px] text-ink-faint">
+          {weekday == null
+            ? "Sem dia fixo — você pode iniciar o treino quando quiser."
+            : `Agendado para ${WEEKDAY_LABELS[weekday]}-feira.`}
+        </p>
+      </div>
+
       <label className="block">
         <span className="mb-1.5 block text-sm font-medium text-ink-soft">
           Descrição (opcional)
@@ -695,9 +654,9 @@ export function NewPlanForm() {
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          rows={3}
+          rows={2}
           maxLength={280}
-          placeholder="Notas sobre foco, duração esperada, dia da semana…"
+          placeholder="Notas sobre foco, divisão, etc."
           className="w-full rounded-xl border border-line bg-base/40 px-3 py-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-base"
         />
       </label>
@@ -709,7 +668,7 @@ export function NewPlanForm() {
       )}
 
       <Button type="submit" loading={isPending} fullWidth leadingIcon={<Plus size={14} />}>
-        Criar plano
+        Continuar
       </Button>
     </form>
   );

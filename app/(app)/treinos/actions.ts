@@ -484,13 +484,19 @@ export async function getWorkoutPlan(id: string): Promise<PlanDetail | null> {
 export async function createWorkoutPlan(input: {
   name: string;
   description?: string | null;
+  scheduled_weekday?: number | null;
 }): Promise<{ id: string }> {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado.");
 
   const name = clean(input.name, 80);
-  if (!name) throw new Error("Nome do plano é obrigatório.");
+  if (!name) throw new Error("Nome do treino é obrigatório.");
+
+  const weekday = input.scheduled_weekday ?? null;
+  if (weekday != null && (weekday < 0 || weekday > 6)) {
+    throw new Error("Dia da semana inválido.");
+  }
 
   const { data, error } = await supabase
     .from("workout_plans")
@@ -500,11 +506,12 @@ export async function createWorkoutPlan(input: {
       description: clean(input.description ?? null, 280),
       sort_order: 0,
       is_active: false,
+      scheduled_weekday: weekday,
     })
     .select("id")
     .maybeSingle();
   if (error) throw new Error(error.message);
-  if (!data) throw new Error("Falha ao criar plano.");
+  if (!data) throw new Error("Falha ao criar treino.");
 
   revalidatePath("/treinos");
   return { id: data.id };

@@ -564,7 +564,7 @@ export async function deleteWorkoutPlan(id: string): Promise<void> {
   revalidatePath("/treinos");
 }
 
-function parseLoad(value: string | null | undefined): number | null {
+function parseLoad(value: string | number | null | undefined): number | null {
   if (value == null || value === "") return null;
   const n = parseFloat(String(value).replace(",", "."));
   if (!Number.isFinite(n)) return null;

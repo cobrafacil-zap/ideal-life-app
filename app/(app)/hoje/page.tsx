@@ -79,7 +79,7 @@ export default async function HojePage() {
       .eq("meal_date", today),
     supabase
       .from("workout_sessions")
-      .select("workout_name, started_at")
+      .select("id, workout_name, started_at")
       .eq("user_id", user.id)
       .is("finished_at", null)
       .order("started_at", { ascending: false })

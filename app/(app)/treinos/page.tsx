@@ -19,7 +19,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { ExerciseLibrary } from "./ExerciseLibrary";
 import { getExerciseImageSignedUrl } from "@/lib/exercise-images";
 import { formatHours, formatShortDate } from "@/lib/format";
-import { startOfWeekISO, todayBR } from "@/lib/datetime";
+import { todayBR } from "@/lib/datetime";
+import { startOfWeekISO } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type { Exercise } from "@/types/database";
 

@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
-import { startOfWeekISO, todayBR } from "@/lib/datetime";
+import { todayBR } from "@/lib/datetime";
+import { startOfWeekISO } from "@/lib/format";
 import {
   WeeklySchedule,
   WeeklyHeader,

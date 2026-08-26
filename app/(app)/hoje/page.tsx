@@ -7,7 +7,6 @@ import { SummaryTile } from "@/components/home/SummaryTile";
 import { Trend } from "@/components/Trend";
 import { WellBeingRing } from "@/components/home/WellBeingRing";
 import { wellBeingAverage } from "@/lib/well-being";
-import { CheckinCard } from "./CheckinCard";
 import { WaterCard } from "./WaterCard";
 import {
   Dumbbell,
@@ -17,7 +16,7 @@ import {
   Scale,
   Target,
   Sparkles,
-  Smile,
+  Heart,
 } from "lucide-react";
 import { differenceInCalendarDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -211,88 +210,6 @@ export default async function HojePage() {
         <div className="space-y-6 lg:col-span-2">
           <Card>
             <CardHeader
-              title="Bem-estar hoje"
-              description="Energia, humor e disposição em um único indicador."
-            />
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-              <WellBeingRing value={todayOverall ?? 0} />
-              <div className="flex-1 min-w-0">
-                {todayOverall == null ? (
-                  <p className="text-[13px] text-ink-soft">
-                    Você ainda não registrou o check-in de hoje. Ajuste energia,
-                    humor e disposição no card abaixo para acompanhar seu bem-estar.
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    {wellBeingDelta != null ? (
-                      <Trend
-                        value={wellBeingDelta}
-                        label={`vs. ${compareLabel}`}
-                        formatter={(n) =>
-                          `${n > 0 ? "+" : ""}${Math.round(n)} pp`
-                        }
-                        mode="up-good"
-                      />
-                    ) : (
-                      <p className="text-[12px] text-ink-soft">
-                        Sem check-in anterior para comparar.
-                      </p>
-                    )}
-                    <ul className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-ink-soft">
-                      <li>
-                        <Smile size={12} className="inline -mt-0.5 mr-1 text-ember" />
-                        Energia <strong className="font-mono text-ink">{checkin!.energy}</strong>
-                      </li>
-                      <li>
-                        Humor <strong className="font-mono text-ink">{checkin!.mood}</strong>
-                      </li>
-                      <li>
-                        Disposição <strong className="font-mono text-ink">{checkin!.disposition}</strong>
-                      </li>
-                    </ul>
-                    <div className="pt-1">
-                      <p className="text-[11px] uppercase tracking-wide text-ink-faint">
-                        Progresso do dia
-                      </p>
-                      <div
-                        className="mt-1 h-2 w-full rounded-pill bg-line/60 overflow-hidden"
-                        role="progressbar"
-                        aria-valuenow={goalsCompleted}
-                        aria-valuemin={0}
-                        aria-valuemax={5}
-                        aria-label="Progresso do dia"
-                      >
-                        <div
-                          className="h-full rounded-pill bg-moss-gradient transition-all duration-500 ease-out"
-                          style={{ width: `${(goalsCompleted / 5) * 100}%` }}
-                        />
-                      </div>
-                      <p className="mt-1 text-[12px] text-ink-soft">
-                        {goalsCompleted} de 5 metas cumpridas hoje
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <CardHeader
-              title="Como você está hoje?"
-              description="Registre energia, humor e disposição. Você pode ajustar a qualquer momento."
-            />
-            <CheckinCard
-              initial={{
-                energy: checkin?.energy ?? 5,
-                mood: checkin?.mood ?? 5,
-                disposition: checkin?.disposition ?? 5,
-              }}
-            />
-          </Card>
-
-          <Card>
-            <CardHeader
               title="Água"
               description="Toque nos atalhos para registrar copos ou garrafas."
             />
@@ -304,6 +221,31 @@ export default async function HojePage() {
         <aside className="space-y-6">
           <Card>
             <CardHeader title="Resumo do dia" />
+            {/* Bem-estar compacto — 1 linha, leva o usuário ao card completo via /saude. */}
+            <div className="mb-4 flex items-center gap-3 rounded-2xl bg-base/50 p-3">
+              <Heart size={16} className="text-ember" aria-hidden="true" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] text-ink-soft">Bem-estar hoje</p>
+                {todayOverall == null ? (
+                  <p className="text-[12px] text-ink-faint">
+                    Sem check-in de hoje.
+                  </p>
+                ) : (
+                  <p className="font-mono text-sm font-semibold text-ink">
+                    {Math.round(todayOverall * 10)}%
+                  </p>
+                )}
+              </div>
+              {wellBeingDelta != null && todayOverall != null && (
+                <Trend
+                  value={wellBeingDelta}
+                  formatter={(n) =>
+                    `${n > 0 ? "+" : ""}${Math.round(n)} pp`
+                  }
+                  mode="up-good"
+                />
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <Link href="/saude" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
                 <SummaryTile

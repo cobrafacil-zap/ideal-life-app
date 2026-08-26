@@ -12,6 +12,8 @@ type Props = {
     | "id"
     | "name"
     | "primary_muscle"
+    | "secondary_muscles"
+    | "equipment"
     | "image_url"
     | "animation_url"
     | "user_id"

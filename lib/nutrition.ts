@@ -231,24 +231,87 @@ const BEBIDAS: PortionItem[] = [
   { label: "Vinho tinto", kcal: 130, unit: "1 taça (~150 ml)", category: "bebidas", carbs: 4 },
   { label: "Água de coco", kcal: 60, unit: "1 copo (~200 ml)", category: "bebidas", carbs: 14, protein: 0.5 },
   { label: "Energético", kcal: 110, unit: "1 lata (~250 ml)", category: "bebidas", carbs: 27 },
+  { label: "Red Bull (lata)", kcal: 110, unit: "1 lata (250 ml)", category: "bebidas", carbs: 27, protein: 1 },
+  { label: "Red Bull (lata pequena)", kcal: 65, unit: "1 lata (150 ml)", category: "bebidas", carbs: 16 },
+  { label: "Red Bull sem açúcar", kcal: 5, unit: "1 lata (250 ml)", category: "bebidas" },
+  { label: "Monster Energy", kcal: 120, unit: "1 lata (473 ml)", category: "bebidas", carbs: 31 },
+  { label: "TNT Energy", kcal: 105, unit: "1 lata (269 ml)", category: "bebidas", carbs: 26 },
+  { label: "Burn Energy", kcal: 145, unit: "1 lata (250 ml)", category: "bebidas", carbs: 38 },
 ];
 
 // ───────────────────────────── INDUSTRIALIZADOS ─────────────────────────────
 const INDUSTRIALIZADOS: PortionItem[] = [
+  // Fast-food
   { label: "Hambúrguer de fast-food", kcal: 540, unit: "1 unidade (~200 g)", category: "industrializados", protein: 25, carbs: 40, fat: 30 },
-  { label: "Hot dog", kcal: 350, unit: "1 unidade (~150 g)", category: "industrializados", protein: 11, carbs: 33, fat: 18 },
+  { label: "Big Mac (McDonald's)", kcal: 560, unit: "1 unidade (~220 g)", category: "industrializados", protein: 26, carbs: 45, fat: 30 },
+  { label: "Cheeseburger", kcal: 300, unit: "1 unidade (~120 g)", category: "industrializados", protein: 15, carbs: 32, fat: 12 },
+  { label: "McLanche Feliz", kcal: 330, unit: "1 unidade (~140 g)", category: "industrializados", protein: 13, carbs: 35, fat: 14 },
+  { label: "Whopper (BK)", kcal: 660, unit: "1 unidade (~270 g)", category: "industrializados", protein: 28, carbs: 49, fat: 37 },
+  { label: "Quarterão (McDonald's)", kcal: 540, unit: "1 unidade (~220 g)", category: "industrializados", protein: 30, carbs: 38, fat: 28 },
+  { label: "Misto quente", kcal: 220, unit: "1 unidade (~80 g)", category: "industrializados", protein: 9, carbs: 24, fat: 9 },
+  { label: "Bauru (sanduíche)", kcal: 320, unit: "1 unidade (~150 g)", category: "industrializados", protein: 16, carbs: 30, fat: 14 },
+  { label: "Hot dog americano", kcal: 350, unit: "1 unidade (~150 g)", category: "industrializados", protein: 11, carbs: 33, fat: 18 },
   { label: "Cachorro-quente (pão+salsicha+molho)", kcal: 280, unit: "1 unidade (~120 g)", category: "industrializados", protein: 9, carbs: 30, fat: 12 },
   { label: "X-salada", kcal: 500, unit: "1 unidade (~250 g)", category: "industrializados", protein: 22, carbs: 38, fat: 28 },
   { label: "X-bacon", kcal: 580, unit: "1 unidade (~280 g)", category: "industrializados", protein: 26, carbs: 38, fat: 34 },
+  { label: "X-tudo", kcal: 700, unit: "1 unidade (~330 g)", category: "industrializados", protein: 30, carbs: 42, fat: 44 },
+  { label: "X-frango", kcal: 460, unit: "1 unidade (~220 g)", category: "industrializados", protein: 24, carbs: 38, fat: 22 },
+  { label: "X-egg", kcal: 480, unit: "1 unidade (~220 g)", category: "industrializados", protein: 22, carbs: 36, fat: 26 },
+  { label: "Açaí (tamanho médio com leite ninho)", kcal: 460, unit: "1 copo (~300 g)", category: "industrializados", protein: 6, carbs: 65, fat: 16 },
+  { label: "Açaí (tamanho grande)", kcal: 700, unit: "1 copo (~500 g)", category: "industrializados", protein: 9, carbs: 100, fat: 24 },
+  { label: "Sorvete de massa (1 bola)", kcal: 130, unit: "1 bola (~60 g)", category: "industrializados", protein: 2.5, carbs: 16, fat: 7 },
+  { label: "Sorvete 2 bolas", kcal: 260, unit: "2 bolas (~120 g)", category: "industrializados", protein: 5, carbs: 32, fat: 14 },
+  { label: "Sorvete de flocos (picolé)", kcal: 170, unit: "1 unidade (~80 g)", category: "industrializados", protein: 2, carbs: 28, fat: 6 },
+  { label: "Picolé de fruta", kcal: 80, unit: "1 unidade (~80 g)", category: "industrializados", carbs: 20 },
+
+  // Massas instantâneas e congelados
   { label: "Miojo / Lámen (instantâneo)", kcal: 430, unit: "1 pacote (~85 g)", category: "industrializados", protein: 10, carbs: 60, fat: 17 },
+  { label: "Nissin Lámen Cup", kcal: 370, unit: "1 copo (~75 g)", category: "industrializados", protein: 9, carbs: 50, fat: 14 },
+  { label: "Pizza congelada (1/4)", kcal: 320, unit: "1/4 pizza (~130 g)", category: "industrializados", protein: 12, carbs: 38, fat: 12 },
+  { label: "Hambúrguer congelado (1 unidade)", kcal: 220, unit: "1 unidade (~90 g)", category: "industrializados", protein: 14, carbs: 3, fat: 16 },
+  { label: "Nuggets congelados (5 unidades)", kcal: 270, unit: "5 unidades (~90 g)", category: "industrializados", protein: 13, carbs: 14, fat: 16 },
+  { label: "Batata congelada (tipo McCain)", kcal: 230, unit: "1 porção (~100 g)", category: "industrializados", protein: 3, carbs: 30, fat: 11 },
+  { label: "Lasanha congelada", kcal: 320, unit: "1 porção (~300 g)", category: "industrializados", protein: 14, carbs: 38, fat: 12 },
+
+  // Comida japonesa
   { label: "Sushi (1 unidade de salmão)", kcal: 70, unit: "1 unidade (~30 g)", category: "industrializados", protein: 5, carbs: 9, fat: 1.5 },
+  { label: "Sushi (1 unidade kani)", kcal: 50, unit: "1 unidade (~30 g)", category: "industrializados", protein: 2, carbs: 9, fat: 1 },
   { label: "Temaki", kcal: 320, unit: "1 unidade (~200 g)", category: "industrializados", protein: 12, carbs: 45, fat: 9 },
+  { label: "Yakisoba", kcal: 480, unit: "1 porção (~300 g)", category: "industrializados", protein: 18, carbs: 70, fat: 14 },
+
+  // Salgadinhos e petiscos
   { label: "Batata chips (salgadinho)", kcal: 150, unit: "1 porção (~50 g)", category: "industrializados", protein: 2, carbs: 13, fat: 10 },
+  { label: "Cheetos", kcal: 160, unit: "1 pacote (~50 g)", category: "industrializados", protein: 2, carbs: 14, fat: 10 },
+  { label: "Doritos", kcal: 140, unit: "1 pacote (~45 g)", category: "industrializados", protein: 2, carbs: 14, fat: 7 },
+  { label: "Fandangos", kcal: 150, unit: "1 pacote (~50 g)", category: "industrializados", protein: 2, carbs: 14, fat: 9 },
+  { label: "Ruffles", kcal: 150, unit: "1 pacote (~50 g)", category: "industrializados", protein: 2, carbs: 13, fat: 10 },
+  { label: "Torcida (salgadinho)", kcal: 140, unit: "1 pacote (~45 g)", category: "industrializados", protein: 2, carbs: 14, fat: 8 },
   { label: "Pipoca de micro-ondas", kcal: 110, unit: "1 pacote (~50 g)", category: "industrializados", protein: 2, carbs: 13, fat: 5 },
+  { label: "Amendoim japonês", kcal: 150, unit: "1 porção (~30 g)", category: "industrializados", protein: 6, carbs: 6, fat: 12 },
+  { label: "Castanha de caju", kcal: 170, unit: "1 porção (~30 g)", category: "industrializados", protein: 5, carbs: 9, fat: 13 },
+
+  // Salgados fritos / assados
   { label: "Salgado de festa (risole/coxinha)", kcal: 170, unit: "1 unidade média", category: "industrializados", protein: 6, carbs: 16, fat: 9 },
+  { label: "Coxinha de frango", kcal: 200, unit: "1 unidade (~80 g)", category: "industrializados", protein: 7, carbs: 18, fat: 11 },
+  { label: "Risole", kcal: 180, unit: "1 unidade (~70 g)", category: "industrializados", protein: 5, carbs: 16, fat: 10 },
   { label: "Pastel frito", kcal: 240, unit: "1 unidade média (~100 g)", category: "industrializados", protein: 6, carbs: 22, fat: 13 },
+  { label: "Pastel de queijo", kcal: 200, unit: "1 unidade (~80 g)", category: "industrializados", protein: 6, carbs: 18, fat: 11 },
+  { label: "Esfiha", kcal: 170, unit: "1 unidade (~70 g)", category: "industrializados", protein: 6, carbs: 18, fat: 8 },
+  { label: "Esfiha de carne", kcal: 190, unit: "1 unidade (~80 g)", category: "industrializados", protein: 8, carbs: 18, fat: 9 },
+  { label: "Kibe frito", kcal: 200, unit: "1 unidade (~80 g)", category: "industrializados", protein: 9, carbs: 16, fat: 10 },
   { label: "Empada", kcal: 200, unit: "1 unidade (~70 g)", category: "industrializados", protein: 5, carbs: 18, fat: 12 },
+  { label: "Empada de frango", kcal: 180, unit: "1 unidade (~70 g)", category: "industrializados", protein: 7, carbs: 17, fat: 9 },
+  { label: "Quibe assado", kcal: 160, unit: "1 unidade (~80 g)", category: "industrializados", protein: 8, carbs: 18, fat: 6 },
+  { label: "Enroladinho de salsicha", kcal: 170, unit: "1 unidade (~70 g)", category: "industrializados", protein: 5, carbs: 16, fat: 9 },
   { label: "Torta salgada (fatia)", kcal: 320, unit: "1 fatia (~150 g)", category: "industrializados", protein: 10, carbs: 28, fat: 18 },
+  { label: "Pão de queijo", kcal: 110, unit: "1 unidade média (~40 g)", category: "industrializados", protein: 4, carbs: 12, fat: 6 },
+
+  // Outros industrializados
+  { label: "Miojo com ovo e queijo (prato pronto)", kcal: 520, unit: "1 prato (~350 g)", category: "industrializados", protein: 18, carbs: 65, fat: 18 },
+  { label: "Feijoada (prato)", kcal: 600, unit: "1 prato (~400 g)", category: "industrializados", protein: 28, carbs: 50, fat: 28 },
+  { label: "PF (Prato Feito) arroz+feijão+carne+salada", kcal: 700, unit: "1 prato (~500 g)", category: "industrializados", protein: 32, carbs: 80, fat: 22 },
+  { label: "Marmita fitness", kcal: 450, unit: "1 marmita (~350 g)", category: "industrializados", protein: 28, carbs: 50, fat: 12 },
+  { label: "Marmita executiva", kcal: 850, unit: "1 marmita (~500 g)", category: "industrializados", protein: 35, carbs: 90, fat: 35 },
 ];
 
 export const PORTION_TABLE: PortionItem[] = [

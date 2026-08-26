@@ -171,7 +171,7 @@ export default async function HistoricoExercicioPage({
                   {fmtKg(p.top_load_kg)}
                 </p>
                 <p className="text-[10px] text-ink-faint">
-                  {p.top_load_kg != null && p.reps_at_top > 0
+                  {p.top_load_kg != null && p.reps_at_top != null && p.reps_at_top > 0
                     ? `${p.reps_at_top} reps · `
                     : ""}
                   {p.total_sets} séries · {fmtKg(p.total_volume_kg)} volume

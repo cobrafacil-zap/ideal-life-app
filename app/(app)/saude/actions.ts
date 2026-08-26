@@ -33,6 +33,9 @@ export async function logWeight(weightKg: number) {
 export async function updatePhysicalProfile(input: {
   height_cm: number | string | null;
   weight_goal_kg: number | string | null;
+  weight_goal_start_kg?: number | string | null;
+  weekly_rate_kg?: number | string | null;
+  goal_type?: "perder" | "manter" | "ganhar" | "recompor" | null;
   birth_date?: string | null;
   biological_sex?: "feminino" | "masculino" | "nao_informado" | null;
   activity_level?: "sedentario" | "leve" | "moderado" | "ativo" | "muito_ativo" | null;
@@ -43,10 +46,66 @@ export async function updatePhysicalProfile(input: {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado.");
 
+  // Sanitização da altura (defesa contra o bug "metros em vez de cm").
+  const rawHeight = parseNumber(input.height_cm);
+  const safeHeight =
+    rawHeight === null
+      ? null
+      : rawHeight < 3
+        ? Math.round(rawHeight * 100 * 10) / 10 // converte m → cm
+        : rawHeight < 100 || rawHeight > 250
+          ? null
+          : rawHeight;
+
+  // Lê o estado atual para detectar mudança de goal_type (precisa capturar
+  // o peso inicial quando o usuário ativa 'perder' pela primeira vez).
+  const { data: currentProfile } = await supabase
+    .from("profiles")
+    .select("goal_type, weight_goal_start_kg")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const prevGoalType = (currentProfile?.goal_type ?? "manter") as
+    | "perder"
+    | "manter"
+    | "ganhar"
+    | "recompor";
+  const nextGoalType = input.goal_type ?? prevGoalType;
+
   const update: Record<string, unknown> = {
-    height_cm: parseNumber(input.height_cm),
+    height_cm: safeHeight,
     weight_goal_kg: parseNumber(input.weight_goal_kg),
+    goal_type: nextGoalType,
   };
+
+  // goal_started_at: carimba quando o objetivo muda.
+  if (nextGoalType !== prevGoalType) {
+    update.goal_started_at = new Date().toISOString();
+  }
+
+  // Peso inicial: obrigatório ao entrar em 'perder'; limpa em outros modos.
+  if (nextGoalType === "perder") {
+    const start =
+      input.weight_goal_start_kg !== undefined
+        ? parseNumber(input.weight_goal_start_kg)
+        : (currentProfile?.weight_goal_start_kg ?? null);
+    if (start === null) {
+      throw new Error(
+        "Informe o peso inicial para começar uma meta de perda.",
+      );
+    }
+    update.weight_goal_start_kg = start;
+  } else {
+    update.weight_goal_start_kg = null;
+  }
+
+  // Taxa semanal: só persiste em 'perder'.
+  if (nextGoalType === "perder") {
+    update.weekly_rate_kg = parseNumber(input.weekly_rate_kg) ?? 0.5;
+  } else {
+    update.weekly_rate_kg = null;
+  }
+
   if (input.birth_date !== undefined) update.birth_date = input.birth_date || null;
   if (input.biological_sex !== undefined) update.biological_sex = input.biological_sex;
   if (input.activity_level !== undefined) update.activity_level = input.activity_level;

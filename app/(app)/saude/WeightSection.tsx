@@ -14,10 +14,10 @@ import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
+import { Trend } from "@/components/Trend";
 import { logWeight } from "./actions";
 import { EmptyState } from "@/components/EmptyState";
-import { Scale, TrendingDown, TrendingUp, Minus } from "lucide-react";
-import { cn } from "@/lib/cn";
+import { Scale } from "lucide-react";
 
 export function WeightSection({
   history,
@@ -82,24 +82,11 @@ export function WeightSection({
             </p>
           </div>
           {trend && (
-            <div
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-pill px-3 py-1 text-[12px] font-semibold",
-                trend.diff > 0 && "bg-ember-soft text-ember-dark",
-                trend.diff < 0 && "bg-moss-soft text-moss-dark",
-                trend.diff === 0 && "bg-line/50 text-ink-soft"
-              )}
-            >
-              {trend.diff > 0 ? (
-                <TrendingUp size={14} aria-hidden="true" />
-              ) : trend.diff < 0 ? (
-                <TrendingDown size={14} aria-hidden="true" />
-              ) : (
-                <Minus size={14} aria-hidden="true" />
-              )}
-              {trend.diff > 0 ? "+" : ""}
-              {trend.diff.toFixed(1)} kg vs. medição anterior
-            </div>
+            <Trend
+              value={trend.diff}
+              label="vs. medição anterior"
+              mode="down-good"
+            />
           )}
         </div>
       )}

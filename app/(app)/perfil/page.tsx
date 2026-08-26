@@ -9,6 +9,7 @@ import { CircleUserRound, LogOut, Compass, Save } from "lucide-react";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
 import { getAvatarSignedUrl } from "@/lib/avatar";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -100,6 +101,14 @@ export default async function PerfilPage() {
               workoutGoal={profile?.workout_weekly_goal ?? 4}
               calorieGoal={profile?.calorie_goal ?? null}
             />
+          </Card>
+
+          <Card>
+            <CardHeader
+              title="Aparência"
+              description="Tema claro, escuro ou seguindo o sistema."
+            />
+            <ThemeToggle />
           </Card>
         </div>
 

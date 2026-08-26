@@ -5,10 +5,8 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 import { SummaryTile } from "@/components/home/SummaryTile";
 import { Trend } from "@/components/Trend";
-import {
-  WellBeingRing,
-  wellBeingAverage,
-} from "@/components/home/WellBeingRing";
+import { WellBeingRing } from "@/components/home/WellBeingRing";
+import { wellBeingAverage } from "@/lib/well-being";
 import { CheckinCard } from "./CheckinCard";
 import { WaterCard } from "./WaterCard";
 import {

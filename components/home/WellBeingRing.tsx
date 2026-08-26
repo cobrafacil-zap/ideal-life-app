@@ -14,6 +14,8 @@ export interface WellBeingRingProps {
  * Ring único com o percentual de bem-estar (0–100%) calculado a partir de
  * energy + mood + disposition (0–10 cada). Usado na Home para resumir
  * visualmente o check-in do dia.
+ *
+ * Para o cálculo, importe `wellBeingAverage` de `@/lib/well-being`.
  */
 export function WellBeingRing({
   value,
@@ -45,18 +47,4 @@ export function WellBeingRing({
       </div>
     </div>
   );
-}
-
-/**
- * Helper para a UI: dado um check-in, devolve a média 0–10 (ou null se não houver).
- */
-export function wellBeingAverage(checkin: {
-  energy: number | null;
-  mood: number | null;
-  disposition: number | null;
-} | null): number | null {
-  if (!checkin) return null;
-  const vals = [checkin.energy, checkin.mood, checkin.disposition];
-  if (vals.some((v) => v == null)) return null;
-  return ((vals[0]! + vals[1]! + vals[2]!) / 30) * 10;
 }

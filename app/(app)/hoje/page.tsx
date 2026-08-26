@@ -4,28 +4,26 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 import { SummaryTile } from "@/components/home/SummaryTile";
-import { Trend } from "@/components/Trend";
-import { WellBeingRing } from "@/components/home/WellBeingRing";
 import { wellBeingAverage } from "@/lib/well-being";
 import { WaterCard } from "./WaterCard";
-import { DailyProgressHero } from "./DailyProgressHero";
+import { CalorieHero } from "./CalorieHero";
+import { WellBeingCard } from "./WellBeingCard";
 import { YesterdayComparison } from "./YesterdayComparison";
+import { WorkoutWeekHero } from "./WorkoutWeekHero";
 import {
-  Dumbbell,
-  Flame,
-  Activity,
-  Droplets as DropletIcon,
   Scale,
-  Target,
-  Sparkles,
   Heart,
+  Utensils,
+  Droplets,
+  Plus,
 } from "lucide-react";
-import { differenceInCalendarDays, format } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { startOfWeekISO } from "@/lib/format";
 import { nowInBR, todayBR, daysAgoBRISO } from "@/lib/datetime";
 import { phraseForDate } from "@/lib/motivational-phrases";
 import { getAvatarSignedUrl } from "@/lib/avatar";
+import { cn } from "@/lib/cn";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +62,6 @@ export default async function HojePage() {
       .eq("checkin_date", today)
       .maybeSingle(),
     supabase.from("water_logs").select("amount_ml").eq("user_id", user.id).eq("log_date", today),
-    // Pega até 2 medições para calcular trend.
     supabase
       .from("body_measurements")
       .select("weight_kg, measured_at")
@@ -96,7 +93,6 @@ export default async function HojePage() {
       .order("start_date", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    // 9ª query: último check-in ANTERIOR a hoje (pode ser de dias atrás).
     supabase
       .from("daily_checkins")
       .select("energy, mood, disposition, checkin_date")
@@ -105,26 +101,22 @@ export default async function HojePage() {
       .order("checkin_date", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    // 10ª query: workouts FINALIZADOS esta semana (para o card "Treino (semana)").
     supabase
       .from("workout_sessions")
       .select("id, duration_h")
       .eq("user_id", user.id)
       .not("finished_at", "is", null)
       .gte("started_at", startOfWeekISO()),
-    // 11ª query: refeições de ontem (kcal total para comparativo).
     supabase
       .from("meals")
       .select("total_calories")
       .eq("user_id", user.id)
       .eq("meal_date", yesterday),
-    // 12ª query: água de ontem (ml total para comparativo).
     supabase
       .from("water_logs")
       .select("amount_ml")
       .eq("user_id", user.id)
       .eq("log_date", yesterday),
-    // 13ª query: check-in de ontem (energia/humor/disposição para comparativo).
     supabase
       .from("daily_checkins")
       .select("energy, mood, disposition, checkin_date")
@@ -146,7 +138,6 @@ export default async function HojePage() {
     0,
   );
 
-  // Treinos finalizados na semana (para o card Treino (semana)).
   const workoutHoursWeek = (workoutsThisWeek ?? []).reduce(
     (s, w) => s + (w.duration_h ?? 0),
     0,
@@ -158,7 +149,6 @@ export default async function HojePage() {
     0
   );
 
-  // Valores de ontem (para o comparativo).
   const caloriesYesterday = (mealsYesterday ?? []).reduce(
     (sum, m) => sum + (m.total_calories ?? 0),
     0,
@@ -167,15 +157,14 @@ export default async function HojePage() {
     (sum, w) => sum + w.amount_ml,
     0,
   );
-  const yesterdayOverall = wellBeingAverage(checkinYesterday); // 0–10 ou null
+  const yesterdayOverall = wellBeingAverage(checkinYesterday);
   const yesterdayOverallPct =
     yesterdayOverall != null ? Math.round(yesterdayOverall * 10) : null;
 
   const cycleDay = latestCycle?.start_date
-    ? differenceInCalendarDays(nowInBR(), new Date(latestCycle.start_date)) + 1
+    ? Math.floor((nowInBR().getTime() - new Date(latestCycle.start_date).getTime()) / 86400000) + 1
     : null;
 
-  // Peso: atual + anterior (para trend).
   const currentWeight = recentWeights?.[0]?.weight_kg ?? null;
   const previousWeight = recentWeights?.[1]?.weight_kg ?? null;
   const weightDelta =
@@ -183,26 +172,55 @@ export default async function HojePage() {
       ? currentWeight - previousWeight
       : null;
 
-  // Bem-estar: hoje + último check-in anterior.
-  const todayOverall = wellBeingAverage(checkin); // 0–10
+  const todayOverall = wellBeingAverage(checkin);
   const todayOverallPct =
     todayOverall != null ? Math.round(todayOverall * 10) : null;
-  const lastOverall = wellBeingAverage(lastCheckin); // 0–10 ou null
-  const wellBeingDelta =
-    todayOverall != null && lastOverall != null
-      ? Math.round((todayOverall - lastOverall) * 10) // escala 0–10 → 0–100pp
-      : null;
-  const daysSinceLast = lastCheckin?.checkin_date
-    ? differenceInCalendarDays(nowInBR(), new Date(lastCheckin.checkin_date))
-    : null;
+  const lastOverall = wellBeingAverage(lastCheckin);
 
-  const goalsCompleted = [
-    !!checkin,
-    waterConsumed >= waterGoal,
-    caloriesToday > 0,
-    cardioMinutes > 0,
-    !!currentWeight,
-  ].filter(Boolean).length;
+  // "Dia completo" — todos os pilares atingidos. Vira selo no hero.
+  const dayComplete =
+    !!checkin &&
+    waterConsumed >= waterGoal &&
+    caloriesToday > 0 &&
+    cardioMinutes > 0 &&
+    currentWeight != null;
+
+  // Próximo passo sugerido (ordem de prioridade do que está pendente).
+  const nextStep = (() => {
+    if (!checkin) {
+      return {
+        href: "/saude",
+        icon: Heart,
+        label: "Fazer check-in",
+        description: "Comece medindo como você está hoje.",
+      };
+    }
+    if (waterConsumed < waterGoal) {
+      return {
+        href: "/hoje",
+        icon: Droplets,
+        label: "Beber água",
+        description: `Faltam ${((waterGoal - waterConsumed) / 1000).toFixed(1).replace(".", ",")}L para sua meta.`,
+      };
+    }
+    if ((mealsToday ?? []).length === 0) {
+      return {
+        href: "/alimentacao",
+        icon: Utensils,
+        label: "Registrar refeição",
+        description: "Anote o que comeu hoje.",
+      };
+    }
+    if (workoutHoursWeek < workoutHoursGoal && !openSession) {
+      return {
+        href: "/saude",
+        icon: Plus,
+        label: "Marcar treino",
+        description: `Faltam ${(workoutHoursGoal - workoutHoursWeek).toFixed(1).replace(".", ",")}h esta semana.`,
+      };
+    }
+    return null;
+  })();
 
   const greeting = (() => {
     const h = nowInBR().getHours();
@@ -213,16 +231,6 @@ export default async function HojePage() {
 
   const todayLabel = format(nowInBR(), "EEEE, d 'de' MMMM", { locale: ptBR });
   const phrase = phraseForDate(today);
-
-  // Texto curto da comparação ("ontem" / "3 dia(s) atrás").
-  const compareLabel =
-    daysSinceLast == null
-      ? "sem check-in anterior"
-      : daysSinceLast === 1
-        ? "ontem"
-        : daysSinceLast === 0
-          ? "hoje"
-          : `${daysSinceLast} dia(s) atrás`;
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -260,183 +268,156 @@ export default async function HojePage() {
         ✨ {phrase}
       </p>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Coluna principal */}
-        <div className="space-y-6 lg:col-span-2">
-          <DailyProgressHero
-            caloriesConsumed={caloriesToday}
-            calorieGoal={profile?.calorie_goal ?? null}
-            waterConsumedMl={waterConsumed}
-            waterGoalMl={waterGoal}
-            cardioMinutesWeek={cardioMinutes}
-            cardioGoalMin={cardioGoal}
-            workoutHoursWeek={workoutHoursWeek}
-            workoutHoursGoal={workoutHoursGoal}
-          />
+      {/* HERO: protagonista visual único */}
+      <CalorieHero
+        consumed={caloriesToday}
+        goal={profile?.calorie_goal ?? null}
+        mealCount={(mealsToday ?? []).length}
+        dayComplete={dayComplete}
+      />
 
-          <YesterdayComparison
-            caloriesToday={caloriesToday}
-            caloriesYesterday={caloriesYesterday}
-            waterTodayMl={waterConsumed}
-            waterYesterdayMl={waterYesterdayMl}
-            wellBeingTodayPct={todayOverallPct}
-            wellBeingYesterdayPct={yesterdayOverallPct}
+      {/* Dois pilares lado a lado: Água (cliente) + Bem-estar (reusa WellBeingRing) */}
+      <div className="grid gap-5 md:grid-cols-2">
+        <Card>
+          <CardHeader
+            title="Hidratação"
+            description="Toque nos atalhos para registrar copos ou garrafas."
           />
+          <WaterCard consumedMl={waterConsumed} goalMl={waterGoal} />
+        </Card>
 
+        <WellBeingCard
+          todayAvg={todayOverall}
+          lastAvg={lastOverall}
+          lastCheckinDate={lastCheckin?.checkin_date ?? null}
+        />
+      </div>
+
+      {/* Comparativo editorial — 1 card, 3 seções com divisor */}
+      <YesterdayComparison
+        caloriesToday={caloriesToday}
+        caloriesYesterday={caloriesYesterday}
+        waterTodayMl={waterConsumed}
+        waterYesterdayMl={waterYesterdayMl}
+        wellBeingTodayPct={todayOverallPct}
+        wellBeingYesterdayPct={yesterdayOverallPct}
+      />
+
+      {/* Treinos da semana — gold (rotina em construção) */}
+      <WorkoutWeekHero
+        hoursThisWeek={workoutHoursWeek}
+        hoursGoal={workoutHoursGoal}
+      />
+
+      {/* Footer: 3 colunas — peso atual, próximo passo, atalhos */}
+      <div className="grid gap-5 md:grid-cols-3">
+        <SummaryTile
+          variant="feature"
+          icon={Scale}
+          label="Peso atual"
+          value={currentWeight != null ? `${currentWeight} kg` : "—"}
+          sub={
+            profile?.weight_goal_kg
+              ? `meta ${profile.weight_goal_kg} kg${
+                  weightDelta != null
+                    ? ` · ${
+                        weightDelta > 0 ? "+" : ""
+                      }${weightDelta.toFixed(1).replace(".", ",")} kg vs. última`
+                    : ""
+                }`
+              : "definir meta em /saude"
+          }
+          accent="moss"
+          href="/saude"
+        />
+
+        {nextStep ? (
           <Card>
             <CardHeader
-              title="Água"
-              description="Toque nos atalhos para registrar copos ou garrafas."
+              title="Próximo passo"
+              description="Ação sugerida pra hoje."
             />
-            <WaterCard consumedMl={waterConsumed} goalMl={waterGoal} />
-          </Card>
-        </div>
-
-        {/* Sidebar com resumo (vira coluna no desktop) */}
-        <aside className="space-y-6">
-          <Card>
-            <CardHeader title="Resumo do dia" />
-            {/* Bem-estar compacto — 1 linha, leva o usuário ao card completo via /saude. */}
-            <div className="mb-4 flex items-center gap-3 rounded-2xl bg-base/50 p-3">
-              <Heart size={16} className="text-ember" aria-hidden="true" />
-              <div className="flex-1 min-w-0">
-                <p className="text-[12px] text-ink-soft">Bem-estar hoje</p>
-                {todayOverall == null ? (
-                  <p className="text-[12px] text-ink-faint">
-                    Sem check-in de hoje.
-                  </p>
-                ) : (
-                  <p className="font-mono text-sm font-semibold text-ink">
-                    {Math.round(todayOverall * 10)}%
-                  </p>
-                )}
+            <Link
+              href={nextStep.href}
+              className={cn(
+                "flex items-start gap-3 rounded-2xl bg-base/50 p-3 transition-colors",
+                "hover:bg-base/80",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base",
+              )}
+            >
+              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ember-soft text-ember">
+                <nextStep.icon size={16} aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-ink">{nextStep.label}</p>
+                <p className="mt-0.5 text-[12px] text-ink-soft">
+                  {nextStep.description}
+                </p>
               </div>
-              {wellBeingDelta != null && todayOverall != null && (
-                <Trend
-                  value={wellBeingDelta}
-                  label={`vs. ${compareLabel}`}
-                  formatter={(n) =>
-                    `${n > 0 ? "+" : ""}${Math.round(n)} pp`
-                  }
-                  mode="up-good"
-                  size="sm"
-                />
-              )}
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <Link href="/saude" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
-                <SummaryTile
-                  icon={Dumbbell}
-                  label="Treino"
-                  value={openSession?.workout_name ?? "—"}
-                  sub={openSession ? "em andamento" : "nenhum ativo"}
-                />
-              </Link>
-              <Link href="/alimentacao" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
-                <SummaryTile
-                  icon={Flame}
-                  label="Alimentação"
-                  value={`${caloriesToday.toLocaleString("pt-BR")} kcal`}
-                  sub={`${(mealsToday ?? []).length} refeições hoje`}
-                  accent="moss"
-                />
-              </Link>
-              <Link href="/saude" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
-                <SummaryTile
-                  icon={Activity}
-                  label="Cardio (semana)"
-                  value={`${cardioMinutes} / ${cardioGoal} min`}
-                  progress={{ current: cardioMinutes, max: cardioGoal }}
-                />
-              </Link>
-              <Link href="/saude" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
-                <SummaryTile
-                  icon={Scale}
-                  label="Peso atual"
-                  value={currentWeight != null ? `${currentWeight} kg` : "—"}
-                  sub={
-                    profile?.weight_goal_kg
-                      ? `meta: ${profile.weight_goal_kg} kg`
-                      : "defina sua meta"
-                  }
-                  accent="moss"
-                />
-              </Link>
-              {weightDelta != null && (
-                <div className="col-span-2">
-                  <Trend
-                    value={weightDelta}
-                    label="vs. última medida"
-                    mode="down-good"
-                  />
-                </div>
-              )}
-              {cycleDay !== null && (
-                <Link href="/ciclo" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
-                  <SummaryTile
-                    icon={DropletIcon}
-                    label="Ciclo"
-                    value={`Dia ${cycleDay}`}
-                    sub="acompanhe na aba Ciclo"
-                  />
-                </Link>
-              )}
-              <Link href="/hoje" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
-                <SummaryTile
-                  icon={Target}
-                  label="Água"
-                  value={
-                    waterConsumed >= waterGoal
-                      ? "Atingida!"
-                      : `${(waterConsumed / 1000).toFixed(1)}L`
-                  }
-                  sub={`meta ${(waterGoal / 1000).toFixed(1)}L`}
-                  accent="moss"
-                  progress={{ current: waterConsumed, max: waterGoal }}
-                />
-              </Link>
-            </div>
-            {goalsCompleted === 5 && (
-              <p className="mt-4 inline-flex items-center gap-1.5 rounded-pill bg-moss-soft px-3 py-1 text-[12px] font-semibold text-moss-dark">
-                <Sparkles size={14} aria-hidden="true" />
-                Dia completo — bem-estar em dia.
-              </p>
-            )}
+              <span aria-hidden="true" className="text-ink-soft self-center">→</span>
+            </Link>
           </Card>
+        ) : (
+          <Card>
+            <CardHeader title="Tudo em dia" description="Sem ações pendentes." />
+            <p className="text-[13px] text-ink-soft">
+              Você está em dia com seus pilares hoje. Continue assim. ✨
+            </p>
+          </Card>
+        )}
 
-          <Card className="hidden lg:block">
-            <CardHeader
-              title="Atalhos"
-              description="Ações rápidas para os módulos mais usados."
-            />
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <Link
-                href="/saude"
-                className="rounded-xl border border-line/60 bg-surface px-3 py-2.5 hover:border-ember/40 transition-colors"
-              >
-                Registrar peso
-              </Link>
-              <Link
-                href="/alimentacao"
-                className="rounded-xl border border-line/60 bg-surface px-3 py-2.5 hover:border-ember/40 transition-colors"
-              >
-                Nova refeição
-              </Link>
-              <Link
-                href="/ciclo"
-                className="rounded-xl border border-line/60 bg-surface px-3 py-2.5 hover:border-ember/40 transition-colors"
-              >
-                Sintomas de hoje
-              </Link>
-              <Link
-                href="/perfil"
-                className="rounded-xl border border-line/60 bg-surface px-3 py-2.5 hover:border-ember/40 transition-colors"
-              >
-                Ajustar metas
-              </Link>
-            </div>
-          </Card>
-        </aside>
+        <Card>
+          <CardHeader title="Atalhos" description="Ações rápidas." />
+          <ul className="space-y-1">
+            {[
+              { href: "/saude", label: "Registrar peso" },
+              { href: "/alimentacao", label: "Nova refeição" },
+              { href: "/ciclo", label: "Sintomas de hoje" },
+              { href: "/perfil", label: "Ajustar metas" },
+            ].map((a) => (
+              <li key={a.href}>
+                <Link
+                  href={a.href}
+                  className={cn(
+                    "flex items-center justify-between rounded-xl px-3 py-2 text-sm",
+                    "hover:bg-base/70 transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base",
+                  )}
+                >
+                  <span className="font-medium text-ink">{a.label}</span>
+                  <span aria-hidden="true" className="text-ink-faint">→</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </div>
+
+      {/* Linha auxiliar: treino/cardio/ciclo — info secundária que cabe em 3 chips curtos */}
+      <div className="flex flex-wrap gap-2 text-[12px] text-ink-soft">
+        <span className="inline-flex items-center gap-1.5 rounded-pill bg-base/60 px-3 py-1">
+          <span className="font-semibold text-ink">
+            {cardioMinutes}/{cardioGoal} min
+          </span>
+          cardio semanal
+          {cardioKcalWeek > 0 && (
+            <span className="font-mono text-ink-faint">· {cardioKcalWeek} kcal</span>
+          )}
+        </span>
+        {openSession && (
+          <span className="inline-flex items-center gap-1.5 rounded-pill bg-ember-soft px-3 py-1 text-ember-dark">
+            <span className="font-semibold">{openSession.workout_name}</span>
+            em andamento
+          </span>
+        )}
+        {cycleDay != null && (
+          <Link
+            href="/ciclo"
+            className="inline-flex items-center gap-1.5 rounded-pill bg-lilac-soft px-3 py-1 text-lilac-dark hover:bg-lilac-soft/80 transition-colors"
+          >
+            <span className="font-semibold">Ciclo · dia {cycleDay}</span>
+          </Link>
+        )}
       </div>
     </div>
   );

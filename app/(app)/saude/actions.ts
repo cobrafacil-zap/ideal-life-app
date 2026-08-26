@@ -32,7 +32,7 @@ export async function logWeight(weightKg: number) {
 
 export async function updatePhysicalProfile(input: {
   height_cm: number | string | null;
-  weight_goal_kg: number | string | null;
+  weight_goal_kg?: number | string | null;
   weight_goal_start_kg?: number | string | null;
   weekly_rate_kg?: number | string | null;
   goal_type?: "perder" | "manter" | "ganhar" | "recompor" | null;
@@ -74,9 +74,15 @@ export async function updatePhysicalProfile(input: {
 
   const update: Record<string, unknown> = {
     height_cm: safeHeight,
-    weight_goal_kg: parseNumber(input.weight_goal_kg),
     goal_type: nextGoalType,
   };
+
+  // weight_goal_kg: só mexe se foi explicitamente passado.
+  // (A edição da meta hoje é responsabilidade do `updateGoalWeights`
+  // chamado pelo `GoalProgressCard` — o form não toca mais nisso.)
+  if (input.weight_goal_kg !== undefined) {
+    update.weight_goal_kg = parseNumber(input.weight_goal_kg);
+  }
 
   // goal_started_at: carimba quando o objetivo muda.
   if (nextGoalType !== prevGoalType) {

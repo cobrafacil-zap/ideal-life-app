@@ -62,13 +62,13 @@ export function CardHeader({
   description,
   action,
   className,
-  /** Inverte cores pra herdar do card variant=feature. */
-  inverse?: boolean,
+  inverse,
 }: {
   title: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
   className?: string;
+  /** Inverte cores pra herdar do card variant=feature. */
   inverse?: boolean;
 }) {
   return (

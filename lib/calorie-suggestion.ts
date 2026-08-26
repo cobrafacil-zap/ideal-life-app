@@ -14,12 +14,16 @@ import type { Profile } from "@/types/database";
  *      height_cm, biological_sex, activity_level.
  *    - Fallback: heurística 22 kcal/kg (manter) — usada quando faltam
  *      dados para Mifflin.
- * 2. Aplica ajuste conforme `goal_type`:
+ * 2. Aplica ajuste conforme `goal_type` baseado em **% do TDEE**
+ *    (não em déficit fixo de kcal — isso respeita o metabolismo
+ *    individual):
  *    - manter → 0
- *    - perder → déficit semanal = weeklyRateKg × 7700 ÷ 7 kcal/dia
- *      (teto de déficit: 1000 kcal/dia pra não ser agressivo demais)
- *    - ganhar → superavit simétrico, teto 800 kcal/dia
- *    - recompor → +100 kcal/dia (leve superavit focado em proteína)
+ *    - perder 0.25 kg/sem → ~12% déficit
+ *    - perder 0.5  kg/sem → ~22% déficit
+ *    - perder 0.75 kg/sem → ~30% déficit
+ *    - perder 1.0  kg/sem → ~35% déficit (limite saudável)
+ *    - ganhar → 10–15% superávit
+ *    - recompor → +8% (leve superávit, foco em proteína)
  * 3. Aplica floor de segurança (1200 feminino / 1500 masculino) e
  *    teto de 6000 kcal.
  *
@@ -59,7 +63,6 @@ export type CalorieSuggestion = {
   warnings: string[];
 };
 
-const KCAL_PER_KG = 7700;
 const MIN_KCAL_FEMALE = 1200;
 const MIN_KCAL_MALE = 1500;
 const MAX_KCAL = 6000;
@@ -67,6 +70,60 @@ const MIN_KCAL_FORM = 800; // combina com validação de GoalsForm
 
 /** Heurística simples (kcal/kg) usada quando faltam dados pro Mifflin. */
 const HEURISTIC_KCAL_PER_KG = 22;
+
+/**
+ * Tradução de `weeklyRateKg` (kg/semana) para fração do TDEE.
+ *
+ * Referência: 7700 kcal ≈ 1 kg de gordura; 1 semana = 7 dias.
+ * Para uma pessoa com TDEE ~2500 kcal:
+ *   - 0.25 kg/sem → ~275 kcal/dia → ~11% déficit
+ *   - 0.5  kg/sem → ~550 kcal/dia → ~22% déficit
+ *   - 0.75 kg/sem → ~825 kcal/dia → ~33% déficit
+ *   - 1.0  kg/sem → ~1100 kcal/dia → ~44% déficit (muito agressivo)
+ *
+ * Os fatores abaixo interpolam entre esses pontos para TDEEs variados.
+ * Limitamos em 0.35 (35% déficit) porque déficits maiores comprometem
+ * saúde hormonal, imunidade e adesão.
+ */
+const DEFICIT_FACTOR_BY_RATE: Array<[number, number]> = [
+  [0.25, 0.12],
+  [0.5, 0.22],
+  [0.75, 0.3],
+  [1.0, 0.35],
+];
+
+const SURPLUS_FACTOR_BY_RATE: Array<[number, number]> = [
+  [0.1, 0.06],
+  [0.25, 0.12],
+  [0.5, 0.18],
+  [0.75, 0.22],
+];
+
+function interpolate(
+  table: Array<[number, number]>,
+  rate: number,
+): number {
+  if (table.length === 0) return 0;
+  if (rate <= table[0]![0]) return table[0]![1];
+  if (rate >= table[table.length - 1]![0]) return table[table.length - 1]![1];
+  for (let i = 0; i < table.length - 1; i++) {
+    const [r0, f0] = table[i]!;
+    const [r1, f1] = table[i + 1]!;
+    if (rate >= r0 && rate <= r1) {
+      const t = (rate - r0) / (r1 - r0);
+      return f0 + t * (f1 - f0);
+    }
+  }
+  return table[table.length - 1]![1];
+}
+
+function deficitFactor(rate: number): number {
+  return interpolate(DEFICIT_FACTOR_BY_RATE, rate);
+}
+
+function surplusFactor(rate: number): number {
+  return interpolate(SURPLUS_FACTOR_BY_RATE, rate);
+}
 
 export function canUseMifflin(input: SuggestionInput): boolean {
   return (
@@ -134,30 +191,31 @@ function adjustForGoal(
   }
 
   if (goal === "perder") {
-    const dailyDeficit = Math.round((rate * KCAL_PER_KG) / 7);
-    const capped = Math.min(dailyDeficit, 1000); // teto de segurança
+    const factor = deficitFactor(rate);
+    const delta = Math.round(baseKcal * factor);
     return {
-      kcal: baseKcal - capped,
-      delta: -capped,
-      reason: `déficit para perder ${rate} kg/sem`,
+      kcal: baseKcal - delta,
+      delta: -delta,
+      reason: `déficit de ${Math.round(factor * 100)}% para perder ${rate} kg/sem`,
     };
   }
 
   if (goal === "ganhar") {
-    const dailySurplus = Math.round((rate * KCAL_PER_KG) / 7);
-    const capped = Math.min(dailySurplus, 800); // teto de segurança
+    const factor = surplusFactor(rate);
+    const delta = Math.round(baseKcal * factor);
     return {
-      kcal: baseKcal + capped,
-      delta: capped,
-      reason: `superávit para ganhar ${rate} kg/sem`,
+      kcal: baseKcal + delta,
+      delta,
+      reason: `superávit de ${Math.round(factor * 100)}% para ganhar ${rate} kg/sem`,
     };
   }
 
   if (goal === "recompor") {
+    const delta = Math.round(baseKcal * 0.08);
     return {
-      kcal: baseKcal + 100,
-      delta: 100,
-      reason: "recomposição corporal (+100 kcal)",
+      kcal: baseKcal + delta,
+      delta,
+      reason: `recomposição (+${Math.round(baseKcal * 0.08)} kcal, +8%)`,
     };
   }
 

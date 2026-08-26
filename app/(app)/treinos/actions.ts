@@ -721,3 +721,229 @@ export async function reorderPlanExercises(
 
   revalidatePath(`/treinos/planos/${planId}`);
 }
+
+/* =========================================================================
+   FASE 4 — Agendamento semanal
+   ========================================================================= */
+
+export async function setPlanWeekday(
+  planId: string,
+  weekday: number | null,
+): Promise<void> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  if (weekday != null && (!Number.isInteger(weekday) || weekday < 0 || weekday > 6)) {
+    throw new Error("Dia da semana inválido.");
+  }
+
+  const { error } = await supabase
+    .from("workout_plans")
+    .update({ scheduled_weekday: weekday })
+    .eq("id", planId)
+    .eq("user_id", user.id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/treinos/agenda");
+  revalidatePath("/treinos");
+}
+
+/* =========================================================================
+   FASE 5 — Execução de treino e séries
+   ========================================================================= */
+
+export async function startWorkoutSession(input: {
+  workout_plan_id?: string | null;
+  workout_name: string;
+}): Promise<{ id: string }> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const name = clean(input.workout_name, 80) ?? "Treino";
+
+  // Garante que não existe sessão aberta (1 por vez).
+  const { data: open } = await supabase
+    .from("workout_sessions")
+    .select("id")
+    .eq("user_id", user.id)
+    .is("finished_at", null)
+    .limit(1);
+  if (open && open.length > 0) {
+    throw new Error("Você já tem um treino em andamento.");
+  }
+
+  const { data, error } = await supabase
+    .from("workout_sessions")
+    .insert({
+      user_id: user.id,
+      workout_plan_id: input.workout_plan_id ?? null,
+      workout_name: name,
+      started_at: new Date().toISOString(),
+    })
+    .select("id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Falha ao iniciar treino.");
+
+  revalidatePath("/treinos");
+  return { id: data.id };
+}
+
+export async function cancelWorkoutSession(sessionId: string): Promise<void> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  // FK ON DELETE CASCADE em exercise_sets garante limpeza.
+  const { error } = await supabase
+    .from("workout_sessions")
+    .delete()
+    .eq("id", sessionId)
+    .eq("user_id", user.id)
+    .is("finished_at", null);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/treinos");
+  revalidatePath("/hoje");
+  revalidatePath("/saude");
+}
+
+export async function finishWorkoutSession(input: {
+  session_id: string;
+  duration_min: number;
+  user_rpe?: number | null;
+}): Promise<void> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const dur = Math.round(input.duration_min);
+  if (!Number.isFinite(dur) || dur < 1 || dur > 1440) {
+    throw new Error("Duração inválida.");
+  }
+  const rpe = input.user_rpe ?? null;
+  if (rpe != null && (!Number.isInteger(rpe) || rpe < 1 || rpe > 10)) {
+    throw new Error("RPE deve estar entre 1 e 10.");
+  }
+
+  const { error } = await supabase
+    .from("workout_sessions")
+    .update({
+      finished_at: new Date().toISOString(),
+      duration_min: dur,
+      duration_h: Math.round((dur / 60) * 100) / 100,
+      user_rpe: rpe,
+    })
+    .eq("id", input.session_id)
+    .eq("user_id", user.id)
+    .is("finished_at", null);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/treinos");
+  revalidatePath("/hoje");
+  revalidatePath("/saude");
+}
+
+export async function logSet(input: {
+  session_id: string;
+  exercise_id: string | null;
+  exercise_name: string;
+  set_number: number;
+  reps: number | null;
+  load: number | null;
+  load_unit: "kg" | "lb";
+  rpe?: number | null;
+  discomfort?: number | null;
+}): Promise<{ id: string }> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const name = clean(input.exercise_name, 120);
+  if (!name) throw new Error("Exercício inválido.");
+
+  if (!Number.isInteger(input.set_number) || input.set_number < 1 || input.set_number > 50) {
+    throw new Error("Número de série inválido.");
+  }
+  if (input.reps != null && (!Number.isInteger(input.reps) || input.reps < 0 || input.reps > 100)) {
+    throw new Error("Repetições devem estar entre 0 e 100.");
+  }
+  if (input.load != null && (!Number.isFinite(input.load) || input.load < 0 || input.load > 1000)) {
+    throw new Error("Carga inválida.");
+  }
+  if (input.rpe != null && (!Number.isInteger(input.rpe) || input.rpe < 1 || input.rpe > 10)) {
+    throw new Error("RPE deve estar entre 1 e 10.");
+  }
+  if (input.discomfort != null && (!Number.isInteger(input.discomfort) || input.discomfort < 0 || input.discomfort > 10)) {
+    throw new Error("Desconforto deve estar entre 0 e 10.");
+  }
+
+  const { data, error } = await supabase
+    .from("exercise_sets")
+    .insert({
+      workout_session_id: input.session_id,
+      user_id: user.id,
+      exercise_id: input.exercise_id,
+      exercise_name: name,
+      set_number: input.set_number,
+      reps: input.reps,
+      load: input.load,
+      load_unit: input.load_unit === "lb" ? "lb" : "kg",
+      rpe: input.rpe ?? null,
+      discomfort: input.discomfort ?? null,
+    })
+    .select("id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Falha ao registrar série.");
+
+  revalidatePath(`/treinos/sessao/${input.session_id}`);
+  return { id: data.id };
+}
+
+export async function updateSet(
+  setId: string,
+  input: {
+    reps?: number | null;
+    load?: number | null;
+    rpe?: number | null;
+    discomfort?: number | null;
+  },
+): Promise<void> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const update: Record<string, unknown> = {};
+  if (input.reps !== undefined) update.reps = input.reps;
+  if (input.load !== undefined) update.load = input.load;
+  if (input.rpe !== undefined) update.rpe = input.rpe;
+  if (input.discomfort !== undefined) update.discomfort = input.discomfort;
+  if (Object.keys(update).length === 0) return;
+
+  const { error } = await supabase
+    .from("exercise_sets")
+    .update(update)
+    .eq("id", setId)
+    .eq("user_id", user.id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/treinos`);
+}
+
+export async function deleteSet(setId: string): Promise<void> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const { error } = await supabase
+    .from("exercise_sets")
+    .delete()
+    .eq("id", setId)
+    .eq("user_id", user.id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/treinos`);
+}

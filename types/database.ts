@@ -145,6 +145,8 @@ export interface WorkoutPlan {
   description: string | null;
   sort_order: number;
   is_active: boolean;
+  /** 0=domingo .. 6=sábado. NULL = plano sem dia fixo (sob demanda). */
+  scheduled_weekday: number | null;
   created_at: string;
   updated_at: string;
 }

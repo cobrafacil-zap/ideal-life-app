@@ -95,3 +95,17 @@ export function nowDateTimeBR(): string {
   const get = (type: string) => parts.find(p => p.type === type)?.value ?? "00";
   return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}:${get("second")}`;
 }
+
+/**
+ * Data de `n` dias atrás no fuso de Brasília, em ISO `YYYY-MM-DD`.
+ * Útil para queries Supabase com `gte('log_date', ...)`.
+ */
+export function daysAgoBRISO(daysAgo: number): string {
+  const now = nowInBR();
+  const d = new Date(now);
+  d.setDate(d.getDate() - daysAgo);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}

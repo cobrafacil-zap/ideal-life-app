@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { NewCycleForm, DailySymptomsForm } from "./CycleForms";
 import { CycleHeatmap, type CycleHeatmapLog } from "@/components/ciclo/CycleHeatmap";
 import { CommonSymptomsCard } from "@/components/ciclo/CommonSymptomsCard";
-import { differenceInCalendarDays, format } from "date-fns";
+import { differenceInCalendarDays, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarDays, Droplets, Heart, Sparkles } from "lucide-react";
 import { nowInBR, todayBR, daysAgoBRISO } from "@/lib/datetime";

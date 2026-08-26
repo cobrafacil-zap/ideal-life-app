@@ -239,10 +239,12 @@ export default async function HojePage() {
               {wellBeingDelta != null && todayOverall != null && (
                 <Trend
                   value={wellBeingDelta}
+                  label={`vs. ${compareLabel}`}
                   formatter={(n) =>
                     `${n > 0 ? "+" : ""}${Math.round(n)} pp`
                   }
                   mode="up-good"
+                  size="sm"
                 />
               )}
             </div>

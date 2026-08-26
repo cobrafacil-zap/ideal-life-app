@@ -87,7 +87,7 @@ export function pickDailyInsight(input: InsightInput): Insight | null {
   // 2. Bem-estar caiu ≥ 10 pp
   if (todayPct != null && lastPct != null && lastPct - todayPct >= 10) {
     const dropPp = Math.round((lastPct - todayPct) * 10) / 10;
-    const worst = biggestDrop(input.today, input.last);
+    const worst = input.today && input.last ? biggestDrop(input.today, input.last) : null;
     return {
       key: "wellbeing-down",
       tone: "bad",

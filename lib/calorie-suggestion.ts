@@ -41,7 +41,7 @@ export type SuggestionInput = {
   weeklyRateKg: number | null;
   // Ritmo real (não declarado) — observado nos últimos 14 dias:
   cardioMinutes14d: number;
-  workoutCount14d: number;
+  workoutHours14d: number;
   // Alimentação real:
   avgKcal14d: number | null;
 };
@@ -239,7 +239,7 @@ function buildConfidence(
   if (method === "heuristica") return "baixa";
   const hasMealHistory = input.avgKcal14d != null;
   const hasActivityHistory =
-    input.cardioMinutes14d > 0 || input.workoutCount14d > 0;
+    input.cardioMinutes14d > 0 || input.workoutHours14d > 0;
   const hasGoal = input.weightGoalKg != null && input.goalType != null;
   if (hasMealHistory && hasActivityHistory && hasGoal) return "alta";
   if (hasGoal) return "media";
@@ -254,7 +254,7 @@ function buildWarnings(input: SuggestionInput, finalKcal: number): string[] {
   if (input.avgKcal14d == null) {
     w.push("Poucos dias de alimentação registrada (menos de 5 dias nos últimos 14).");
   }
-  if (input.cardioMinutes14d === 0 && input.workoutCount14d === 0) {
+  if (input.cardioMinutes14d === 0 && input.workoutHours14d === 0) {
     w.push("Sem atividade nos últimos 14 dias — confira seu nível de atividade em /saude.");
   }
   if (

@@ -22,7 +22,8 @@ export interface Profile {
   goal_started_at: string | null;
   water_goal_ml: number;
   cardio_weekly_goal_min: number;
-  workout_weekly_goal: number;
+  /** Meta semanal de treino em HORAS (era contagem de sessoes). Bound 0–20. */
+  workout_weekly_goal_hours: number | null;
   calorie_goal: number | null;
   /**
    * Meta semanal de gasto calórico derivada do peso atual vs peso-meta

@@ -50,7 +50,7 @@ export async function getCalorieSuggestion(): Promise<CalorieSuggestion | null> 
       .gte("performed_at", sinceTs),
     supabase
       .from("workout_sessions")
-      .select("id")
+      .select("id, duration_h")
       .eq("user_id", user.id)
       .not("finished_at", "is", null)
       .gte("started_at", sinceTs),
@@ -69,6 +69,10 @@ export async function getCalorieSuggestion(): Promise<CalorieSuggestion | null> 
     0,
   );
   const workoutCount14d = (workouts ?? []).length;
+  const workoutHours14d = (workouts ?? []).reduce(
+    (s, w) => s + (w.duration_h ?? 0),
+    0,
+  );
 
   // Média 14d: soma kcal ÷ dias com pelo menos 1 refeição.
   // Exige ≥ 5 dias pra evitar distorção (ex.: 1 dia com 5000 kcal).
@@ -113,7 +117,7 @@ export async function getCalorieSuggestion(): Promise<CalorieSuggestion | null> 
       | null,
     weeklyRateKg: profile?.weekly_rate_kg ?? null,
     cardioMinutes14d,
-    workoutCount14d,
+    workoutHours14d,
     avgKcal14d,
   });
 }

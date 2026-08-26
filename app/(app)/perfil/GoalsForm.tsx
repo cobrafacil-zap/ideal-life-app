@@ -8,17 +8,17 @@ import { updateGoals } from "./actions";
 export function GoalsForm({
   waterGoalMl,
   cardioGoalMin,
-  workoutGoal,
+  workoutGoalHours,
   calorieGoal,
 }: {
   waterGoalMl: number;
   cardioGoalMin: number;
-  workoutGoal: number;
+  workoutGoalHours: number | null;
   calorieGoal: number | null;
 }) {
   const [water, setWater] = useState(String(waterGoalMl));
   const [cardio, setCardio] = useState(String(cardioGoalMin));
-  const [workouts, setWorkouts] = useState(String(workoutGoal));
+  const [workouts, setWorkouts] = useState(String(workoutGoalHours ?? 4));
   const [calories, setCalories] = useState(calorieGoal ? String(calorieGoal) : "");
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
@@ -29,7 +29,7 @@ export function GoalsForm({
     setError(null);
     const w = parseInt(water, 10);
     const c = parseInt(cardio, 10);
-    const t = parseInt(workouts, 10);
+    const t = parseFloat(workouts.replace(",", "."));
     const cal = calories ? parseInt(calories, 10) : null;
     if (!w || w < 250 || w > 10000) {
       setError("Meta de água deve estar entre 250 e 10.000 ml.");
@@ -39,8 +39,8 @@ export function GoalsForm({
       setError("Meta de cardio deve estar entre 0 e 2.000 min/semana.");
       return;
     }
-    if (!t || t < 0 || t > 14) {
-      setError("Meta de treinos deve estar entre 0 e 14 por semana.");
+    if (!Number.isFinite(t) || t < 0 || t > 20) {
+      setError("Meta de horas de treino deve estar entre 0 e 20 h/semana.");
       return;
     }
     if (cal !== null && (cal < 800 || cal > 6000)) {
@@ -52,7 +52,7 @@ export function GoalsForm({
         await updateGoals({
           water_goal_ml: w,
           cardio_weekly_goal_min: c,
-          workout_weekly_goal: t,
+          workout_weekly_goal_hours: t,
           calorie_goal: cal,
         });
         setSaved(true);
@@ -88,15 +88,16 @@ export function GoalsForm({
           trailingAdornment="min/sem"
         />
         <TextField
-          label="Treinos por semana"
+          label="Horas de treino/semana"
           type="text"
-          inputMode="numeric"
+          inputMode="decimal"
           value={workouts}
           onChange={(e) => {
             setWorkouts(e.target.value);
             setSaved(false);
           }}
-          trailingAdornment="x/sem"
+          placeholder="4"
+          trailingAdornment="h/sem"
         />
         <TextField
           label="Meta calórica (opcional)"

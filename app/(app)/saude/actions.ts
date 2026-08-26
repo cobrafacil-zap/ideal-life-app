@@ -178,3 +178,40 @@ export async function logCardio(input: {
   revalidatePath("/saude");
   revalidatePath("/hoje");
 }
+
+/**
+ * Server action: registra uma sessão de musculação com duração em horas.
+ * Usada pelo módulo de treino quando a UI "Iniciar treino" existir.
+ * A duração NÃO usa MET (regra diferente de cardio).
+ */
+export async function logWorkout(input: {
+  workout_name: string;
+  duration_h: number;
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const name = String(input.workout_name ?? "").trim().slice(0, 80);
+  if (!name) throw new Error("Informe o nome do treino.");
+
+  const hours = Number(input.duration_h);
+  if (!Number.isFinite(hours) || hours <= 0 || hours > 12) {
+    throw new Error("Duração inválida (use horas, ex.: 1,5 = 1h30).");
+  }
+  const durationMin = Math.round(hours * 60);
+
+  const { error } = await supabase.from("workout_sessions").insert({
+    user_id: user.id,
+    workout_name: name,
+    duration_h: hours,
+    duration_min: durationMin,
+    finished_at: new Date().toISOString(),
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/saude");
+  revalidatePath("/hoje");
+}

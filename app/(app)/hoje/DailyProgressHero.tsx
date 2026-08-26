@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { Flame, Droplets, Dumbbell } from "lucide-react";
+import { formatHours } from "@/lib/format";
 
 /**
- * Hero de visualização da Home: 3 cards com gráfico (ring ou barra)
+ * Hero de visualização da Home: 3 cards com gráfico (ring SVG)
  * para calorias, água e treino da semana. Sem botões de edição —
  * apenas resumo. Cada card leva ao módulo correspondente.
  */
@@ -18,9 +19,9 @@ interface DailyProgressHeroProps {
   // Cardio da semana (minutos vs meta semanal)
   cardioMinutesWeek: number;
   cardioGoalMin: number;
-  // Workouts da semana (quantos vs meta semanal)
-  workoutCountWeek: number;
-  workoutGoal: number;
+  // Treinos (horas da semana vs meta em horas)
+  workoutHoursWeek: number;
+  workoutHoursGoal: number;
 }
 
 export function DailyProgressHero({
@@ -30,9 +31,15 @@ export function DailyProgressHero({
   waterGoalMl,
   cardioMinutesWeek,
   cardioGoalMin,
-  workoutCountWeek,
-  workoutGoal,
+  workoutHoursWeek,
+  workoutHoursGoal,
 }: DailyProgressHeroProps) {
+  const caloriesCompleted =
+    calorieGoal != null && caloriesConsumed >= calorieGoal;
+  const waterCompleted = waterConsumedMl >= waterGoalMl;
+  const cardioCompleted = cardioMinutesWeek >= cardioGoalMin;
+  const workoutCompleted = workoutHoursWeek >= workoutHoursGoal;
+
   return (
     <div className="grid gap-3 sm:grid-cols-3">
       <ProgressCard
@@ -44,14 +51,14 @@ export function DailyProgressHero({
         ringColor="stroke-ember"
         current={caloriesConsumed}
         max={calorieGoal ?? 0}
+        primary={caloriesConsumed.toLocaleString("pt-BR")}
         unit="kcal"
-        primary={formatKcal(caloriesConsumed)}
         secondary={
           calorieGoal
-            ? `de ${formatKcal(calorieGoal)}`
+            ? `de ${calorieGoal.toLocaleString("pt-BR")} kcal`
             : "defina sua meta em /perfil"
         }
-        completed={calorieGoal != null && caloriesConsumed >= calorieGoal}
+        completed={caloriesCompleted}
       />
       <ProgressCard
         href="/alimentacao"
@@ -62,10 +69,9 @@ export function DailyProgressHero({
         ringColor="stroke-moss"
         current={waterConsumedMl}
         max={waterGoalMl}
-        unit="ml"
         primary={`${(waterConsumedMl / 1000).toFixed(1).replace(".", ",")}L`}
         secondary={`meta ${(waterGoalMl / 1000).toFixed(1).replace(".", ",")}L`}
-        completed={waterConsumedMl >= waterGoalMl}
+        completed={waterCompleted}
       />
       <ProgressCard
         href="/saude"
@@ -74,24 +80,17 @@ export function DailyProgressHero({
         iconColor="text-gold-dark"
         label="Treino (semana)"
         ringColor="stroke-gold"
-        // Prioriza workouts (mais motivador) — se for 0, mostra cardio.
-        current={Math.max(workoutCountWeek, cardioMinutesWeek)}
-        max={Math.max(workoutGoal, cardioGoalMin)}
-        unit={workoutCountWeek > 0 ? "treinos" : "min"}
-        primary={
-          workoutCountWeek > 0
-            ? `${workoutCountWeek} / ${workoutGoal}`
-            : `${cardioMinutesWeek} / ${cardioGoalMin}`
-        }
+        current={workoutHoursWeek}
+        max={workoutHoursGoal}
+        primary={`${formatHours(workoutHoursWeek)} / ${formatHours(workoutHoursGoal)}`}
         secondary={
-          workoutCountWeek > 0
-            ? `${cardioMinutesWeek} min cardio`
-            : `meta ${cardioGoalMin} min`
+          workoutCompleted
+            ? "meta atingida"
+            : workoutHoursGoal - workoutHoursWeek > 0
+              ? `faltam ${formatHours(workoutHoursGoal - workoutHoursWeek)}`
+              : `${cardioMinutesWeek} min cardio`
         }
-        completed={
-          workoutCountWeek >= workoutGoal ||
-          cardioMinutesWeek >= cardioGoalMin
-        }
+        completed={workoutCompleted}
       />
     </div>
   );
@@ -106,8 +105,8 @@ interface ProgressCardProps {
   ringColor: string;
   current: number;
   max: number;
-  unit: string;
   primary: string;
+  unit?: string;
   secondary: string;
   completed: boolean;
 }
@@ -122,6 +121,7 @@ function ProgressCard({
   current,
   max,
   primary,
+  unit,
   secondary,
   completed,
 }: ProgressCardProps) {
@@ -185,6 +185,11 @@ function ProgressCard({
         <p className="truncate text-[11px] font-medium text-ink-soft">{label}</p>
         <p className="font-mono text-base font-bold leading-tight text-ink">
           {primary}
+          {unit && (
+            <span className="ml-1 text-[12px] font-normal text-ink-soft">
+              {unit}
+            </span>
+          )}
         </p>
         <p className="truncate text-[11px] text-ink-faint">{secondary}</p>
       </div>
@@ -197,8 +202,4 @@ function ProgressCard({
       )}
     </Link>
   );
-}
-
-function formatKcal(n: number): string {
-  return n.toLocaleString("pt-BR");
 }

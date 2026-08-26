@@ -8,7 +8,7 @@ import { uploadAvatar } from "@/lib/storage";
 export async function updateGoals(input: {
   water_goal_ml: number;
   cardio_weekly_goal_min: number;
-  workout_weekly_goal: number;
+  workout_weekly_goal_hours: number | null;
   calorie_goal: number | null;
 }) {
   const supabase = createClient();

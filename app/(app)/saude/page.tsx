@@ -19,7 +19,7 @@ import {
   Activity,
   Calendar,
 } from "lucide-react";
-import { startOfWeekISO } from "@/lib/format";
+import { startOfWeekISO, formatHours } from "@/lib/format";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import {
   bmiCategory,
@@ -76,6 +76,7 @@ export default async function SaudePage() {
     { data: profile },
     { data: weightHistory },
     { data: cardioThisWeek },
+    { data: workoutsThisWeek },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase
@@ -89,6 +90,12 @@ export default async function SaudePage() {
       .select("duration_min, duration_h, kcal_burned")
       .eq("user_id", user.id)
       .gte("performed_at", startOfWeekISO()),
+    supabase
+      .from("workout_sessions")
+      .select("id, duration_h")
+      .eq("user_id", user.id)
+      .not("finished_at", "is", null)
+      .gte("started_at", startOfWeekISO()),
   ]);
 
   // --- DERIVADOS ---
@@ -137,6 +144,12 @@ export default async function SaudePage() {
     (s, c) => s + (c.kcal_burned ?? 0),
     0,
   );
+
+  const workoutHoursWeek = (workoutsThisWeek ?? []).reduce(
+    (s, w) => s + (w.duration_h ?? 0),
+    0,
+  );
+  const workoutHoursGoal = profile?.workout_weekly_goal_hours ?? 4;
 
   const goalType =
     (profile?.goal_type as "perder" | "manter" | "ganhar" | "recompor" | null) ??
@@ -358,6 +371,17 @@ export default async function SaudePage() {
               kcalThisWeek={cardioKcalWeek}
             />
           </Card>
+
+          <Card>
+            <CardHeader
+              title="Treinos (semana)"
+              description="Horas de musculação registradas na semana."
+            />
+            <WorkoutWeekCard
+              hoursThisWeek={workoutHoursWeek}
+              hoursGoal={workoutHoursGoal}
+            />
+          </Card>
         </div>
 
         <aside className="space-y-6">
@@ -418,6 +442,44 @@ function Stat({
         {value}
       </p>
       {children && <div className="mt-2">{children}</div>}
+    </div>
+  );
+}
+
+function WorkoutWeekCard({
+  hoursThisWeek,
+  hoursGoal,
+}: {
+  hoursThisWeek: number;
+  hoursGoal: number;
+}) {
+  const completed = hoursThisWeek >= hoursGoal;
+  const safeMax = Math.max(hoursGoal, 0.5);
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between text-sm">
+        <span className="font-medium text-ink-soft">Horas na semana</span>
+        <span className="font-mono text-ink">
+          {formatHours(hoursThisWeek)} / {formatHours(hoursGoal)}
+        </span>
+      </div>
+      <ProgressBar
+        value={hoursThisWeek}
+        max={safeMax}
+        colorClass={completed ? "bg-moss-gradient" : "bg-gold-gradient"}
+      />
+      {completed ? (
+        <p className="mt-2 inline-flex items-center gap-1.5 rounded-pill bg-moss-soft px-2.5 py-1 text-[12px] font-semibold text-moss-dark">
+          Meta semanal atingida
+        </p>
+      ) : (
+        <p className="mt-2 text-[12px] text-ink-soft">
+          Faltam {formatHours(Math.max(0, hoursGoal - hoursThisWeek))} para fechar a meta.
+        </p>
+      )}
+      <p className="mt-3 text-[11px] text-ink-faint">
+        O registro detalhado de séries e cargas chega na próxima etapa.
+      </p>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { WellBeingRing } from "@/components/home/WellBeingRing";
 import { wellBeingAverage } from "@/lib/well-being";
 import { WaterCard } from "./WaterCard";
 import { DailyProgressHero } from "./DailyProgressHero";
+import { YesterdayComparison } from "./YesterdayComparison";
 import {
   Dumbbell,
   Flame,
@@ -22,7 +23,7 @@ import {
 import { differenceInCalendarDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { startOfWeekISO } from "@/lib/format";
-import { nowInBR, todayBR } from "@/lib/datetime";
+import { nowInBR, todayBR, daysAgoBRISO } from "@/lib/datetime";
 import { phraseForDate } from "@/lib/motivational-phrases";
 import { getAvatarSignedUrl } from "@/lib/avatar";
 
@@ -37,6 +38,7 @@ export default async function HojePage() {
   if (!user) redirect("/login");
 
   const today = todayBR();
+  const yesterday = daysAgoBRISO(1);
   const firstName = user.user_metadata?.full_name?.split(" ")[0] ?? "";
 
   const [
@@ -50,6 +52,9 @@ export default async function HojePage() {
     { data: latestCycle },
     { data: lastCheckin },
     { data: workoutsThisWeek },
+    { data: mealsYesterday },
+    { data: waterYesterday },
+    { data: checkinYesterday },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase
@@ -103,10 +108,29 @@ export default async function HojePage() {
     // 10ª query: workouts FINALIZADOS esta semana (para o card "Treino (semana)").
     supabase
       .from("workout_sessions")
-      .select("id")
+      .select("id, duration_h")
       .eq("user_id", user.id)
       .not("finished_at", "is", null)
       .gte("started_at", startOfWeekISO()),
+    // 11ª query: refeições de ontem (kcal total para comparativo).
+    supabase
+      .from("meals")
+      .select("total_calories")
+      .eq("user_id", user.id)
+      .eq("meal_date", yesterday),
+    // 12ª query: água de ontem (ml total para comparativo).
+    supabase
+      .from("water_logs")
+      .select("amount_ml")
+      .eq("user_id", user.id)
+      .eq("log_date", yesterday),
+    // 13ª query: check-in de ontem (energia/humor/disposição para comparativo).
+    supabase
+      .from("daily_checkins")
+      .select("energy, mood, disposition, checkin_date")
+      .eq("user_id", user.id)
+      .eq("checkin_date", yesterday)
+      .maybeSingle(),
   ]);
 
   // Avatar (signed URL).
@@ -123,12 +147,31 @@ export default async function HojePage() {
   );
 
   // Treinos finalizados na semana (para o card Treino (semana)).
-  const workoutCountWeek = (workoutsThisWeek ?? []).length;
+  const workoutHoursWeek = (workoutsThisWeek ?? []).reduce(
+    (s, w) => s + (w.duration_h ?? 0),
+    0,
+  );
+  const workoutHoursGoal = profile?.workout_weekly_goal_hours ?? 4;
 
   const caloriesToday = (mealsToday ?? []).reduce(
     (sum, m) => sum + (m.total_calories ?? 0),
     0
   );
+
+  // Valores de ontem (para o comparativo).
+  const caloriesYesterday = (mealsYesterday ?? []).reduce(
+    (sum, m) => sum + (m.total_calories ?? 0),
+    0,
+  );
+  const waterYesterday = (waterYesterday ?? []).reduce(
+    (sum, w) => sum + w.amount_ml,
+    0,
+  );
+  const yesterdayOverall = wellBeingAverage(checkinYesterday); // 0–10 ou null
+  const yesterdayOverallPct =
+    yesterdayOverall != null ? Math.round(yesterdayOverall * 10) : null;
+  const todayOverallPct =
+    todayOverall != null ? Math.round(todayOverall * 10) : null;
 
   const cycleDay = latestCycle?.start_date
     ? differenceInCalendarDays(nowInBR(), new Date(latestCycle.start_date)) + 1
@@ -227,8 +270,17 @@ export default async function HojePage() {
             waterGoalMl={waterGoal}
             cardioMinutesWeek={cardioMinutes}
             cardioGoalMin={cardioGoal}
-            workoutCountWeek={workoutCountWeek}
-            workoutGoal={profile?.workout_weekly_goal ?? 4}
+            workoutHoursWeek={workoutHoursWeek}
+            workoutHoursGoal={workoutHoursGoal}
+          />
+
+          <YesterdayComparison
+            caloriesToday={caloriesToday}
+            caloriesYesterday={caloriesYesterday}
+            waterTodayMl={waterConsumed}
+            waterYesterdayMl={waterYesterday}
+            wellBeingTodayPct={todayOverallPct}
+            wellBeingYesterdayPct={yesterdayOverallPct}
           />
 
           <Card>

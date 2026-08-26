@@ -110,7 +110,7 @@ export default async function PerfilPage() {
             <GoalsForm
               waterGoalMl={profile?.water_goal_ml ?? 3000}
               cardioGoalMin={profile?.cardio_weekly_goal_min ?? 150}
-              workoutGoal={profile?.workout_weekly_goal ?? 4}
+              workoutGoalHours={profile?.workout_weekly_goal_hours ?? null}
               calorieGoal={profile?.calorie_goal ?? null}
             />
           </Card>

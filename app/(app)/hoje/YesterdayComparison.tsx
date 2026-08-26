@@ -1,13 +1,17 @@
 import { TrendingDown, TrendingUp, Minus, Flame, Droplets, Heart } from "lucide-react";
+import { Card, CardHeader } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
 
 /**
- * Comparativo "hoje vs ontem" — mostra se a pessoa está melhor ou pior
- * em 3 indicadores diários: calorias, água e bem-estar geral.
+ * Comparativo "hoje vs ontem" — versão editorial.
+ *
+ * Em vez de 3 cards em grid (que era mais "tile de IA"), agora é um card
+ * único com 3 seções separadas por divisor vertical. Lê como uma linha de
+ * jornal: "Calorias | Água | Bem-estar" cada uma com seu delta.
  *
  * Sem input aqui — apenas visualização. Cada delta tem ícone
  * (cima/baixo/igual) + número + classe de cor (moss = melhorou,
- * ember = piorou, line = igual).
+ * ember = piorou, gold = neutro).
  */
 
 interface YesterdayComparisonProps {
@@ -15,7 +19,7 @@ interface YesterdayComparisonProps {
   caloriesYesterday: number;
   waterTodayMl: number;
   waterYesterdayMl: number;
-  wellBeingTodayPct: number | null; // 0–100
+  wellBeingTodayPct: number | null;
   wellBeingYesterdayPct: number | null;
 }
 
@@ -28,86 +32,83 @@ export function YesterdayComparison({
   wellBeingYesterdayPct,
 }: YesterdayComparisonProps) {
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
-      <CompareRow
-        icon={Flame}
-        label="Calorias"
-        today={caloriesToday}
-        yesterday={caloriesYesterday}
-        unit="kcal"
-        mode="neutral"
+    <Card>
+      <CardHeader
+        title="Hoje vs. ontem"
+        description="Se você está melhor ou pior em cada pilar."
       />
-      <CompareRow
-        icon={Droplets}
-        label="Água"
-        today={waterTodayMl}
-        yesterday={waterYesterdayMl}
-        unit="ml"
-        mode="up-good"
-        formatValue={(n) => `${(n / 1000).toFixed(1).replace(".", ",")}L`}
-      />
-      <CompareRow
-        icon={Heart}
-        label="Bem-estar"
-        today={wellBeingTodayPct ?? 0}
-        yesterday={wellBeingYesterdayPct ?? 0}
-        unit="%"
-        mode="up-good"
-        formatValue={(n) => `${Math.round(n)}%`}
-        hideIfNoYesterday={wellBeingYesterdayPct == null}
-      />
-    </div>
+
+      <div className="grid grid-cols-1 divide-y divide-line/40 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <CompareSection
+          icon={Flame}
+          label="Calorias"
+          today={caloriesToday}
+          yesterday={caloriesYesterday}
+          formatValue={(n) => `${n.toLocaleString("pt-BR")} kcal`}
+          mode="neutral"
+        />
+        <CompareSection
+          icon={Droplets}
+          label="Água"
+          today={waterTodayMl}
+          yesterday={waterYesterdayMl}
+          formatValue={(n) => `${(n / 1000).toFixed(1).replace(".", ",")} L`}
+          mode="up-good"
+        />
+        <CompareSection
+          icon={Heart}
+          label="Bem-estar"
+          today={wellBeingTodayPct ?? 0}
+          yesterday={wellBeingYesterdayPct ?? 0}
+          formatValue={(n) => `${Math.round(n)}%`}
+          mode="up-good"
+          hideIfNoYesterday={wellBeingYesterdayPct == null}
+        />
+      </div>
+    </Card>
   );
 }
 
-interface CompareRowProps {
+interface CompareSectionProps {
   icon: typeof Flame;
   label: string;
   today: number;
   yesterday: number;
-  unit: string;
-  /** "up-good" = subir é bom (água, bem-estar). "down-good" = descer é bom (peso).
-   *  "neutral" = sem juízo (calorias brutas). */
   mode: "up-good" | "down-good" | "neutral";
-  formatValue?: (n: number) => string;
+  formatValue: (n: number) => string;
   hideIfNoYesterday?: boolean;
 }
 
-function CompareRow({
+function CompareSection({
   icon: Icon,
   label,
   today,
   yesterday,
-  unit,
   mode,
   formatValue,
   hideIfNoYesterday,
-}: CompareRowProps) {
-  const fmt = formatValue ?? ((n: number) => `${n.toLocaleString("pt-BR")} ${unit}`);
+}: CompareSectionProps) {
   const delta = today - yesterday;
+  const isPositive = delta > 0;
+  const isNegative = delta < 0;
+  const isGood =
+    mode === "neutral" ? null : mode === "up-good" ? isPositive : isNegative;
 
   if (hideIfNoYesterday && yesterday === 0) {
     return (
-      <div className="rounded-2xl border border-line/60 bg-surface p-4">
-        <div className="mb-2 flex items-center gap-2">
+      <div className="py-4 sm:px-6 sm:py-2">
+        <div className="flex items-center gap-2">
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-ember-soft text-ember-dark">
             <Icon size={14} aria-hidden="true" />
           </span>
           <span className="text-[12px] font-medium text-ink-soft">{label}</span>
         </div>
-        <p className="text-[13px] text-ink-faint">Sem check-in de ontem.</p>
+        <p className="mt-2 text-[12px] text-ink-faint">
+          Sem registro de ontem.
+        </p>
       </div>
     );
   }
-
-  const isPositive = delta > 0;
-  const isNegative = delta < 0;
-  const isGood =
-    mode === "neutral"
-      ? null
-      : mode === "up-good"
-        ? isPositive
-        : isNegative;
 
   const toneClass = (() => {
     if (!isPositive && !isNegative) return "bg-line/50 text-ink-soft";
@@ -118,18 +119,20 @@ function CompareRow({
   const DeltaIcon = !isPositive && !isNegative ? Minus : isPositive ? TrendingUp : TrendingDown;
 
   return (
-    <div className="rounded-2xl border border-line/60 bg-surface p-4">
-      <div className="mb-2 flex items-center gap-2">
+    <div className="py-4 sm:px-6 sm:py-2">
+      <div className="flex items-center gap-2">
         <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-ember-soft text-ember-dark">
           <Icon size={14} aria-hidden="true" />
         </span>
         <span className="text-[12px] font-medium text-ink-soft">{label}</span>
       </div>
 
-      <p className="font-mono text-base font-bold leading-tight text-ink">
-        {fmt(today)}
+      <p className="mt-2 font-display text-xl font-semibold leading-tight text-ink tabular-nums">
+        {formatValue(today)}
       </p>
-      <p className="mt-0.5 text-[11px] text-ink-faint">ontem: {fmt(yesterday)}</p>
+      <p className="mt-0.5 text-[11px] text-ink-faint">
+        ontem: {formatValue(yesterday)}
+      </p>
 
       {yesterday > 0 || today > 0 ? (
         <span
@@ -140,7 +143,7 @@ function CompareRow({
         >
           <DeltaIcon size={11} aria-hidden="true" />
           {delta > 0 ? "+" : ""}
-          {formatValue ? formatValue(Math.abs(delta)).replace(/^[+-]?/, "") : `${Math.abs(delta).toLocaleString("pt-BR")} ${unit}`}
+          {formatValue(Math.abs(delta))}
           {isPositive
             ? mode === "down-good"
               ? " pior"

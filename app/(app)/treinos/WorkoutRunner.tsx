@@ -766,7 +766,9 @@ function FinishDialog({
           <p className="inline-flex items-start gap-1.5 rounded-2xl bg-base/40 p-3 text-[11px] text-ink-soft">
             <AlertTriangle size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
             RPE é só registro. Não é diagnóstico nem prescrição — ajuste a carga
-            sempre com base em como você se sente.
+            sempre com base em como você se sente. Se notar desconforto
+            recorrente, vale conversar com um profissional de educação física
+            ou fisioterapia.
           </p>
         </div>
 

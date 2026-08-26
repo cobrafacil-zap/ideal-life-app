@@ -1233,3 +1233,67 @@ export async function listExerciseHistory(opts?: {
     (a, b) => (b.top_load_kg ?? 0) - (a.top_load_kg ?? 0),
   );
 }
+
+/* =========================================================================
+   FASE 7 — Feedback de dificuldade e dor (histórico)
+   ========================================================================= */
+
+export type DiscomfortEntry = {
+  set_id: string;
+  session_id: string;
+  started_at: string;
+  workout_name: string;
+  exercise_name: string;
+  set_number: number;
+  discomfort: number;
+  reps: number | null;
+  load: number | null;
+  load_unit: "kg" | "lb";
+  rpe: number | null;
+};
+
+export async function listDiscomfortHistory(opts?: {
+  rangeDays?: number;
+  minLevel?: number;
+}): Promise<DiscomfortEntry[]> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const rangeDays = opts?.rangeDays ?? 90;
+  const minLevel = opts?.minLevel ?? 1;
+  const since = new Date(Date.now() - rangeDays * 24 * 3600 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("exercise_sets")
+    .select(
+      "id, set_number, exercise_name, reps, load, load_unit, rpe, discomfort, workout_session_id, workout_sessions!inner(id, user_id, started_at, finished_at, workout_name)",
+    )
+    .eq("user_id", user.id)
+    .not("discomfort", "is", null)
+    .gte("discomfort", minLevel)
+    .gte("workout_sessions.started_at", since)
+    .order("workout_sessions.started_at", { ascending: false })
+    .limit(300);
+  if (error) throw new Error(error.message);
+
+  return (data ?? [])
+    .map((row: any) => {
+      const ws = row.workout_sessions;
+      if (!ws || ws.user_id !== user.id) return null;
+      return {
+        set_id: row.id,
+        session_id: ws.id,
+        started_at: ws.started_at,
+        workout_name: ws.workout_name,
+        exercise_name: row.exercise_name,
+        set_number: row.set_number,
+        discomfort: row.discomfort,
+        reps: row.reps,
+        load: row.load,
+        load_unit: row.load_unit,
+        rpe: row.rpe,
+      } satisfies DiscomfortEntry;
+    })
+    .filter((x): x is DiscomfortEntry => x != null);
+}

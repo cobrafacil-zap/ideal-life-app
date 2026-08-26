@@ -214,7 +214,7 @@ export default async function TreinosPage() {
                 title="Sem planos ainda"
                 description="Crie um plano com exercícios, séries e cargas alvo."
                 action={
-                  <Link href="/treinos/planos/novo">
+                  <Link href="/treinos/meus-treinos/novo">
                     <Button variant="secondary">Criar plano</Button>
                   </Link>
                 }
@@ -224,7 +224,7 @@ export default async function TreinosPage() {
                 {(plans ?? []).slice(0, 5).map((p) => (
                   <li key={p.id}>
                     <Link
-                      href={`/treinos/planos/${p.id}`}
+                      href={`/treinos/meus-treinos/${p.id}`}
                       className="flex items-center gap-2 rounded-2xl border border-line/60 bg-surface px-3 py-2 text-sm hover:border-ember/40 hover:shadow-card"
                     >
                       <Dumbbell size={14} aria-hidden="true" className="text-ink-soft" />
@@ -241,12 +241,12 @@ export default async function TreinosPage() {
               </ul>
             )}
             <div className="mt-3 flex gap-2">
-              <Link href="/treinos/planos" className="flex-1">
+              <Link href="/treinos/meus-treinos" className="flex-1">
                 <Button variant="ghost" fullWidth trailingIcon={<ChevronRight size={14} />}>
                   Ver todos
                 </Button>
               </Link>
-              <Link href="/treinos/planos/novo">
+              <Link href="/treinos/meus-treinos/novo">
                 <Button variant="secondary" leadingIcon={<Plus size={14} />}>
                   Novo
                 </Button>

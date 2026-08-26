@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Plus, Dumbbell, ChevronRight, Power } from "lucide-react";
+import { Plus, Dumbbell, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -10,22 +10,35 @@ import { listWorkoutPlans } from "../actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function PlanosPage() {
+const WEEKDAY_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+function summarizeWeekdays(days: (number | null)[]): string {
+  const valid = days.filter((d): d is number => d != null).sort((a, b) => a - b);
+  if (valid.length === 0) return "Sem dia fixo";
+  if (valid.length === 1) return WEEKDAY_SHORT[valid[0]];
+  if (valid.length === 2) return `${WEEKDAY_SHORT[valid[0]]} e ${WEEKDAY_SHORT[valid[1]]}`;
+  return valid.map((d) => WEEKDAY_SHORT[d]).join(" · ");
+}
+
+export default async function MeusTreinosPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
   const plans = await listWorkoutPlans();
 
+  // Coleta dias da semana por plano (1 plano pode ter vários dias — porém o
+  // schema atual suporta 1 por plano via scheduled_weekday. Para a lista,
+  // mostramos o(s) dia(s) do plano + descrição opcional.)
   return (
     <div className="space-y-6 md:space-y-8">
       <SectionHeader
-        title="Planos de treino"
-        subtitle="Organize exercícios, séries e cargas alvo."
+        title="Meus treinos"
+        subtitle="Crie treinos com exercícios, séries e cargas alvo."
         action={
-          <Link href="/treinos/planos/novo">
+          <Link href="/treinos/meus-treinos/novo">
             <Button variant="secondary" leadingIcon={<Plus size={14} />}>
-              Novo plano
+              Criar treino
             </Button>
           </Link>
         }
@@ -34,25 +47,27 @@ export default async function PlanosPage() {
       {plans.length === 0 ? (
         <EmptyState
           icon={Dumbbell}
-          title="Sem planos ainda"
-          description="Crie um plano com exercícios, séries e cargas alvo."
+          title="Crie seu primeiro treino"
+          description="Escolha um nome, marque os dias da semana e adicione exercícios da biblioteca."
           action={
-            <Link href="/treinos/planos/novo">
-              <Button variant="secondary">Criar plano</Button>
+            <Link href="/treinos/meus-treinos/novo">
+              <Button variant="primary" leadingIcon={<Plus size={14} />}>
+                Criar treino
+              </Button>
             </Link>
           }
         />
       ) : (
         <Card>
           <CardHeader
-            title="Seus planos"
-            description="Apenas um pode estar ativo por vez."
+            title="Seus treinos"
+            description="Toque para abrir e executar."
           />
           <ul className="space-y-2">
             {plans.map((p) => (
               <li key={p.id}>
                 <Link
-                  href={`/treinos/planos/${p.id}`}
+                  href={`/treinos/meus-treinos/${p.id}`}
                   className="flex items-center gap-3 rounded-2xl border border-line/60 bg-surface p-3 hover:border-ember/40 hover:shadow-card"
                 >
                   <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ember-soft text-ember">
@@ -63,18 +78,16 @@ export default async function PlanosPage() {
                       {p.name}
                     </p>
                     <p className="text-[11px] text-ink-soft">
+                      {summarizeWeekdays([p.scheduled_weekday])} ·{" "}
                       {p.exercise_count}{" "}
                       {p.exercise_count === 1 ? "exercício" : "exercícios"}
-                      {p.description ? ` · ${p.description}` : ""}
                     </p>
                   </div>
-                  {p.is_active && (
-                    <span className="inline-flex items-center gap-1 rounded-pill bg-moss-soft px-2 py-0.5 text-[10px] font-semibold text-moss-dark">
-                      <Power size={10} aria-hidden="true" />
-                      ativo
-                    </span>
-                  )}
-                  <ChevronRight size={14} aria-hidden="true" className="text-ink-faint" />
+                  <ChevronRight
+                    size={14}
+                    aria-hidden="true"
+                    className="text-ink-faint"
+                  />
                 </Link>
               </li>
             ))}

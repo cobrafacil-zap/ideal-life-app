@@ -659,7 +659,7 @@ export function NewPlanForm() {
     startTransition(async () => {
       try {
         const res = await createWorkoutPlan({ name, description: description || null });
-        router.push(`/treinos/planos/${res.id}`);
+        router.push(`/treinos/meus-treinos/${res.id}`);
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro.");

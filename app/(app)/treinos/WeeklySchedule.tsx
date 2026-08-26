@@ -292,7 +292,7 @@ function PlanPickerDialog({
         <div className="max-h-80 space-y-1 overflow-y-auto p-4 sm:p-6">
           {plans.length === 0 ? (
             <p className="rounded-2xl bg-base/40 p-4 text-center text-[12px] text-ink-soft">
-              Você ainda não tem planos. Crie um em /treinos/planos.
+              Você ainda não tem planos. Crie um em /treinos/meus-treinos.
             </p>
           ) : (
             <ul className="space-y-1">

@@ -383,6 +383,7 @@ export type PlanSummary = {
   description: string | null;
   is_active: boolean;
   sort_order: number;
+  scheduled_weekday: number | null;
   updated_at: string;
   exercise_count: number;
 };
@@ -395,7 +396,7 @@ export async function listWorkoutPlans(): Promise<PlanSummary[]> {
   const { data, error } = await supabase
     .from("workout_plans")
     .select(
-      "id, name, description, is_active, sort_order, updated_at, workout_plan_exercises(id)",
+      "id, name, description, is_active, sort_order, scheduled_weekday, updated_at, workout_plan_exercises(id)",
     )
     .eq("user_id", user.id)
     .order("is_active", { ascending: false })
@@ -409,6 +410,7 @@ export async function listWorkoutPlans(): Promise<PlanSummary[]> {
     description: row.description,
     is_active: row.is_active,
     sort_order: row.sort_order,
+    scheduled_weekday: row.scheduled_weekday ?? null,
     updated_at: row.updated_at,
     exercise_count: Array.isArray(row.workout_plan_exercises)
       ? row.workout_plan_exercises.length
@@ -546,7 +548,7 @@ export async function updateWorkoutPlan(
   if (error) throw new Error(error.message);
 
   revalidatePath("/treinos");
-  revalidatePath(`/treinos/planos/${id}`);
+  revalidatePath(`/treinos/meus-treinos/${id}`);
 }
 
 export async function deleteWorkoutPlan(id: string): Promise<void> {
@@ -638,7 +640,7 @@ export async function addPlanExercise(
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Falha ao adicionar exercício.");
 
-  revalidatePath(`/treinos/planos/${planId}`);
+  revalidatePath(`/treinos/meus-treinos/${planId}`);
   return { id: data.id };
 }
 
@@ -677,7 +679,7 @@ export async function updatePlanExercise(
     .eq("user_id", user.id);
   if (error) throw new Error(error.message);
 
-  revalidatePath(`/treinos/planos`);
+  revalidatePath(`/treinos/meus-treinos`);
 }
 
 export async function removePlanExercise(rowId: string): Promise<void> {
@@ -692,7 +694,7 @@ export async function removePlanExercise(rowId: string): Promise<void> {
     .eq("user_id", user.id);
   if (error) throw new Error(error.message);
 
-  revalidatePath(`/treinos/planos`);
+  revalidatePath(`/treinos/meus-treinos`);
 }
 
 /**
@@ -719,7 +721,7 @@ export async function reorderPlanExercises(
     if (error) throw new Error(error.message);
   }
 
-  revalidatePath(`/treinos/planos/${planId}`);
+  revalidatePath(`/treinos/meus-treinos/${planId}`);
 }
 
 /* =========================================================================

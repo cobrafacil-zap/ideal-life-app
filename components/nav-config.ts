@@ -39,7 +39,7 @@ export const navItems: NavItem[] = [
     href: "/treinos",
     label: "Treinos",
     icon: Dumbbell,
-    description: "Biblioteca, planos e séries",
+    description: "Meus treinos, exercícios e séries",
   },
   {
     href: "/ciclo",

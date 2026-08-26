@@ -9,6 +9,7 @@ import { PRIMARY_MUSCLE_BG } from "@/lib/workout";
 type Props = {
   exercise: Pick<
     Exercise,
+    | "id"
     | "name"
     | "primary_muscle"
     | "image_url"

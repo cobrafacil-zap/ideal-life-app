@@ -118,3 +118,41 @@ export const PHASE_META: Record<
     description: "Últimos 5 dias antes da próxima menstruação.",
   },
 };
+
+/** Tons de fundo (gradient ou soft) por fase. Usado no hero e em pills. */
+export const PHASE_BG: Record<CyclePhase, string> = {
+  menstrual: "bg-ember-gradient",
+  folicular: "bg-moss-gradient",
+  fertil: "bg-gold-soft",
+  ovulacao: "bg-rose-gradient",
+  lutea: "bg-lilac-soft",
+  tpm: "bg-lilac-soft",
+};
+
+/**
+ * Fases em fundos claros (gold/lilac soft) precisam de texto escuro; as
+ * demais (ember/rose/moss gradients) usam texto branco.
+ */
+export const PHASE_TEXT_LIGHT: Record<CyclePhase, boolean> = {
+  menstrual: true,
+  folicular: true,
+  fertil: false,
+  ovulacao: true,
+  lutea: false,
+  tpm: false,
+};
+
+/**
+ * Classes Tailwind (pill/badge) por tom — referência única para garantir que
+ * cada tom tenha um par `bg-*-soft` + `text-*-dark` válido.
+ */
+export const TONE_PILL_CLASS: Record<
+  "moss" | "ember" | "rose" | "lilac" | "gold",
+  string
+> = {
+  moss: "bg-moss-soft text-moss-dark",
+  ember: "bg-ember-soft text-ember-dark",
+  rose: "bg-rose-soft text-rose-dark",
+  lilac: "bg-lilac-soft text-lilac-dark",
+  gold: "bg-gold-soft text-gold-dark",
+};

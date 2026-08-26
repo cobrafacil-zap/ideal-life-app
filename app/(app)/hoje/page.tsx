@@ -163,7 +163,7 @@ export default async function HojePage() {
     (sum, m) => sum + (m.total_calories ?? 0),
     0,
   );
-  const waterYesterday = (waterYesterday ?? []).reduce(
+  const waterYesterdayMl = (waterYesterday ?? []).reduce(
     (sum, w) => sum + w.amount_ml,
     0,
   );
@@ -278,7 +278,7 @@ export default async function HojePage() {
             caloriesToday={caloriesToday}
             caloriesYesterday={caloriesYesterday}
             waterTodayMl={waterConsumed}
-            waterYesterdayMl={waterYesterday}
+            waterYesterdayMl={waterYesterdayMl}
             wellBeingTodayPct={todayOverallPct}
             wellBeingYesterdayPct={yesterdayOverallPct}
           />

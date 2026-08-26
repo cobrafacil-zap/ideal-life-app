@@ -17,8 +17,8 @@ import { WeightProgressCard } from "./WeightProgressCard";
 import { EndDayModal } from "./EndDayModal";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { startOfWeekISO, daysAgoBRISO } from "@/lib/format";
-import { nowInBR, todayBR } from "@/lib/datetime";
+import { startOfWeekISO } from "@/lib/format";
+import { nowInBR, todayBR, daysAgoBRISO } from "@/lib/datetime";
 import { phraseForDate } from "@/lib/motivational-phrases";
 import { getAvatarSignedUrl } from "@/lib/avatar";
 

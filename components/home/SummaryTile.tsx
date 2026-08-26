@@ -29,8 +29,8 @@ export function SummaryTile({
       type={interactive ? "button" : undefined}
       onClick={onClick}
       className={cn(
-        "group w-full text-left rounded-2xl border border-line/60 bg-surface p-4 transition-all",
-        "hover:border-ember/40 hover:shadow-card",
+        "group w-full text-left rounded-2xl border border-line/60 bg-surface p-4 transition-all duration-200",
+        "hover:border-ember/40 hover:shadow-floating",
         interactive &&
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base active:scale-[0.99]"
       )}

@@ -24,7 +24,7 @@ export function Card({
     <Tag
       {...rest}
       className={cn(
-        "rounded-card border transition-colors",
+        "rounded-card border transition-shadow transition-colors duration-200",
         bare
           ? "bg-transparent border-transparent shadow-none"
           : cn(
@@ -33,7 +33,7 @@ export function Card({
                 ? "border-ember/30 ring-1 ring-ember/10"
                 : "border-line/60"
             ),
-        padded && "p-5 sm:p-6",
+        padded && "p-6 sm:p-7",
         className
       )}
     >

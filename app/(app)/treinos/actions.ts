@@ -947,3 +947,289 @@ export async function deleteSet(setId: string): Promise<void> {
 
   revalidatePath(`/treinos`);
 }
+
+/* =========================================================================
+   FASE 6 — Histórico e progressão
+   ========================================================================= */
+
+export type SessionSummary = {
+  id: string;
+  workout_name: string;
+  started_at: string;
+  finished_at: string | null;
+  duration_h: number | null;
+  duration_min: number | null;
+  user_rpe: number | null;
+  total_volume_kg: number;
+  set_count: number;
+};
+
+export async function listWorkoutHistory(filters?: {
+  rangeDays?: 7 | 30 | 90 | 365;
+  limit?: number;
+}): Promise<SessionSummary[]> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const limit = filters?.limit ?? 60;
+  const rangeDays = filters?.rangeDays ?? 30;
+  const since = new Date(Date.now() - rangeDays * 24 * 3600 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("workout_sessions")
+    .select(
+      "id, workout_name, started_at, finished_at, duration_h, duration_min, user_rpe, exercise_sets(reps, load, load_unit)",
+    )
+    .eq("user_id", user.id)
+    .not("finished_at", "is", null)
+    .gte("started_at", since)
+    .order("started_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((row: any) => {
+    const sets = Array.isArray(row.exercise_sets) ? row.exercise_sets : [];
+    const totalVolume = sets.reduce((acc: number, s: any) => {
+      if (s.reps == null || s.load == null) return acc;
+      const kg = s.load_unit === "lb" ? s.load * 0.4536 : s.load;
+      return acc + s.reps * kg;
+    }, 0);
+    return {
+      id: row.id,
+      workout_name: row.workout_name,
+      started_at: row.started_at,
+      finished_at: row.finished_at,
+      duration_h: row.duration_h,
+      duration_min: row.duration_min,
+      user_rpe: row.user_rpe,
+      total_volume_kg: Math.round(totalVolume * 100) / 100,
+      set_count: sets.length,
+    };
+  });
+}
+
+export type SessionDetail = {
+  id: string;
+  workout_name: string;
+  started_at: string;
+  finished_at: string | null;
+  duration_min: number | null;
+  user_rpe: number | null;
+  sets: {
+    id: string;
+    exercise_id: string | null;
+    exercise_name: string;
+    set_number: number;
+    reps: number | null;
+    load: number | null;
+    load_unit: "kg" | "lb";
+    rpe: number | null;
+    discomfort: number | null;
+  }[];
+};
+
+export async function getWorkoutSessionDetail(
+  sessionId: string,
+): Promise<SessionDetail | null> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const { data, error } = await supabase
+    .from("workout_sessions")
+    .select(
+      "id, workout_name, started_at, finished_at, duration_min, user_rpe, exercise_sets(id, exercise_id, exercise_name, set_number, reps, load, load_unit, rpe, discomfort)",
+    )
+    .eq("id", sessionId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  const sets = (data.exercise_sets ?? [])
+    .map((row: any) => ({
+      id: row.id,
+      exercise_id: row.exercise_id,
+      exercise_name: row.exercise_name,
+      set_number: row.set_number,
+      reps: row.reps,
+      load: row.load,
+      load_unit: row.load_unit,
+      rpe: row.rpe,
+      discomfort: row.discomfort,
+    }))
+    .sort((a: any, b: any) => a.exercise_name.localeCompare(b.exercise_name) || a.set_number - b.set_number);
+
+  return {
+    id: data.id,
+    workout_name: data.workout_name,
+    started_at: data.started_at,
+    finished_at: data.finished_at,
+    duration_min: data.duration_min,
+    user_rpe: data.user_rpe,
+    sets,
+  };
+}
+
+export type ExerciseProgressionPoint = {
+  session_id: string;
+  started_at: string;
+  top_load_kg: number | null;
+  reps_at_top: number | null;
+  total_volume_kg: number;
+  total_sets: number;
+};
+
+export async function getExerciseProgression(
+  exerciseId: string,
+  opts?: { rangeDays?: number },
+): Promise<ExerciseProgressionPoint[]> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const rangeDays = opts?.rangeDays ?? 90;
+  const since = new Date(Date.now() - rangeDays * 24 * 3600 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("exercise_sets")
+    .select(
+      "workout_session_id, exercise_id, exercise_name, reps, load, load_unit, workout_sessions!inner(id, user_id, started_at, finished_at)",
+    )
+    .eq("exercise_id", exerciseId)
+    .eq("user_id", user.id)
+    .gte("workout_sessions.started_at", since)
+    .order("workout_sessions.started_at", { ascending: true });
+  if (error) throw new Error(error.message);
+
+  const bySession = new Map<string, {
+    session_id: string;
+    started_at: string;
+    sets: { reps: number | null; load: number | null; load_unit: "kg" | "lb" }[];
+  }>();
+
+  for (const row of data ?? []) {
+    const ws: any = (row as any).workout_sessions;
+    if (!ws || ws.user_id !== user.id || !ws.finished_at) continue;
+    const sessionId = ws.id as string;
+    if (!bySession.has(sessionId)) {
+      bySession.set(sessionId, {
+        session_id: sessionId,
+        started_at: ws.started_at,
+        sets: [],
+      });
+    }
+    bySession.get(sessionId)!.sets.push({
+      reps: row.reps,
+      load: row.load,
+      load_unit: row.load_unit,
+    });
+  }
+
+  const points: ExerciseProgressionPoint[] = [];
+  for (const [, v] of bySession) {
+    let topLoadKg: number | null = null;
+    let repsAtTop = 0;
+    let totalVol = 0;
+    for (const s of v.sets) {
+      if (s.load == null) continue;
+      const kg = s.load_unit === "lb" ? s.load * 0.4536 : s.load;
+      if (topLoadKg == null || kg > topLoadKg) {
+        topLoadKg = Math.round(kg * 100) / 100;
+        repsAtTop = s.reps ?? 0;
+      }
+      if (s.reps != null && s.reps > 0) totalVol += s.reps * kg;
+    }
+    points.push({
+      session_id: v.session_id,
+      started_at: v.started_at,
+      top_load_kg: topLoadKg,
+      reps_at_top: repsAtTop,
+      total_volume_kg: Math.round(totalVol * 100) / 100,
+      total_sets: v.sets.length,
+    });
+  }
+
+  return points.sort(
+    (a, b) => new Date(a.started_at).getTime() - new Date(b.started_at).getTime(),
+  );
+}
+
+export type ExerciseHistoryItem = {
+  exercise_id: string;
+  exercise_name: string;
+  primary_muscle: string | null;
+  sessions: number;
+  total_sets: number;
+  top_load_kg: number | null;
+};
+
+export async function listExerciseHistory(opts?: {
+  rangeDays?: number;
+}): Promise<ExerciseHistoryItem[]> {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const rangeDays = opts?.rangeDays ?? 90;
+  const since = new Date(Date.now() - rangeDays * 24 * 3600 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("exercise_sets")
+    .select(
+      "exercise_id, exercise_name, reps, load, load_unit, workout_sessions!inner(id, user_id, finished_at, started_at), exercises(primary_muscle)",
+    )
+    .eq("user_id", user.id)
+    .gte("workout_sessions.started_at", since)
+    .limit(2000);
+  if (error) throw new Error(error.message);
+
+  const map = new Map<string, ExerciseHistoryItem>();
+  for (const row of data ?? []) {
+    const ws: any = (row as any).workout_sessions;
+    if (!ws || ws.user_id !== user.id || !ws.finished_at) continue;
+    const ex: any = (row as any).exercises;
+    const exerciseId = (row.exercise_id as string | null) ?? `orphan:${row.exercise_name}`;
+    if (!map.has(exerciseId)) {
+      map.set(exerciseId, {
+        exercise_id: exerciseId,
+        exercise_name: row.exercise_name,
+        primary_muscle: ex?.primary_muscle ?? null,
+        sessions: 0,
+        total_sets: 0,
+        top_load_kg: null,
+      });
+    }
+    const item = map.get(exerciseId)!;
+    item.total_sets += 1;
+    if (row.load != null) {
+      const kg = row.load_unit === "lb" ? row.load * 0.4536 : row.load;
+      if (item.top_load_kg == null || kg > item.top_load_kg) {
+        item.top_load_kg = Math.round(kg * 100) / 100;
+      }
+    }
+  }
+
+  // Conta sessões distintas por exercício.
+  for (const [, item] of map) {
+    const { data: countRows, error: countErr } = await supabase
+      .from("exercise_sets")
+      .select("workout_session_id, workout_sessions!inner(id, user_id, finished_at)")
+      .eq("user_id", user.id)
+      .eq("exercise_name", item.exercise_name)
+      .gte("workout_sessions.started_at", since)
+      .limit(2000);
+    if (countErr) continue;
+    const ids = new Set<string>();
+    for (const r of countRows ?? []) {
+      const ws: any = (r as any).workout_sessions;
+      if (ws?.finished_at) ids.add(ws.id);
+    }
+    item.sessions = ids.size;
+  }
+
+  return Array.from(map.values()).sort(
+    (a, b) => (b.top_load_kg ?? 0) - (a.top_load_kg ?? 0),
+  );
+}

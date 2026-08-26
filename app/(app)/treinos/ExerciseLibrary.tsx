@@ -421,30 +421,30 @@ function ExerciseEditorDialog({
   }
 
   function handlePickImage(file: File) {
-    if (!isNew && target !== "new") {
-      setUploadingImage(true);
-      const fd = new FormData();
-      fd.append("exercise_id", target.id);
-      fd.append("image", file);
-      uploadExerciseImageAction(fd)
-        .then(() => {
-          setUploadingImage(false);
-          // Atualiza a pré-visualização localmente.
-          const url = URL.createObjectURL(file);
-          setSignedUrl(url);
-        })
-        .catch((err) => {
-          setUploadingImage(false);
-          setError(err instanceof Error ? err.message : "Erro no upload.");
-        });
-    } else {
+    if (isNew) {
       // Criação: imagem só após salvar (precisa do id).
       setError("Salve o exercício antes de enviar uma imagem.");
+      return;
     }
+    setUploadingImage(true);
+    const fd = new FormData();
+    fd.append("exercise_id", target.id);
+    fd.append("image", file);
+    uploadExerciseImageAction(fd)
+      .then(() => {
+        setUploadingImage(false);
+        // Atualiza a pré-visualização localmente.
+        const url = URL.createObjectURL(file);
+        setSignedUrl(url);
+      })
+      .catch((err) => {
+        setUploadingImage(false);
+        setError(err instanceof Error ? err.message : "Erro no upload.");
+      });
   }
 
   function handleRemoveImage() {
-    if (isNew || target === "new") return;
+    if (isNew) return;
     removeExerciseImageAction(target.id)
       .then(() => {
         setSignedUrl(null);

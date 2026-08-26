@@ -39,6 +39,27 @@ export function computeBMI(weightKg: number, heightCm: number): number {
   return weightKg / (m * m);
 }
 
+/**
+ * Defesa contra o bug "altura em metros" (ex.: 1.70 em vez de 170).
+ *
+ * Aceita number ou string pt-BR ("170,5" ou "1,70"). Se o valor estiver
+ * claramente em metros (< 3), multiplica por 100. Se o resultado final
+ * estiver fora da faixa plausível (100–250 cm), devolve null em vez de
+ * explodir o IMC com valores absurdos (ex.: 297.577).
+ *
+ * Migração equivalente roda no banco (ver supabase/migrations/...sql).
+ */
+export function parseHeightCm(raw: number | string | null | undefined): number | null {
+  if (raw === null || raw === undefined || raw === "") return null;
+  const n = Number(String(raw).replace(",", "."));
+  if (!Number.isFinite(n) || n <= 0) return null;
+  // Caso legado: valor armazenado em metros.
+  const cm = n < 3 ? n * 100 : n;
+  if (cm < 100 || cm > 250) return null;
+  // Arredonda para 1 casa (NUMERIC(5,1)).
+  return Math.round(cm * 10) / 10;
+}
+
 export function bmiCategory(bmi: number): BMICategoryMeta {
   const cat = BMI_CATEGORIES.find((c) => bmi >= c.range[0] && bmi < c.range[1]);
   return cat ?? BMI_CATEGORIES[1];

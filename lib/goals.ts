@@ -8,29 +8,31 @@ import type { Database } from "@/types/database";
  * Para perder `weeklyRateKgPerWeek` kg/semana (default 0.5), o déficit
  * semanal deve ser `weeklyRateKgPerWeek * 7700` kcal.
  *
- * Se `deltaKg <= 0` (peso atual ≤ meta), retorna 0 (sem meta de queima).
+ * Só faz sentido clínico para `goalType = 'perder'`. Para outros objetivos
+ * (manter, ganhar, recompor) retornamos 0 — não há "meta de queima".
  */
 
 const KCAL_PER_KG = 7700;
 const DEFAULT_WEEKLY_RATE = 0.5;
 
 export function computeWeeklyBurnGoalKcal(input: {
-  currentWeightKg: number | null | undefined;
-  goalWeightKg: number | null | undefined;
-  weeklyRateKgPerWeek?: number;
+  currentWeightKg?: number | null;
+  goalWeightKg?: number | null;
+  goalType?: "perder" | "manter" | "ganhar" | "recompor" | null;
+  weeklyRateKgPerWeek?: number | null;
 }): number {
+  if (input.goalType !== "perder") return 0;
   if (!input.currentWeightKg || !input.goalWeightKg) return 0;
   const delta = input.currentWeightKg - input.goalWeightKg;
   if (delta <= 0) return 0;
   const rate = input.weeklyRateKgPerWeek ?? DEFAULT_WEEKLY_RATE;
   if (rate <= 0) return 0;
-  return Math.round((delta * KCAL_PER_KG * rate) / delta);
-  // simplifica para: rate * KCAL_PER_KG  (ex.: 0.5 × 7700 = 3850)
+  return Math.round(rate * KCAL_PER_KG);
 }
 
 /**
  * Recalcula e grava `profiles.weekly_burn_goal_kcal` a partir do último
- * peso registrado e da meta de peso. Best-effort — não propaga erro.
+ * peso registrado, meta, goal_type e taxa semanal. Best-effort — não propaga erro.
  */
 export async function recomputeAndStoreWeeklyBurn(
   supabase: SupabaseClient<Database>,
@@ -40,7 +42,7 @@ export async function recomputeAndStoreWeeklyBurn(
     const [{ data: profile }, { data: lastWeight }] = await Promise.all([
       supabase
         .from("profiles")
-        .select("weight_goal_kg")
+        .select("weight_goal_kg, goal_type, weekly_rate_kg")
         .eq("id", userId)
         .maybeSingle(),
       supabase
@@ -55,6 +57,13 @@ export async function recomputeAndStoreWeeklyBurn(
     const goal = computeWeeklyBurnGoalKcal({
       currentWeightKg: lastWeight?.weight_kg ?? null,
       goalWeightKg: profile?.weight_goal_kg ?? null,
+      goalType: (profile?.goal_type as
+        | "perder"
+        | "manter"
+        | "ganhar"
+        | "recompor"
+        | null) ?? null,
+      weeklyRateKgPerWeek: profile?.weekly_rate_kg ?? null,
     });
 
     await supabase

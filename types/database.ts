@@ -1,6 +1,8 @@
 // Tipagem simplificada das tabelas usadas na Fase 1.
 // (Pode ser substituída pelo gerador oficial: `supabase gen types typescript`)
 
+export type GoalType = "perder" | "manter" | "ganhar" | "recompor";
+
 export interface Profile {
   id: string;
   full_name: string | null;
@@ -10,13 +12,22 @@ export interface Profile {
   height_cm: number | null;
   activity_level: "sedentario" | "leve" | "moderado" | "ativo" | "muito_ativo" | null;
   weight_goal_kg: number | null;
+  /** Peso no momento em que a meta foi definida (só faz sentido com goal_type='perder'). */
+  weight_goal_start_kg: number | null;
+  /** Tipo de objetivo principal. Default 'manter'. */
+  goal_type: GoalType | null;
+  /** Ritmo semanal desejado (kg/sem). Default 0.5. Só usado com goal_type='perder'. */
+  weekly_rate_kg: number | null;
+  /** Quando a meta atual foi definida (para auditoria). */
+  goal_started_at: string | null;
   water_goal_ml: number;
   cardio_weekly_goal_min: number;
   workout_weekly_goal: number;
   calorie_goal: number | null;
   /**
-   * Meta semanal de gasto calórico derivada do peso atual vs peso-meta.
-   * Recalculada em lib/goals (regra 7700 kcal/kg, 0.5 kg/semana).
+   * Meta semanal de gasto calórico derivada do peso atual vs peso-meta
+   * (regra 7700 kcal/kg). Recalculada em lib/goals.
+   * Só é > 0 quando goal_type = 'perder'.
    */
   weekly_burn_goal_kcal: number | null;
   created_at: string;

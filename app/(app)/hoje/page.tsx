@@ -193,62 +193,68 @@ export default async function HojePage() {
           <Card>
             <CardHeader title="Resumo do dia" />
             <div className="grid grid-cols-2 gap-3">
-              <SummaryTile
-                icon={Dumbbell}
-                label="Treino"
-                value={openSession?.workout_name ?? "—"}
-                sub={openSession ? "em andamento" : "nenhum ativo"}
-                onClick={() => (window.location.href = "/saude")}
-              />
-              <SummaryTile
-                icon={Flame}
-                label="Alimentação"
-                value={`${caloriesToday.toLocaleString("pt-BR")} kcal`}
-                sub={`${(mealsToday ?? []).length} refeições hoje`}
-                accent="moss"
-                onClick={() => (window.location.href = "/alimentacao")}
-              />
-              <SummaryTile
-                icon={Activity}
-                label="Cardio (semana)"
-                value={`${cardioMinutes} / ${cardioGoal} min`}
-                progress={{ current: cardioMinutes, max: cardioGoal }}
-                onClick={() => (window.location.href = "/saude")}
-              />
-              <SummaryTile
-                icon={Scale}
-                label="Peso atual"
-                value={lastWeight ? `${lastWeight.weight_kg} kg` : "—"}
-                sub={
-                  profile?.weight_goal_kg
-                    ? `meta: ${profile.weight_goal_kg} kg`
-                    : "defina sua meta"
-                }
-                accent="moss"
-                onClick={() => (window.location.href = "/saude")}
-              />
-              {cycleDay !== null && (
+              <Link href="/saude" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
                 <SummaryTile
-                  icon={DropletIcon}
-                  label="Ciclo"
-                  value={`Dia ${cycleDay}`}
-                  sub="acompanhe na aba Ciclo"
-                  onClick={() => (window.location.href = "/ciclo")}
+                  icon={Dumbbell}
+                  label="Treino"
+                  value={openSession?.workout_name ?? "—"}
+                  sub={openSession ? "em andamento" : "nenhum ativo"}
                 />
+              </Link>
+              <Link href="/alimentacao" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
+                <SummaryTile
+                  icon={Flame}
+                  label="Alimentação"
+                  value={`${caloriesToday.toLocaleString("pt-BR")} kcal`}
+                  sub={`${(mealsToday ?? []).length} refeições hoje`}
+                  accent="moss"
+                />
+              </Link>
+              <Link href="/saude" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
+                <SummaryTile
+                  icon={Activity}
+                  label="Cardio (semana)"
+                  value={`${cardioMinutes} / ${cardioGoal} min`}
+                  progress={{ current: cardioMinutes, max: cardioGoal }}
+                />
+              </Link>
+              <Link href="/saude" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
+                <SummaryTile
+                  icon={Scale}
+                  label="Peso atual"
+                  value={lastWeight ? `${lastWeight.weight_kg} kg` : "—"}
+                  sub={
+                    profile?.weight_goal_kg
+                      ? `meta: ${profile.weight_goal_kg} kg`
+                      : "defina sua meta"
+                  }
+                  accent="moss"
+                />
+              </Link>
+              {cycleDay !== null && (
+                <Link href="/ciclo" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
+                  <SummaryTile
+                    icon={DropletIcon}
+                    label="Ciclo"
+                    value={`Dia ${cycleDay}`}
+                    sub="acompanhe na aba Ciclo"
+                  />
+                </Link>
               )}
-              <SummaryTile
-                icon={Target}
-                label="Água"
-                value={
-                  waterConsumed >= waterGoal
-                    ? "Atingida!"
-                    : `${(waterConsumed / 1000).toFixed(1)}L`
-                }
-                sub={`meta ${(waterGoal / 1000).toFixed(1)}L`}
-                accent="moss"
-                progress={{ current: waterConsumed, max: waterGoal }}
-                onClick={() => (window.location.href = "/hoje")}
-              />
+              <Link href="/hoje" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base rounded-2xl">
+                <SummaryTile
+                  icon={Target}
+                  label="Água"
+                  value={
+                    waterConsumed >= waterGoal
+                      ? "Atingida!"
+                      : `${(waterConsumed / 1000).toFixed(1)}L`
+                  }
+                  sub={`meta ${(waterGoal / 1000).toFixed(1)}L`}
+                  accent="moss"
+                  progress={{ current: waterConsumed, max: waterGoal }}
+                />
+              </Link>
             </div>
           </Card>
 

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -17,6 +18,7 @@ import {
   Ruler,
   Activity,
   Calendar,
+  ChevronRight,
 } from "lucide-react";
 import { startOfWeekISO, formatHours } from "@/lib/format";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -339,6 +341,13 @@ export default async function SaudePage() {
               hoursThisWeek={workoutHoursWeek}
               hoursGoal={workoutHoursGoal}
             />
+            <Link
+              href="/treinos"
+              className="mt-3 inline-flex items-center gap-1 text-[12px] font-semibold text-ember hover:text-ember-dark"
+            >
+              Ver detalhes
+              <ChevronRight size={12} aria-hidden="true" />
+            </Link>
           </Card>
         </div>
 
@@ -350,12 +359,18 @@ export default async function SaudePage() {
               </span>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-ink">
-                  Montagem de treinos e séries
+                  Treinos detalhados
                 </p>
                 <p className="mt-1 text-[12px] text-ink-soft">
-                  Em construção — chega na próxima etapa (criar treinos, registrar
-                  séries e acompanhar progressão de carga).
+                  Crie biblioteca, planos e registre séries em /treinos.
                 </p>
+                <Link
+                  href="/treinos"
+                  className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-ember hover:text-ember-dark"
+                >
+                  Abrir módulo
+                  <ChevronRight size={12} aria-hidden="true" />
+                </Link>
               </div>
             </div>
           </Card>

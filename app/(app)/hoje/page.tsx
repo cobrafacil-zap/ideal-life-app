@@ -350,20 +350,36 @@ export default async function HojePage() {
     });
   }
   // Treino
-  if (workoutHoursWeek < workoutHoursGoal && !openSession) {
+  if (openSession) {
+    pendingItems.push({
+      kind: "workout",
+      label: "Retomar treino em andamento",
+      description: "Você tem uma sessão aberta — finalize ou cancele para limpar.",
+      done: false,
+      href: `/treinos/sessao/${openSession.id}`,
+    });
+  } else if (workoutHoursWeek < workoutHoursGoal && workoutsCountThisWeek === 0) {
+    pendingItems.push({
+      kind: "workout",
+      label: "Treinar hoje",
+      description: "Sua semana ainda não tem treinos registrados.",
+      done: false,
+      href: "/treinos/agenda",
+    });
+  } else if (workoutHoursWeek < workoutHoursGoal) {
     const restante = (workoutHoursGoal - workoutHoursWeek).toFixed(1).replace(".", ",");
     pendingItems.push({
       kind: "workout",
-      label: "Registrar treino de hoje",
+      label: "Continuar treinando",
       description: `Faltam ${restante}h esta semana.`,
       done: false,
-      href: "/saude",
+      href: "/treinos/agenda",
     });
   } else if (workoutsCountThisWeek > 0) {
     pendingItems.push({
       kind: "workout",
       label: "Treinos da semana",
-      description: `${workoutsCountThisWeek} sessão(ões) concluída(s).`,
+      description: `${workoutsCountThisWeek} ${workoutsCountThisWeek === 1 ? "sessão concluída" : "sessões concluídas"}.`,
       done: true,
     });
   }

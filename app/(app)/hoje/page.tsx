@@ -8,6 +8,7 @@ import { Trend } from "@/components/Trend";
 import { WellBeingRing } from "@/components/home/WellBeingRing";
 import { wellBeingAverage } from "@/lib/well-being";
 import { WaterCard } from "./WaterCard";
+import { DailyProgressHero } from "./DailyProgressHero";
 import {
   Dumbbell,
   Flame,
@@ -48,6 +49,7 @@ export default async function HojePage() {
     { data: openSession },
     { data: latestCycle },
     { data: lastCheckin },
+    { data: workoutsThisWeek },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase
@@ -98,6 +100,13 @@ export default async function HojePage() {
       .order("checkin_date", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // 10ª query: workouts FINALIZADOS esta semana (para o card "Treino (semana)").
+    supabase
+      .from("workout_sessions")
+      .select("id")
+      .eq("user_id", user.id)
+      .not("finished_at", "is", null)
+      .gte("started_at", startOfWeekISO()),
   ]);
 
   // Avatar (signed URL).
@@ -112,6 +121,9 @@ export default async function HojePage() {
     (sum, c) => sum + (c.kcal_burned ?? 0),
     0,
   );
+
+  // Treinos finalizados na semana (para o card Treino (semana)).
+  const workoutCountWeek = (workoutsThisWeek ?? []).length;
 
   const caloriesToday = (mealsToday ?? []).reduce(
     (sum, m) => sum + (m.total_calories ?? 0),
@@ -208,6 +220,17 @@ export default async function HojePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Coluna principal */}
         <div className="space-y-6 lg:col-span-2">
+          <DailyProgressHero
+            caloriesConsumed={caloriesToday}
+            calorieGoal={profile?.calorie_goal ?? null}
+            waterConsumedMl={waterConsumed}
+            waterGoalMl={waterGoal}
+            cardioMinutesWeek={cardioMinutes}
+            cardioGoalMin={cardioGoal}
+            workoutCountWeek={workoutCountWeek}
+            workoutGoal={profile?.workout_weekly_goal ?? 4}
+          />
+
           <Card>
             <CardHeader
               title="Água"

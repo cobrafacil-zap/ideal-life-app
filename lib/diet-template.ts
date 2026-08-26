@@ -33,85 +33,77 @@ const DISTRIBUTION: { key: DietMeal["label"]; pct: number }[] = [
 ];
 
 // Templates por sexo × faixa calórica. Strings curtas em pt-BR.
-const TEMPLATES: Record<
-  Sex extends infer _ ? string : never,
-  Record<Tier, Record<DietMeal["label"], string[]>>
-> = {
-  feminino: {
-    low: {
-      "Café da manhã": [
-        "1 ovo mexido + 1 fatia pão integral + 1 fruta pequena",
-      ],
-      "Almoço": [
-        "Arroz 3 colheres de sopa + feijão 1 concha pequena + frango grelhado 100g + salada à vontade",
-      ],
-      "Lanche da tarde": ["1 iogurte natural + 1 col. sopa de granola"],
-      "Jantar": ["Sopa de legumes com frango desfiado 80g"],
-      "Ceia": ["1 xícara de chá de camomila"],
-    },
-    mid: {
-      "Café da manhã": [
-        "2 ovos mexidos + 2 fatias pão integral + 1 fruta + café sem açúcar",
-      ],
-      "Almoço": [
-        "Arroz 4 colheres de sopa + feijão 1 concha + frango grelhado 120g + salada + 1 col. sobremesa de azeite",
-      ],
-      "Lanche da tarde": ["1 fruta + 1 col. sopa de pasta de amendoim"],
-      "Jantar": ["Omelete com 2 ovos + legumes refogados"],
-      "Ceia": ["1 copo de leite desnatado"],
-    },
-    high: {
-      "Café da manhã": [
-        "Tapioca média + 1 ovo + queijo branco 30g + 1 fruta",
-      ],
-      "Almoço": [
-        "Arroz 5 colheres + feijão 1 concha + carne magra 150g + salada + abóbora cozida 80g",
-      ],
-      "Lanche da tarde": ["Iogurte natural + banana + 1 col. sopa de aveia"],
-      "Jantar": ["Frango grelhado 120g + purê de batata 100g + salada"],
-      "Ceia": ["1 copo de leite desnatado + 1 col. chá de mel"],
-    },
+const FEMININO: Record<Tier, Record<DietMeal["label"], string[]>> = {
+  low: {
+    "Café da manhã": ["1 ovo mexido + 1 fatia pão integral + 1 fruta pequena"],
+    "Almoço": [
+      "Arroz 3 colheres de sopa + feijão 1 concha pequena + frango grelhado 100g + salada à vontade",
+    ],
+    "Lanche da tarde": ["1 iogurte natural + 1 col. sopa de granola"],
+    "Jantar": ["Sopa de legumes com frango desfiado 80g"],
+    "Ceia": ["1 xícara de chá de camomila"],
   },
-  masculino: {
-    low: {
-      "Café da manhã": [
-        "2 ovos mexidos + 1 fatia pão integral + 1 fruta",
-      ],
-      "Almoço": [
-        "Arroz 4 colheres + feijão 1 concha + frango grelhado 120g + salada à vontade",
-      ],
-      "Lanche da tarde": ["1 fruta + 1 col. sopa de pasta de amendoim"],
-      "Jantar": ["Sopa de legumes com frango 100g"],
-      "Ceia": ["1 xícara de chá"],
-    },
-    mid: {
-      "Café da manhã": [
-        "3 ovos mexidos + 2 fatias pão integral + 1 fruta + café sem açúcar",
-      ],
-      "Almoço": [
-        "Arroz 5 colheres + feijão 1 concha + frango/carne 150g + salada + 1 col. sobremesa azeite",
-      ],
-      "Lanche da tarde": ["Iogurte natural + granola + banana"],
-      "Jantar": ["Omelete 3 ovos + legumes refogados + salada"],
-      "Ceia": ["1 copo de leite desnatado"],
-    },
-    high: {
-      "Café da manhã": [
-        "Tapioca grande + 2 ovos + queijo 30g + 1 fruta + café",
-      ],
-      "Almoço": [
-        "Arroz 6 colheres + feijão 1 concha grande + carne magra 180g + salada + abóbora 100g",
-      ],
-      "Lanche da tarde": ["Sanduíche pão integral + peito de peru + queijo"],
-      "Jantar": ["Frango grelhado 150g + batata doce 150g + salada"],
-      "Ceia": ["Leite + aveia + mel"],
-    },
+  mid: {
+    "Café da manhã": [
+      "2 ovos mexidos + 2 fatias pão integral + 1 fruta + café sem açúcar",
+    ],
+    "Almoço": [
+      "Arroz 4 colheres de sopa + feijão 1 concha + frango grelhado 120g + salada + 1 col. sobremesa de azeite",
+    ],
+    "Lanche da tarde": ["1 fruta + 1 col. sopa de pasta de amendoim"],
+    "Jantar": ["Omelete com 2 ovos + legumes refogados"],
+    "Ceia": ["1 copo de leite desnatado"],
   },
-  nao_informado: {
-    low: { ...TEMPLATES.feminino.low },
-    mid: { ...TEMPLATES.feminino.mid },
-    high: { ...TEMPLATES.feminino.high },
+  high: {
+    "Café da manhã": [
+      "Tapioca média + 1 ovo + queijo branco 30g + 1 fruta",
+    ],
+    "Almoço": [
+      "Arroz 5 colheres + feijão 1 concha + carne magra 150g + salada + abóbora cozida 80g",
+    ],
+    "Lanche da tarde": ["Iogurte natural + banana + 1 col. sopa de aveia"],
+    "Jantar": ["Frango grelhado 120g + purê de batata 100g + salada"],
+    "Ceia": ["1 copo de leite desnatado + 1 col. chá de mel"],
   },
+};
+
+const MASCULINO: Record<Tier, Record<DietMeal["label"], string[]>> = {
+  low: {
+    "Café da manhã": ["2 ovos mexidos + 1 fatia pão integral + 1 fruta"],
+    "Almoço": [
+      "Arroz 4 colheres + feijão 1 concha + frango grelhado 120g + salada à vontade",
+    ],
+    "Lanche da tarde": ["1 fruta + 1 col. sopa de pasta de amendoim"],
+    "Jantar": ["Sopa de legumes com frango 100g"],
+    "Ceia": ["1 xícara de chá"],
+  },
+  mid: {
+    "Café da manhã": [
+      "3 ovos mexidos + 2 fatias pão integral + 1 fruta + café sem açúcar",
+    ],
+    "Almoço": [
+      "Arroz 5 colheres + feijão 1 concha + frango/carne 150g + salada + 1 col. sobremesa azeite",
+    ],
+    "Lanche da tarde": ["Iogurte natural + granola + banana"],
+    "Jantar": ["Omelete 3 ovos + legumes refogados + salada"],
+    "Ceia": ["1 copo de leite desnatado"],
+  },
+  high: {
+    "Café da manhã": [
+      "Tapioca grande + 2 ovos + queijo 30g + 1 fruta + café",
+    ],
+    "Almoço": [
+      "Arroz 6 colheres + feijão 1 concha grande + carne magra 180g + salada + abóbora 100g",
+    ],
+    "Lanche da tarde": ["Sanduíche pão integral + peito de peru + queijo"],
+    "Jantar": ["Frango grelhado 150g + batata doce 150g + salada"],
+    "Ceia": ["Leite + aveia + mel"],
+  },
+};
+
+const TEMPLATES: Record<"feminino" | "masculino", Record<Tier, Record<DietMeal["label"], string[]>>> = {
+  feminino: FEMININO,
+  masculino: MASCULINO,
 };
 
 function tierFor(goalKcal: number): Tier {
@@ -120,9 +112,9 @@ function tierFor(goalKcal: number): Tier {
   return "high";
 }
 
-function sexBucket(sex: Sex): keyof typeof TEMPLATES {
-  if (sex === "masculino") return "masculino";
-  return "feminino"; // cai aqui também quando "nao_informado" / null
+function sexBucket(sex: Sex): "feminino" | "masculino" {
+  // Feminino é o fallback para "nao_informado" / null.
+  return sex === "masculino" ? "masculino" : "feminino";
 }
 
 /**

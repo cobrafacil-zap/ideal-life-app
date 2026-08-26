@@ -3,7 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 import { EmptyState } from "@/components/EmptyState";
-import { NewCycleForm, DailySymptomsForm } from "./CycleForms";
+import {
+  StartMenstruationDialog,
+  DailySymptomsForm,
+} from "./CycleForms";
 import { CycleHeatmap, type CycleHeatmapLog } from "@/components/ciclo/CycleHeatmap";
 import { CommonSymptomsCard } from "@/components/ciclo/CommonSymptomsCard";
 import { differenceInCalendarDays, format, parseISO } from "date-fns";
@@ -45,7 +48,7 @@ export default async function CicloPage() {
         .limit(12),
       supabase
         .from("menstrual_daily_logs")
-        .select("pain_level, symptoms, mood, notes")
+        .select("pain_level, symptoms, mood, notes, flow_intensity")
         .eq("user_id", user.id)
         .eq("log_date", today)
         .maybeSingle(),
@@ -76,6 +79,11 @@ export default async function CicloPage() {
 
   const heroBg = phaseKey ? PHASE_BG[phaseKey] : "bg-moss-gradient";
   const heroTextLight = phaseKey ? PHASE_TEXT_LIGHT[phaseKey] : true;
+
+  // Ciclo em aberto = mais recente com end_date NULL.
+  const openCycle = (cycles ?? []).find((c) => c.end_date == null) ?? null;
+  const hasOpenCycle = !!openCycle;
+  const openCycleStart = openCycle?.start_date ?? null;
 
   const hasAnyData =
     (cycles?.length ?? 0) > 0 || (recentLogs?.length ?? 0) > 0 || !!todayLog;
@@ -207,6 +215,16 @@ export default async function CicloPage() {
             <DailySymptomsForm
               initialPain={todayLog?.pain_level ?? undefined}
               initialSymptoms={todayLog?.symptoms ?? []}
+              initialFlow={
+                (todayLog?.flow_intensity as
+                  | "leve"
+                  | "moderado"
+                  | "intenso"
+                  | null
+                  | undefined) ?? null
+              }
+              hasOpenCycle={hasOpenCycle}
+              openCycleStart={openCycleStart}
             />
           </Card>
 
@@ -271,10 +289,10 @@ export default async function CicloPage() {
 
           <Card>
             <CardHeader
-              title="Novo ciclo"
-              description="Marque o primeiro dia de menstruação para recalcular as previsões."
+              title="Menstruação"
+              description="Registre quando começa, escolha a intensidade do fluxo e atualize dia a dia."
             />
-            <NewCycleForm />
+            <StartMenstruationDialog hasOpenCycle={hasOpenCycle} />
           </Card>
 
           <Card padded={false} className="bg-ember-soft/40 border-ember/20">

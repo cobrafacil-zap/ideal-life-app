@@ -28,8 +28,6 @@ const GOAL_OPTIONS: { value: GoalType; label: string; hint: string }[] = [
 
 export function PhysicalProfileForm({
   heightCm,
-  weightGoalKg,
-  weightStartKg,
   weeklyRateKg,
   birthDate,
   biologicalSex,
@@ -37,8 +35,6 @@ export function PhysicalProfileForm({
   goalType,
 }: {
   heightCm: number | null;
-  weightGoalKg: number | null;
-  weightStartKg: number | null;
   weeklyRateKg: number | null;
   birthDate?: string | null;
   biologicalSex?: Sex | null;
@@ -46,8 +42,6 @@ export function PhysicalProfileForm({
   goalType?: GoalType | null;
 }) {
   const [height, setHeight] = useState(heightCm?.toString() ?? "");
-  const [goal, setGoal] = useState(weightGoalKg?.toString() ?? "");
-  const [start, setStart] = useState(weightStartKg?.toString() ?? "");
   const [rate, setRate] = useState(weeklyRateKg?.toString() ?? "0,5");
   const [goalTypeValue, setGoalTypeValue] = useState<GoalType | "">(
     goalType ?? "manter"
@@ -64,21 +58,11 @@ export function PhysicalProfileForm({
     setError(null);
 
     const h = parseFloat(height.replace(",", "."));
-    const g = parseFloat(goal.replace(",", "."));
-    const s = parseFloat(start.replace(",", "."));
     const r = parseFloat(rate.replace(",", "."));
 
     // Validação simples (defesa em profundidade; o CHECK no DB também barra).
     if (Number.isFinite(h) && (h < 100 || h > 250)) {
       setError("Altura deve estar entre 100 e 250 cm.");
-      return;
-    }
-    if (Number.isFinite(g) && (g < 20 || g > 400)) {
-      setError("Meta de peso deve estar entre 20 e 400 kg.");
-      return;
-    }
-    if (goalTypeValue === "perder" && (!Number.isFinite(s) || s < 20 || s > 400)) {
-      setError("Informe o peso inicial (entre 20 e 400 kg) para começar a meta de perda.");
       return;
     }
     if (
@@ -94,9 +78,6 @@ export function PhysicalProfileForm({
       try {
         await updatePhysicalProfile({
           height_cm: Number.isNaN(h) ? null : h,
-          weight_goal_kg: Number.isNaN(g) ? null : g,
-          weight_goal_start_kg:
-            goalTypeValue === "perder" && !Number.isNaN(s) ? s : null,
           weekly_rate_kg:
             goalTypeValue === "perder" && !Number.isNaN(r) ? r : null,
           goal_type: goalTypeValue || null,
@@ -154,40 +135,8 @@ export function PhysicalProfileForm({
         </label>
       </div>
 
-      <div
-        className={cn(
-          "grid gap-3 transition-opacity",
-          isLoseGoal ? "sm:grid-cols-3" : "sm:grid-cols-1"
-        )}
-      >
-        <TextField
-          label="Meta de peso (kg)"
-          type="text"
-          inputMode="decimal"
-          value={goal}
-          placeholder="70,0"
-          trailingAdornment="kg"
-          onChange={(e) => {
-            setGoal(e.target.value);
-            setSaved(false);
-          }}
-        />
-        {isLoseGoal && (
-          <TextField
-            label="Peso inicial (kg)"
-            type="text"
-            inputMode="decimal"
-            value={start}
-            placeholder="85,0"
-            trailingAdornment="kg"
-            hint="Capturado ao definir a meta"
-            onChange={(e) => {
-              setStart(e.target.value);
-              setSaved(false);
-            }}
-          />
-        )}
-        {isLoseGoal && (
+      {isLoseGoal && (
+        <div className="grid gap-3 sm:grid-cols-1">
           <TextField
             label="Taxa semanal (kg/sem)"
             type="text"
@@ -195,14 +144,14 @@ export function PhysicalProfileForm({
             value={rate}
             placeholder="0,5"
             trailingAdornment="kg/sem"
-            hint="Sugestão: 0,3–0,7 kg/sem"
+            hint="Sugestão: 0,3–0,7 kg/sem. Os pesos inicial e atual ficam no card acima."
             onChange={(e) => {
               setRate(e.target.value);
               setSaved(false);
             }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="block">

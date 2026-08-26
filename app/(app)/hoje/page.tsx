@@ -170,8 +170,6 @@ export default async function HojePage() {
   const yesterdayOverall = wellBeingAverage(checkinYesterday); // 0–10 ou null
   const yesterdayOverallPct =
     yesterdayOverall != null ? Math.round(yesterdayOverall * 10) : null;
-  const todayOverallPct =
-    todayOverall != null ? Math.round(todayOverall * 10) : null;
 
   const cycleDay = latestCycle?.start_date
     ? differenceInCalendarDays(nowInBR(), new Date(latestCycle.start_date)) + 1
@@ -187,6 +185,8 @@ export default async function HojePage() {
 
   // Bem-estar: hoje + último check-in anterior.
   const todayOverall = wellBeingAverage(checkin); // 0–10
+  const todayOverallPct =
+    todayOverall != null ? Math.round(todayOverall * 10) : null;
   const lastOverall = wellBeingAverage(lastCheckin); // 0–10 ou null
   const wellBeingDelta =
     todayOverall != null && lastOverall != null

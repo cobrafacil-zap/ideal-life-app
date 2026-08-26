@@ -10,6 +10,8 @@ import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
 import { getAvatarSignedUrl } from "@/lib/avatar";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { CalorieSuggestionCard } from "./CalorieSuggestionCard";
+import { getCalorieSuggestion } from "./calorie-suggestion";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +30,9 @@ export default async function PerfilPage() {
     .maybeSingle();
 
   const avatarSignedUrl = await getAvatarSignedUrl(supabase, profile?.avatar_url);
+
+  // Sugestão de meta calórica (retorna null se não houver peso atual).
+  const calorieSuggestion = await getCalorieSuggestion();
 
   const displayName =
     profile?.full_name ?? user.user_metadata?.full_name ?? "";
@@ -89,6 +94,13 @@ export default async function PerfilPage() {
               </Button>
             </form>
           </Card>
+
+          {calorieSuggestion && (
+            <CalorieSuggestionCard
+              suggestion={calorieSuggestion}
+              currentCalorieGoal={profile?.calorie_goal ?? null}
+            />
+          )}
 
           <Card>
             <CardHeader

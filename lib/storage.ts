@@ -12,9 +12,13 @@ import type { Database } from "@/types/database";
 
 const AVATAR_BUCKET = "avatars";
 const MEAL_PHOTOS_BUCKET = "meal-photos";
+const WORKOUT_IMAGES_BUCKET = "workout-images";
 
 export type AvatarExt = "png" | "jpg" | "jpeg" | "webp";
 export type MealPhotoExt = "png" | "jpg" | "jpeg" | "webp";
+export type WorkoutImageExt = "png" | "jpg" | "jpeg" | "webp";
+
+export const WORKOUT_IMAGE_BUCKET = WORKOUT_IMAGES_BUCKET;
 
 function extFromMime(type: string): string | null {
   switch (type) {
@@ -79,7 +83,7 @@ export async function uploadMealPhoto(
  */
 export async function getSignedFileUrl(
   supabase: SupabaseClient<Database>,
-  bucket: "avatars" | "meal-photos",
+  bucket: "avatars" | "meal-photos" | "workout-images",
   path: string,
   expiresIn = 3600,
 ): Promise<string | null> {
@@ -95,9 +99,32 @@ export async function getSignedFileUrl(
  */
 export async function removeFile(
   supabase: SupabaseClient<Database>,
-  bucket: "avatars" | "meal-photos",
+  bucket: "avatars" | "meal-photos" | "workout-images",
   paths: string[],
 ): Promise<void> {
   if (paths.length === 0) return;
   await supabase.storage.from(bucket).remove(paths);
+}
+
+/**
+ * Upload da imagem do exercício. Pasta por usuário + nome estável
+ * baseado no id do exercício pra permitir sobrescrita controlada.
+ */
+export async function uploadExerciseImage(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  exerciseId: string,
+  file: File | Blob,
+  mimeType: string,
+): Promise<string> {
+  const ext = extFromMime(mimeType);
+  if (!ext) throw new Error("Tipo de imagem não suportado (use PNG, JPG ou WebP).");
+
+  const path = `${userId}/${exerciseId}.${ext}`;
+  const { error } = await supabase.storage
+    .from(WORKOUT_IMAGES_BUCKET)
+    .upload(path, file, { upsert: true, contentType: mimeType, cacheControl: "3600" });
+
+  if (error) throw new Error(`Falha no upload da imagem do exercício: ${error.message}`);
+  return path;
 }

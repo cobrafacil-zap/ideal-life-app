@@ -113,10 +113,95 @@ export interface MealPhoto {
 export interface WorkoutSession {
   id: string;
   user_id: string;
+  workout_plan_id: string | null;
   workout_name: string;
   started_at: string;
   finished_at: string | null;
+  duration_h: number | null;
+  duration_min: number | null;
+  /** Esforço percebido geral da sessão (1–10). Adicionado na FASE 1. */
+  user_rpe: number | null;
+  created_at: string;
 }
+
+export interface Exercise {
+  id: string;
+  /** NULL = exercício do catálogo global; preenchido = exercício próprio. */
+  user_id: string | null;
+  name: string;
+  primary_muscle: string;
+  secondary_muscles: string[];
+  equipment: string | null;
+  substitutes: string[];
+  /** Storage path no bucket `workout-images` (privado). NULL → placeholder SVG. */
+  image_url: string | null;
+  created_at: string;
+}
+
+export interface WorkoutPlan {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WorkoutPlanExercise {
+  id: string;
+  workout_plan_id: string;
+  user_id: string;
+  exercise_id: string | null;
+  /** Nome do exercício (caso exercise_id seja NULL — exercício apagado). */
+  exercise_name: string;
+  target_sets: number;
+  /** Texto livre: "10-12", "8", "até a falha". */
+  target_reps: string;
+  target_load: number | null;
+  load_unit: "kg" | "lb";
+  rest_seconds: number;
+  notes: string | null;
+  sort_order: number;
+}
+
+export interface ExerciseSet {
+  id: string;
+  workout_session_id: string;
+  user_id: string;
+  exercise_id: string | null;
+  exercise_name: string;
+  set_number: number;
+  reps: number | null;
+  load: number | null;
+  load_unit: "kg" | "lb";
+  /** Esforço percebido da série (1–10). Adicionado na FASE 1. */
+  rpe: number | null;
+  /** Desconforto relatado (0–10). Não é diagnóstico. Adicionado na FASE 1. */
+  discomfort: number | null;
+  created_at: string;
+}
+
+export type PrimaryMuscleGroup =
+  | "peito"
+  | "costas"
+  | "pernas"
+  | "ombros"
+  | "bracos"
+  | "core"
+  | "cardio"
+  | "outro";
+
+export type EquipmentKind =
+  | "nenhum"
+  | "haltere"
+  | "barra"
+  | "maquina"
+  | "elastico"
+  | "cabo"
+  | "kettlebell"
+  | "outro";
 
 export interface MenstrualCycle {
   id: string;

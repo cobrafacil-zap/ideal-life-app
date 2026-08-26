@@ -18,7 +18,7 @@ export function BottomNav() {
       aria-label="Navegação principal"
       className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-surface/85 backdrop-blur border-t border-line"
     >
-      <ul className="mx-auto grid max-w-[1200px] grid-cols-5">
+      <ul className="mx-auto grid max-w-[1200px] grid-cols-6">
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname?.startsWith(href);
           return (

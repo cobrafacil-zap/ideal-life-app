@@ -1,4 +1,11 @@
-import { Sun, HeartPulse, Utensils, Droplets, CircleUserRound } from "lucide-react";
+import {
+  Sun,
+  HeartPulse,
+  Utensils,
+  Dumbbell,
+  Droplets,
+  CircleUserRound,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -27,6 +34,12 @@ export const navItems: NavItem[] = [
     label: "Alimentação",
     icon: Utensils,
     description: "Refeições e calorias do dia",
+  },
+  {
+    href: "/treinos",
+    label: "Treinos",
+    icon: Dumbbell,
+    description: "Biblioteca, planos e séries",
   },
   {
     href: "/ciclo",

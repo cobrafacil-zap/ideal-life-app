@@ -68,6 +68,55 @@ export async function logMeal(input: {
   revalidatePath("/hoje");
 }
 
+/**
+ * Atualiza uma refeição existente (tipo, notas, kcal, macros).
+ * O usuário só pode editar suas próprias refeições (RLS garante).
+ */
+export async function updateMeal(mealId: string, input: {
+  meal_type?: string;
+  notes?: string;
+  total_calories?: number | null;
+  total_protein_g?: number | null;
+  total_carbs_g?: number | null;
+  total_fat_g?: number | null;
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const update: Record<string, unknown> = {};
+  if (input.meal_type !== undefined) {
+    if (!ALLOWED_MEAL_TYPES.has(input.meal_type)) {
+      throw new Error("Tipo de refeição inválido.");
+    }
+    update.meal_type = input.meal_type;
+  }
+  if (input.notes !== undefined) {
+    const trimmed = input.notes.trim();
+    if (trimmed.length > 500) {
+      throw new Error("Descrição muito longa (máx. 500 caracteres).");
+    }
+    update.notes = trimmed;
+  }
+  update.total_calories = input.total_calories ?? null;
+  update.total_protein_g = input.total_protein_g ?? null;
+  update.total_carbs_g = input.total_carbs_g ?? null;
+  update.total_fat_g = input.total_fat_g ?? null;
+
+  const { error } = await supabase
+    .from("meals")
+    .update(update)
+    .eq("id", mealId)
+    .eq("user_id", user.id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/alimentacao");
+  revalidatePath("/hoje");
+}
+
 export async function deleteMeal(mealId: string) {
   const supabase = createClient();
   const {

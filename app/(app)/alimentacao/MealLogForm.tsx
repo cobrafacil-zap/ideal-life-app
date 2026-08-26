@@ -3,9 +3,13 @@
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
-import { Camera, Salad, ChevronDown } from "lucide-react";
+import { Camera, Salad, ChevronDown, Calculator } from "lucide-react";
 import { logMeal } from "./actions";
 import { cn } from "@/lib/cn";
+import {
+  CalorieCalculator,
+  type CalculatedTotals,
+} from "@/components/alimentacao/CalorieCalculator";
 
 const mealTypes = [
   { value: "cafe_da_manha", label: "Café", fullLabel: "Café da manhã" },
@@ -24,8 +28,19 @@ export function MealLogForm() {
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
   const [showMacros, setShowMacros] = useState(false);
+  const [showCalc, setShowCalc] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  function handleCalculatorApply(totals: CalculatedTotals) {
+    setCalories(String(totals.calories));
+    setProtein(String(totals.protein).replace(/\.0$/, ""));
+    setCarbs(String(totals.carbs).replace(/\.0$/, ""));
+    setFat(String(totals.fat).replace(/\.0$/, ""));
+    setShowMacros(true);
+    setShowCalc(false);
+    setFeedback("Totais calculados — revise e salve.");
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -102,9 +117,9 @@ export function MealLogForm() {
         hint={`${description.length}/500 caracteres`}
       />
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-3">
         <TextField
-          label="Calorias (opcional)"
+          label="Calorias"
           type="text"
           inputMode="numeric"
           placeholder="520"
@@ -114,9 +129,23 @@ export function MealLogForm() {
         />
         <button
           type="button"
+          onClick={() => setShowCalc((v) => !v)}
+          aria-expanded={showCalc}
+          className="mt-6 inline-flex items-center justify-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink-soft hover:border-ember/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base"
+        >
+          <Calculator size={14} aria-hidden="true" />
+          {showCalc ? "Fechar" : "Calcular"}
+          <ChevronDown
+            size={14}
+            className={cn("transition-transform", showCalc && "rotate-180")}
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          type="button"
           onClick={() => setShowMacros((v) => !v)}
           aria-expanded={showMacros}
-          className="mt-6 inline-flex items-center justify-center gap-1 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink-soft hover:border-ember/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base"
+          className="mt-6 inline-flex items-center justify-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-ink-soft hover:border-ember/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember focus-visible:ring-offset-2 focus-visible:ring-offset-base"
         >
           <Salad size={14} aria-hidden="true" />
           {showMacros ? "Ocultar" : "Adicionar"} macros
@@ -127,6 +156,15 @@ export function MealLogForm() {
           />
         </button>
       </div>
+
+      {showCalc && (
+        <div className="rounded-2xl border border-line/60 bg-base/40 p-3 animate-fade-up">
+          <CalorieCalculator
+            onApply={handleCalculatorApply}
+            onApplied={() => setShowCalc(false)}
+          />
+        </div>
+      )}
 
       {showMacros && (
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-line/60 bg-base/60 p-3 animate-fade-up">

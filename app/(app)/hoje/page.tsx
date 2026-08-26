@@ -122,7 +122,7 @@ export default async function HojePage() {
       .eq("user_id", user.id)
       .gte("log_date", daysAgoBRISO(7)),
     // "Último registro" — última refeição antes de hoje.
-    findLastRecordRow(supabase, {
+    findLastRecordRow<{ total_calories: number }>(supabase, {
       table: "meals",
       select: "total_calories, meal_date",
       column: "meal_date",
@@ -130,7 +130,7 @@ export default async function HojePage() {
       beforeDate: today,
     }),
     // "Último registro" — última água antes de hoje.
-    findLastRecordRow(supabase, {
+    findLastRecordRow<{ amount_ml: number }>(supabase, {
       table: "water_logs",
       select: "amount_ml, log_date",
       column: "log_date",
@@ -138,7 +138,11 @@ export default async function HojePage() {
       beforeDate: today,
     }),
     // "Último registro" — último check-in (já temos `lastCheckin` mas queremos a data exata).
-    findLastRecordRow(supabase, {
+    findLastRecordRow<{
+      energy: number;
+      mood: number;
+      disposition: number;
+    }>(supabase, {
       table: "daily_checkins",
       select: "energy, mood, disposition, checkin_date",
       column: "checkin_date",
@@ -188,13 +192,13 @@ export default async function HojePage() {
 
   // Totais do último registro por pilar (pega o que tiver).
   const caloriesLast = lastMealRow?.row.total_calories ?? 0;
-  const waterLastMl = (lastWaterRow?.row as { amount_ml: number } | undefined)?.amount_ml ?? 0;
+  const waterLastMl = lastWaterRow?.row.amount_ml ?? 0;
   const wellbeingLastPct =
     lastCheckinRow && lastCheckinRow.row
       ? Math.round(
-          ((lastCheckinRow.row.energy ?? 0) +
-            (lastCheckinRow.row.mood ?? 0) +
-            (lastCheckinRow.row.disposition ?? 0)) /
+          (lastCheckinRow.row.energy +
+            lastCheckinRow.row.mood +
+            lastCheckinRow.row.disposition) /
             30 *
             100,
         )

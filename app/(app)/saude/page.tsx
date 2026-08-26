@@ -6,7 +6,6 @@ import { WeightSection } from "./WeightSection";
 import { PhysicalProfileForm } from "./PhysicalProfileForm";
 import { CardioSection } from "./CardioSection";
 import { DietSuggestion } from "./DietSuggestion";
-import { GoalProgressCard } from "@/components/saude/GoalProgressCard";
 import { Trend } from "@/components/Trend";
 import {
   Dumbbell,
@@ -55,13 +54,6 @@ const ACTIVITY_LABEL: Record<string, string> = {
   moderado: "Moderado",
   ativo: "Ativo",
   muito_ativo: "Atleta",
-};
-
-const GOAL_LABEL: Record<string, string> = {
-  perder: "Perder peso",
-  manter: "Manter",
-  ganhar: "Ganhar massa",
-  recompor: "Recompor",
 };
 
 export default async function SaudePage() {
@@ -266,7 +258,7 @@ export default async function SaudePage() {
 
             {heightCm === null && (
               <p className="mt-4 text-[12px] text-ink-soft">
-                Defina sua altura em &ldquo;Seus objetivos&rdquo; para ver o IMC.
+                Defina sua altura em &ldquo;Perfil físico&rdquo; abaixo para ver o IMC.
               </p>
             )}
 
@@ -279,48 +271,17 @@ export default async function SaudePage() {
           </Card>
 
           {/* ────────────────────────────────────────────
-              SEUS OBJETIVOS
+              SEUS OBJETIVOS (peso + objetivo) → movido pra /perfil
+              Aqui em /saude ficam só os dados físicos de saúde
+              (altura, nascimento, sexo biológico, nível de atividade).
               ──────────────────────────────────────────── */}
           <Card>
             <CardHeader
-              title="Seus objetivos"
-              description="Edite o peso inicial, atual e meta diretamente aqui — cada um salva no lugar certo."
+              title="Perfil físico"
+              description="Altura, idade e nível de atividade — alimentam IMC, TDEE e sugestões."
             />
-
-            <div className="mb-4 rounded-2xl bg-base/40 p-4">
-              <div className="mb-3 flex items-center justify-between text-[12px] text-ink-soft">
-                <span>Objetivo atual</span>
-                <span className="font-mono font-semibold text-ink">
-                  {GOAL_LABEL[goalType] ?? "Manter"}
-                </span>
-              </div>
-              <GoalProgressCard
-                weightStart={
-                  goalType === "perder"
-                    ? (profile?.weight_goal_start_kg ?? null)
-                    : null
-                }
-                currentWeight={currentWeight}
-                weightGoal={profile?.weight_goal_kg ?? null}
-              />
-              {goalType === "ganhar" && (
-                <p className="mt-3 text-[13px] text-ink-soft">
-                  Para ganhar massa, defina a meta acima do seu peso atual.
-                  Ajuste treino e alimentação nas abas correspondentes.
-                </p>
-              )}
-              {goalType === "recompor" && (
-                <p className="mt-3 text-[13px] text-ink-soft">
-                  Recomposição corporal: foco em manter o peso e ajustar
-                  treino e alimentação para remodelar composição.
-                </p>
-              )}
-            </div>
-
             <PhysicalProfileForm
               heightCm={heightCm}
-              weeklyRateKg={profile?.weekly_rate_kg ?? null}
-              goalType={goalType}
               birthDate={profile?.birth_date ?? null}
               biologicalSex={
                 (profile?.biological_sex as

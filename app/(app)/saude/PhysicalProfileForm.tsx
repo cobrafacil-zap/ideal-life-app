@@ -9,7 +9,6 @@ import { todayBR } from "@/lib/datetime";
 
 type Sex = "feminino" | "masculino" | "nao_informado";
 type Activity = "sedentario" | "leve" | "moderado" | "ativo" | "muito_ativo";
-type GoalType = "perder" | "manter" | "ganhar" | "recompor";
 
 const ACTIVITY_OPTIONS: { value: Activity; label: string }[] = [
   { value: "sedentario", label: "Sedentário" },
@@ -19,33 +18,18 @@ const ACTIVITY_OPTIONS: { value: Activity; label: string }[] = [
   { value: "muito_ativo", label: "Atleta" },
 ];
 
-const GOAL_OPTIONS: { value: GoalType; label: string; hint: string }[] = [
-  { value: "perder", label: "Perder peso", hint: "Inclui meta de queima semanal" },
-  { value: "manter", label: "Manter", hint: "Foco em manter o peso atual" },
-  { value: "ganhar", label: "Ganhar massa", hint: "Meta acima do peso atual" },
-  { value: "recompor", label: "Recompor", hint: "Manter peso, ajustar composição" },
-];
-
 export function PhysicalProfileForm({
   heightCm,
-  weeklyRateKg,
   birthDate,
   biologicalSex,
   activityLevel,
-  goalType,
 }: {
   heightCm: number | null;
-  weeklyRateKg: number | null;
   birthDate?: string | null;
   biologicalSex?: Sex | null;
   activityLevel?: Activity | null;
-  goalType?: GoalType | null;
 }) {
   const [height, setHeight] = useState(heightCm?.toString() ?? "");
-  const [rate, setRate] = useState(weeklyRateKg?.toString() ?? "0,5");
-  const [goalTypeValue, setGoalTypeValue] = useState<GoalType | "">(
-    goalType ?? "manter"
-  );
   const [dob, setDob] = useState(birthDate ?? "");
   const [sex, setSex] = useState<Sex | "">(biologicalSex ?? "");
   const [activity, setActivity] = useState<Activity | "">(activityLevel ?? "");
@@ -58,19 +42,10 @@ export function PhysicalProfileForm({
     setError(null);
 
     const h = parseFloat(height.replace(",", "."));
-    const r = parseFloat(rate.replace(",", "."));
 
     // Validação simples (defesa em profundidade; o CHECK no DB também barra).
     if (Number.isFinite(h) && (h < 100 || h > 250)) {
       setError("Altura deve estar entre 100 e 250 cm.");
-      return;
-    }
-    if (
-      goalTypeValue === "perder" &&
-      Number.isFinite(r) &&
-      (r < 0.1 || r > 1.0)
-    ) {
-      setError("Taxa semanal deve estar entre 0,1 e 1,0 kg/semana.");
       return;
     }
 
@@ -78,9 +53,6 @@ export function PhysicalProfileForm({
       try {
         await updatePhysicalProfile({
           height_cm: Number.isNaN(h) ? null : h,
-          weekly_rate_kg:
-            goalTypeValue === "perder" && !Number.isNaN(r) ? r : null,
-          goal_type: goalTypeValue || null,
           birth_date: dob || null,
           biological_sex: sex || null,
           activity_level: activity || null,
@@ -97,61 +69,20 @@ export function PhysicalProfileForm({
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-base",
   );
 
-  const isLoseGoal = goalTypeValue === "perder";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <TextField
-          label="Altura (cm)"
-          type="text"
-          inputMode="decimal"
-          value={height}
-          placeholder="170"
-          trailingAdornment="cm"
-          onChange={(e) => {
-            setHeight(e.target.value);
-            setSaved(false);
-          }}
-        />
-        <label className="block">
-          <span className="mb-1.5 block text-sm font-medium text-ink-soft">
-            Objetivo
-          </span>
-          <select
-            value={goalTypeValue}
-            onChange={(e) => {
-              setGoalTypeValue(e.target.value as GoalType | "");
-              setSaved(false);
-            }}
-            className={selectClass}
-          >
-            {GOAL_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      {isLoseGoal && (
-        <div className="grid gap-3 sm:grid-cols-1">
-          <TextField
-            label="Taxa semanal (kg/sem)"
-            type="text"
-            inputMode="decimal"
-            value={rate}
-            placeholder="0,5"
-            trailingAdornment="kg/sem"
-            hint="Sugestão: 0,3–0,7 kg/sem. Os pesos inicial e atual ficam no card acima."
-            onChange={(e) => {
-              setRate(e.target.value);
-              setSaved(false);
-            }}
-          />
-        </div>
-      )}
+      <TextField
+        label="Altura (cm)"
+        type="text"
+        inputMode="decimal"
+        value={height}
+        placeholder="170"
+        trailingAdornment="cm"
+        onChange={(e) => {
+          setHeight(e.target.value);
+          setSaved(false);
+        }}
+      />
 
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="block">

@@ -56,6 +56,65 @@ export async function updateProfile(input: { full_name: string }) {
 }
 
 /**
+ * Atualiza apenas objetivo + taxa semanal (sem mexer nos pesos).
+ * Os pesos inicial / atual / meta ficam no `GoalProgressCard` e usam
+ * `updateGoalWeights` (em `app/(app)/saude/actions.ts`).
+ *
+ * Regras:
+ *  - Se `goal_type !== "perder"`, força `weekly_rate_kg = null`.
+ *  - Se trocou o `goal_type`, carimba `goal_started_at` (consistente com
+ *    `updatePhysicalProfile`).
+ */
+export async function updateGoalSettings(input: {
+  goal_type: "perder" | "manter" | "ganhar" | "recompor" | null;
+  weekly_rate_kg: number | string | null;
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Não autenticado.");
+
+  const nextGoalType = input.goal_type;
+
+  // Lê o goal_type atual pra detectar mudança (carimba goal_started_at).
+  const { data: currentProfile } = await supabase
+    .from("profiles")
+    .select("goal_type")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const prevGoalType = (currentProfile?.goal_type ?? "manter") as
+    | "perder"
+    | "manter"
+    | "ganhar"
+    | "recompor";
+
+  const update: Record<string, unknown> = {
+    goal_type: nextGoalType,
+    weekly_rate_kg: nextGoalType === "perder" ? Number(input.weekly_rate_kg) || 0.5 : null,
+  };
+
+  if (nextGoalType && nextGoalType !== prevGoalType) {
+    update.goal_started_at = new Date().toISOString();
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update(update)
+    .eq("id", user.id);
+  if (error) throw new Error(error.message);
+
+  // Phase 5: recalcula a meta semanal de gasto calórico.
+  const { recomputeAndStoreWeeklyBurn } = await import("@/lib/goals");
+  void recomputeAndStoreWeeklyBurn(supabase, user.id);
+
+  revalidatePath("/perfil");
+  revalidatePath("/saude");
+  revalidatePath("/hoje");
+}
+
+/**
  * Server action exposto ao form inline de perfil. Encapsula
  * a atualização de nome + user_metadata num único ponto para
  * evitar duplicação e facilitar revogação futura.

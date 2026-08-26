@@ -3,7 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { SectionHeader } from "@/components/SectionHeader";
 import { GoalsForm } from "./GoalsForm";
+import { GoalSettingsForm } from "./GoalSettingsForm";
 import { AvatarUploader } from "./AvatarUploader";
+import { GoalProgressCard } from "@/components/saude/GoalProgressCard";
 import { signOut, updateProfileName } from "./actions";
 import { CircleUserRound, LogOut, Compass, Save } from "lucide-react";
 import { TextField } from "@/components/ui/TextField";
@@ -15,6 +17,15 @@ import { getCalorieSuggestion } from "./calorie-suggestion";
 
 export const dynamic = "force-dynamic";
 
+type GoalType = "perder" | "manter" | "ganhar" | "recompor";
+
+const GOAL_LABEL: Record<string, string> = {
+  perder: "Perder peso",
+  manter: "Manter",
+  ganhar: "Ganhar massa",
+  recompor: "Recompor",
+};
+
 export default async function PerfilPage() {
   const supabase = createClient();
   const {
@@ -23,16 +34,23 @@ export default async function PerfilPage() {
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
+  const [{ data: profile }, { data: latestWeight }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("body_measurements")
+      .select("weight_kg")
+      .eq("user_id", user.id)
+      .order("measured_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   const avatarSignedUrl = await getAvatarSignedUrl(supabase, profile?.avatar_url);
 
   // Sugestão de meta calórica (retorna null se não houver peso atual).
   const calorieSuggestion = await getCalorieSuggestion();
+
+  const goalType = (profile?.goal_type as GoalType | null) ?? "manter";
 
   const displayName =
     profile?.full_name ?? user.user_metadata?.full_name ?? "";
@@ -112,6 +130,34 @@ export default async function PerfilPage() {
               cardioGoalMin={profile?.cardio_weekly_goal_min ?? 150}
               workoutGoalHours={profile?.workout_weekly_goal_hours ?? null}
               calorieGoal={profile?.calorie_goal ?? null}
+            />
+          </Card>
+
+          <Card>
+            <CardHeader
+              title="Seus objetivos"
+              description="Edite o peso inicial, atual e meta diretamente aqui — cada um salva no lugar certo."
+            />
+            <div className="mb-4 rounded-2xl bg-base/40 p-4">
+              <div className="mb-3 flex items-center justify-between text-[12px] text-ink-soft">
+                <span>Objetivo atual</span>
+                <span className="font-mono font-semibold text-ink">
+                  {GOAL_LABEL[goalType] ?? "Manter"}
+                </span>
+              </div>
+              <GoalProgressCard
+                weightStart={
+                  goalType === "perder"
+                    ? (profile?.weight_goal_start_kg ?? null)
+                    : null
+                }
+                currentWeight={latestWeight?.weight_kg ?? null}
+                weightGoal={profile?.weight_goal_kg ?? null}
+              />
+            </div>
+            <GoalSettingsForm
+              goalType={goalType}
+              weeklyRateKg={profile?.weekly_rate_kg ?? null}
             />
           </Card>
 

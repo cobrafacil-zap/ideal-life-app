@@ -15,7 +15,6 @@ import {
   Power,
   Check,
   X,
-  AlertTriangle,
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -716,13 +715,3 @@ export function NewPlanForm() {
   );
 }
 
-export function PlansEmptyHint() {
-  return (
-    <div className="rounded-card border border-dashed border-line bg-surface/60 p-6 text-center">
-      <AlertTriangle size={20} aria-hidden="true" className="mx-auto mb-2 text-ink-faint" />
-      <p className="text-[13px] text-ink-soft">
-        Você ainda não tem planos. Crie um para começar a registrar séries.
-      </p>
-    </div>
-  );
-}

@@ -189,14 +189,18 @@ export async function listExercises(
     }
   }
 
-  let { data, error } = await query;
+  let data: unknown[] | null = null;
 
-  // Se falhou (provavelmente coluna v2 ainda não existe), cai pro SELECT legado
-  // sem os filtros `category` / `aliases.cs`.
-  if (error) {
+  const { data: primaryData, error } = await query;
+  if (!error) {
+    data = (primaryData ?? []) as unknown[];
+  } else {
+    // Se falhou (provavelmente coluna v2 ainda não existe), cai pro SELECT legado
+    // sem os filtros `category` / `aliases.cs`.
     const msg = String(error.message ?? "").toLowerCase();
     const looksLikeMissingColumn =
-      msg.includes("column") && (msg.includes("does not exist") || msg.includes("não existe"));
+      msg.includes("column") &&
+      (msg.includes("does not exist") || msg.includes("não existe"));
     if (!looksLikeMissingColumn) {
       throw new Error(error.message);
     }
@@ -223,12 +227,12 @@ export async function listExercises(
     }
     const fallbackRes = await fallback;
     if (fallbackRes.error) throw new Error(fallbackRes.error.message);
-    data = fallbackRes.data;
+    data = (fallbackRes.data ?? []) as unknown[];
   }
 
   // Se caímos no modo legado, normalize os campos novos para `null` / `[]`
   // para satisfazer o tipo ExerciseListItem (campos nullable no client).
-  const rows = (data ?? []) as Array<Record<string, unknown>>;
+  const rows = data as Array<Record<string, unknown>>;
   if (!useV2Search) {
     for (const row of rows) {
       if (row.category === undefined) row.category = null;
@@ -237,7 +241,7 @@ export async function listExercises(
       if (row.instructions === undefined) row.instructions = null;
     }
   }
-  return rows as ExerciseListItem[];
+  return rows as unknown as ExerciseListItem[];
 }
 
 export async function getExercise(id: string): Promise<ExerciseListItem | null> {
@@ -311,7 +315,7 @@ export async function createExercise(input: {
     .select(EXERCISE_SELECT_COLUMNS)
     .maybeSingle();
 
-  let created = data;
+  let created: unknown = data;
   if (error) {
     // Fallback se as colunas v2 não existem no banco (migration não aplicada).
     const fallback = await supabase
@@ -395,7 +399,7 @@ export async function updateExercise(
     .select(EXERCISE_SELECT_COLUMNS)
     .maybeSingle();
 
-  let updated = data;
+  let updated: unknown = data;
   if (error) {
     // Fallback se as colunas v2 não existem no banco (migration não aplicada).
     const fallback = await supabase

@@ -18,19 +18,31 @@ export default async function PlanoDetalhePage({
   const plan = await getWorkoutPlan(params.id);
   if (!plan) notFound();
 
-  const library = await listExercises();
+  let library: Awaited<ReturnType<typeof listExercises>> = [];
+  try {
+    library = await listExercises();
+  } catch (err) {
+    // Não derruba a página se a library falhar (ex: coluna não existe).
+    console.error("[plan detail] listExercises falhou:", err);
+  }
 
   // Signed URLs com prioridade para animation_url (gif/vídeo) > image_url.
   // Limite a 80 entradas para evitar custos altos de signed URL.
   const signedEntries = await Promise.all(
-    library.slice(0, 80).map(async (ex) => ({
-      id: ex.id,
-      url: await getExerciseMediaSignedUrl(
-        supabase,
-        ex.image_url,
-        ex.animation_url,
-      ),
-    })),
+    library.slice(0, 80).map(async (ex) => {
+      try {
+        return {
+          id: ex.id,
+          url: await getExerciseMediaSignedUrl(
+            supabase,
+            ex.image_url,
+            ex.animation_url,
+          ),
+        };
+      } catch {
+        return { id: ex.id, url: null };
+      }
+    }),
   );
   const urlMap = new Map(signedEntries.map((s) => [s.id, s.url]));
 

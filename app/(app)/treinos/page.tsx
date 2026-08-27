@@ -17,7 +17,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/EmptyState";
 import { ExerciseLibrary } from "./ExerciseLibrary";
-import { getExerciseImageSignedUrl } from "@/lib/exercise-images";
+import { getExerciseMediaSignedUrl } from "@/lib/exercise-images";
 import { formatHours, formatShortDate } from "@/lib/format";
 import { todayBR } from "@/lib/datetime";
 import { startOfWeekISO } from "@/lib/format";
@@ -44,7 +44,7 @@ export default async function TreinosPage() {
     supabase
       .from("exercises")
       .select(
-        "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, created_at",
+        "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
       )
       .or(`user_id.is.null,user_id.eq.${user.id}`)
       .order("name", { ascending: true })
@@ -93,15 +93,17 @@ export default async function TreinosPage() {
     | "secondary_muscles"
     | "equipment"
     | "image_url"
-    | "created_at"
+    | "animation_url"
   >[];
 
   const signedUrlMap: Record<string, string | null> = {};
   await Promise.all(
     exerciseList.slice(0, 60).map(async (ex) => {
-      signedUrlMap[ex.id] = ex.image_url
-        ? await getExerciseImageSignedUrl(supabase, ex.image_url)
-        : null;
+      signedUrlMap[ex.id] = await getExerciseMediaSignedUrl(
+        supabase,
+        ex.image_url,
+        ex.animation_url,
+      );
     }),
   );
 

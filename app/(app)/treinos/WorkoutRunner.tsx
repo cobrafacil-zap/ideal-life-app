@@ -58,6 +58,7 @@ export function WorkoutRunner({
   planExercises,
   initialSets,
   library,
+  signedUrls,
 }: {
   sessionId: string;
   workoutName: string;

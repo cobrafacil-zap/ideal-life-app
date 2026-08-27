@@ -498,26 +498,43 @@ export async function createWorkoutPlan(input: {
     throw new Error("Dia da semana inválido.");
   }
 
-  const insert: Record<string, unknown> = {
+  // Tenta inserir com scheduled_weekday; se a coluna não existir
+  // (migration não aplicada), faz fallback sem ela.
+  const baseInsert: Record<string, unknown> = {
     user_id: user.id,
     name,
     description: clean(input.description ?? null, 280),
     sort_order: 0,
     is_active: false,
   };
-  // Só envia scheduled_weekday se foi explicitamente escolhido — a coluna
-  // pode ainda não existir em ambientes que não rodaram a migration.
   if (weekday != null) {
-    insert.scheduled_weekday = weekday;
+    baseInsert.scheduled_weekday = weekday;
   }
 
-  const { data, error } = await supabase
-    .from("workout_plans")
-    .insert(insert)
-    .select("id")
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Falha ao criar treino.");
+  let data: { id: string } | null = null;
+  let lastError: string | null = null;
+  {
+    const { data: d1, error: e1 } = await supabase
+      .from("workout_plans")
+      .insert(baseInsert)
+      .select("id")
+      .maybeSingle();
+    if (e1) {
+      lastError = e1.message;
+      // Fallback: remove scheduled_weekday e tenta de novo.
+      const { scheduled_weekday: _drop, ...withoutWeekday } = baseInsert;
+      const { data: d2, error: e2 } = await supabase
+        .from("workout_plans")
+        .insert(withoutWeekday)
+        .select("id")
+        .maybeSingle();
+      if (e2) throw new Error(e2.message);
+      data = d2;
+    } else {
+      data = d1;
+    }
+  }
+  if (!data) throw new Error(lastError ?? "Falha ao criar treino.");
 
   try {
     revalidatePath("/treinos");

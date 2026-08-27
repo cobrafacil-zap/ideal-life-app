@@ -166,7 +166,7 @@ export async function createExercise(input: {
     .from("exercises")
     .insert(insert)
     .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, created_at",
+      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
     )
     .maybeSingle();
 
@@ -242,7 +242,7 @@ export async function updateExercise(
     .update(update)
     .eq("id", id)
     .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, created_at",
+      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
     )
     .maybeSingle();
 

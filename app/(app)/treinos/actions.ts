@@ -57,7 +57,7 @@ export type ExerciseListItem = Pick<
   | "secondary_muscles"
   | "equipment"
   | "image_url"
-  | "created_at"
+  | "animation_url"
 >;
 
 /**
@@ -79,7 +79,7 @@ export async function listExercises(filters?: {
   let query = supabase
     .from("exercises")
     .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, created_at",
+      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
     )
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .order("name", { ascending: true })
@@ -116,7 +116,7 @@ export async function getExercise(id: string): Promise<ExerciseListItem | null> 
   const { data, error } = await supabase
     .from("exercises")
     .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, created_at",
+      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
     )
     .eq("id", id)
     .or(`user_id.is.null,user_id.eq.${user.id}`)

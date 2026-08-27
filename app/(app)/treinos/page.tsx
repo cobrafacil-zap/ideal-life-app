@@ -35,11 +35,11 @@ export default async function TreinosPage() {
   if (!user) redirect("/login");
 
   const [
-    { data: exercises },
-    { data: plans },
-    { data: activeSession },
-    { data: weekSessions },
-    { data: todaySession },
+    exercisesRes,
+    plansRes,
+    activeSessionRes,
+    weekSessionsRes,
+    todaySessionRes,
   ] = await Promise.all([
     supabase
       .from("exercises")
@@ -84,7 +84,7 @@ export default async function TreinosPage() {
   ]);
 
   // Signed URLs para os exercícios do usuário + catálogo (até 20 primeiros para preview).
-  const exerciseList = (exercises ?? []) as Pick<
+  const exerciseList = (exercisesRes.data ?? []) as Pick<
     Exercise,
     | "id"
     | "user_id"
@@ -99,20 +99,32 @@ export default async function TreinosPage() {
   const signedUrlMap: Record<string, string | null> = {};
   await Promise.all(
     exerciseList.slice(0, 60).map(async (ex) => {
-      signedUrlMap[ex.id] = await getExerciseMediaSignedUrl(
-        supabase,
-        ex.image_url,
-        ex.animation_url,
-      );
+      try {
+        signedUrlMap[ex.id] = await getExerciseMediaSignedUrl(
+          supabase,
+          ex.image_url,
+          ex.animation_url,
+        );
+      } catch {
+        // Storage/RLS falhou pra esse item — segue sem mídia.
+        signedUrlMap[ex.id] = null;
+      }
     }),
   );
 
-  const weekHours = (weekSessions ?? []).reduce(
+  const weekHours = (weekSessionsRes.data ?? []).reduce(
     (s, w) => s + (w.duration_h ?? 0),
     0,
   );
-  const weekCount = weekSessions?.length ?? 0;
-  const activePlan = (plans ?? []).find((p) => p.is_active) ?? null;
+  const weekCount = weekSessionsRes.data?.length ?? 0;
+  const activePlan = (plansRes.data ?? []).find((p) => p.is_active) ?? null;
+
+  // Log silencioso se algum subselect falhou (não derruba a página inteira).
+  if (exercisesRes.error) console.error("/treinos exercises:", exercisesRes.error.message);
+  if (plansRes.error) console.error("/treinos plans:", plansRes.error.message);
+  if (activeSessionRes.error) console.error("/treinos activeSession:", activeSessionRes.error.message);
+  if (weekSessionsRes.error) console.error("/treinos weekSessions:", weekSessionsRes.error.message);
+  if (todaySessionRes.error) console.error("/treinos todaySession:", todaySessionRes.error.message);
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -123,7 +135,7 @@ export default async function TreinosPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          {activeSession && (
+          {activeSessionRes.data && (
             <Card padded={false} className="border-ember/30 bg-ember-soft/40">
               <div className="flex items-center gap-3 p-4 sm:p-5">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-ember text-white">
@@ -134,12 +146,12 @@ export default async function TreinosPage() {
                     Treino em andamento
                   </p>
                   <p className="text-[12px] text-ink-soft">
-                    {activeSession.workout_name} — iniciado{" "}
-                    {formatShortDate(new Date(activeSession.started_at))}
+                    {activeSessionRes.data.workout_name} — iniciado{" "}
+                    {formatShortDate(new Date(activeSessionRes.data.started_at))}
                   </p>
                 </div>
                 <Link
-                  href={`/treinos/sessao/${activeSession.id}`}
+                  href={`/treinos/sessao/${activeSessionRes.data.id}`}
                   className="inline-flex h-9 items-center gap-1 rounded-pill bg-ember px-4 text-[13px] font-semibold text-white hover:bg-ember-dark"
                 >
                   Retomar
@@ -148,7 +160,7 @@ export default async function TreinosPage() {
             </Card>
           )}
 
-          {todaySession && !activeSession && (
+          {todaySessionRes.data && !activeSessionRes.data && (
             <Card padded={false} className="bg-moss-soft/40 border-moss/20">
               <div className="flex items-center gap-3 p-4 sm:p-5">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-moss text-white">
@@ -159,8 +171,8 @@ export default async function TreinosPage() {
                     Você treinou hoje
                   </p>
                   <p className="text-[12px] text-ink-soft">
-                    {todaySession.workout_name} —{" "}
-                    {formatHours(todaySession.duration_h ?? 0)}
+                    {todaySessionRes.data.workout_name} —{" "}
+                    {formatHours(todaySessionRes.data.duration_h ?? 0)}
                   </p>
                 </div>
               </div>
@@ -210,7 +222,7 @@ export default async function TreinosPage() {
               title="Planos"
               description="Crie, edite e ative seus planos de treino."
             />
-            {(plans ?? []).length === 0 ? (
+            {(plansRes.data ?? []).length === 0 ? (
               <EmptyState
                 icon={ListChecks}
                 title="Sem planos ainda"
@@ -223,7 +235,7 @@ export default async function TreinosPage() {
               />
             ) : (
               <ul className="space-y-2">
-                {(plans ?? []).slice(0, 5).map((p) => (
+                {(plansRes.data ?? []).slice(0, 5).map((p) => (
                   <li key={p.id}>
                     <Link
                       href={`/treinos/meus-treinos/${p.id}`}

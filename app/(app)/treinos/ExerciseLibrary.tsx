@@ -456,15 +456,23 @@ function ExerciseEditorDialog({
 
   const exerciseForImage = isNew
     ? {
+        id: "preview",
         name: name || "Exercício",
         primary_muscle: primaryMuscle,
+        secondary_muscles: [],
+        equipment: null,
         image_url: null,
+        animation_url: null,
         user_id: "preview",
       }
     : {
+        id: target.id,
         name: target.name,
         primary_muscle: target.primary_muscle as PrimaryMuscleGroup,
+        secondary_muscles: target.secondary_muscles ?? [],
+        equipment: target.equipment,
         image_url: target.image_url,
+        animation_url: target.animation_url ?? null,
         user_id: target.user_id,
       };
 

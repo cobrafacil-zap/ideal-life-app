@@ -8,10 +8,13 @@ import type {
   EquipmentKind,
   Exercise,
   ExerciseCategory,
+  PrimaryMuscleGroup,
 } from "@/types/database";
 import {
   EXERCISE_CATEGORY_LABEL,
   EXERCISE_CATEGORY_ORDER,
+  PRIMARY_MUSCLE_LABEL,
+  PRIMARY_MUSCLE_ORDER,
 } from "@/lib/workout";
 
 type ExerciseForPicker = Pick<
@@ -75,26 +78,35 @@ export function ExercisePicker({
           if (cat && EXERCISE_CATEGORY_LABEL[cat]?.toLowerCase().includes(term)) {
             return true;
           }
+          const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
+          if (pm && PRIMARY_MUSCLE_LABEL[pm]?.toLowerCase().includes(term)) {
+            return true;
+          }
           return false;
         })
       : exercises;
 
-    const map = new Map<ExerciseCategory, ExerciseForPicker[]>();
+    const map = new Map<string, ExerciseForPicker[]>();
     for (const ex of filtered) {
       const cat = ex.category as ExerciseCategory | null;
-      if (!cat) continue; // sem categoria → fica fora do agrupamento (legado)
-      const list = map.get(cat) ?? [];
+      const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
+      // Bucket preferido: category v2; fallback para primary_muscle legado.
+      const key: string = cat ?? pm ?? "outro";
+      const list = map.get(key) ?? [];
       list.push(ex);
-      map.set(cat, list);
+      map.set(key, list);
     }
     return map;
   }, [exercises, query]);
 
   if (!open) return null;
 
-  // Ordem de exibição das categorias. Mantém EXERCISE_CATEGORY_ORDER como
-  // fonte da verdade.
-  const orderedGroups = EXERCISE_CATEGORY_ORDER.filter((g) => grouped.has(g));
+  // Ordem de exibição: primeiro as categorias v2, depois as legado
+  // (primary_muscle) que sobraram (migração ainda não aplicada no banco).
+  const orderedGroups: string[] = [
+    ...EXERCISE_CATEGORY_ORDER.filter((g) => grouped.has(g)),
+    ...PRIMARY_MUSCLE_ORDER.filter((g) => grouped.has(g)),
+  ];
 
   return (
     <div
@@ -159,7 +171,7 @@ export function ExercisePicker({
           orderedGroups.map((group) => (
             <section key={group}>
               <h3 className="mb-3 flex items-center gap-2 font-display text-sm font-semibold uppercase tracking-wide text-ink-soft">
-                {EXERCISE_CATEGORY_LABEL[group]}
+                {groupLabel(group)}
                 <span className="text-[10px] font-normal normal-case text-ink-faint">
                   {grouped.get(group)?.length ?? 0} exercícios
                 </span>
@@ -189,9 +201,11 @@ export function ExercisePicker({
                           {ex.name}
                         </p>
                         <p className="text-[11px] text-ink-soft">
-                          {EXERCISE_CATEGORY_LABEL[
-                            ex.category as ExerciseCategory
-                          ] ?? "Outro"}
+                          {groupLabel(
+                            (ex.category as ExerciseCategory | null) ??
+                              (ex.primary_muscle as PrimaryMuscleGroup | null) ??
+                              "outro"
+                          )}
                           {ex.equipment && ex.equipment !== "nenhum"
                             ? ` · ${equipmentShortLabel(ex.equipment as EquipmentKind)}`
                             : ""}
@@ -253,4 +267,15 @@ function equipmentShortLabel(eq: EquipmentKind): string {
     case "outro": return "Outro";
     case "nenhum": return "Peso corporal";
   }
+}
+
+/** Resolve o rótulo do bucket: tenta category v2, cai para primary_muscle
+ *  legado, e por último "Outro". Necessário enquanto a migration v2 não
+ *  foi aplicada em produção. */
+function groupLabel(key: string): string {
+  return (
+    EXERCISE_CATEGORY_LABEL[key as ExerciseCategory] ??
+    PRIMARY_MUSCLE_LABEL[key as PrimaryMuscleGroup] ??
+    "Outro"
+  );
 }

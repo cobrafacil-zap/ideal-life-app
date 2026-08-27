@@ -498,22 +498,34 @@ export async function createWorkoutPlan(input: {
     throw new Error("Dia da semana inválido.");
   }
 
+  const insert: Record<string, unknown> = {
+    user_id: user.id,
+    name,
+    description: clean(input.description ?? null, 280),
+    sort_order: 0,
+    is_active: false,
+  };
+  // Só envia scheduled_weekday se foi explicitamente escolhido — a coluna
+  // pode ainda não existir em ambientes que não rodaram a migration.
+  if (weekday != null) {
+    insert.scheduled_weekday = weekday;
+  }
+
   const { data, error } = await supabase
     .from("workout_plans")
-    .insert({
-      user_id: user.id,
-      name,
-      description: clean(input.description ?? null, 280),
-      sort_order: 0,
-      is_active: false,
-      scheduled_weekday: weekday,
-    })
+    .insert(insert)
     .select("id")
     .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Falha ao criar treino.");
 
-  revalidatePath("/treinos");
+  try {
+    revalidatePath("/treinos");
+    revalidatePath("/treinos/meus-treinos");
+  } catch {
+    // revalidate pode falhar se a página corrente depende de algo que
+    // mudou — não bloqueia o create.
+  }
   return { id: data.id };
 }
 

@@ -92,6 +92,12 @@ function isMachineType(value: string): value is MachineType {
 
 /** Lista enxuta das colunas usadas em todas as queries `exercises`.
  *  Mantém em um só lugar para evitar drift entre SELECTs. */
+const EXERCISE_SELECT_COLUMNS_LEGACY =
+  "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url";
+
+/** Mesmo SELECT mas incluindo as colunas novas (v2 da biblioteca).
+ *  Antes da migration v2 do schema ser aplicada em produção, usar
+ *  somente a versão LEGACY. */
 const EXERCISE_SELECT_COLUMNS =
   "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, category, aliases, machine_type, instructions";
 
@@ -122,6 +128,9 @@ export type ExerciseListItem = Pick<
  *   ao montar plano e na sessão de treino, onde o usuário só escolhe
  *   exercícios pré-determinados pelo sistema.
  * - "mine":  só exercícios do próprio usuário
+ *
+ * Tolerante à migration v2 ainda não aplicada: se o SELECT estendido
+ * falhar (coluna inexistente), refaz a query só com as colunas legadas.
  */
 export async function listExercises(
   filters?: {
@@ -149,9 +158,11 @@ export async function listExercises(
     userFilter = `user_id.is.null,user_id.eq.${user.id}`;
   }
 
+  const selectColumns = EXERCISE_SELECT_COLUMNS;
+
   let query = supabase
     .from("exercises")
-    .select(EXERCISE_SELECT_COLUMNS)
+    .select(selectColumns)
     .or(userFilter)
     .order("name", { ascending: true })
     .limit(300);
@@ -159,11 +170,14 @@ export async function listExercises(
   if (filters?.primary_muscle) {
     query = query.eq("primary_muscle", filters.primary_muscle);
   }
-  if (filters?.category && isExerciseCategory(filters.category)) {
-    query = query.eq("category", filters.category);
-  }
   if (filters?.equipment) {
     query = query.eq("equipment", filters.equipment);
+  }
+  // category / aliases.cs exigem migration v2 aplicada. São tentados primeiro;
+  // se a query falhar (coluna inexistente), refazemos sem esses filtros.
+  let useV2Search = true;
+  if (filters?.category && isExerciseCategory(filters.category)) {
+    query = query.eq("category", filters.category);
   }
   if (filters?.search) {
     const term = filters.search.trim();
@@ -175,9 +189,55 @@ export async function listExercises(
     }
   }
 
-  const { data, error } = await query;
-  if (error) throw new Error(error.message);
-  return (data ?? []) as ExerciseListItem[];
+  let { data, error } = await query;
+
+  // Se falhou (provavelmente coluna v2 ainda não existe), cai pro SELECT legado
+  // sem os filtros `category` / `aliases.cs`.
+  if (error) {
+    const msg = String(error.message ?? "").toLowerCase();
+    const looksLikeMissingColumn =
+      msg.includes("column") && (msg.includes("does not exist") || msg.includes("não existe"));
+    if (!looksLikeMissingColumn) {
+      throw new Error(error.message);
+    }
+    useV2Search = false;
+    let fallback = supabase
+      .from("exercises")
+      .select(EXERCISE_SELECT_COLUMNS_LEGACY)
+      .or(userFilter)
+      .order("name", { ascending: true })
+      .limit(300);
+    if (filters?.primary_muscle) {
+      fallback = fallback.eq("primary_muscle", filters.primary_muscle);
+    }
+    if (filters?.equipment) {
+      fallback = fallback.eq("equipment", filters.equipment);
+    }
+    if (filters?.search) {
+      const term = filters.search.trim();
+      if (term) {
+        fallback = fallback.or(
+          `name.ilike.%${term}%,equipment.ilike.%${term}%`,
+        );
+      }
+    }
+    const fallbackRes = await fallback;
+    if (fallbackRes.error) throw new Error(fallbackRes.error.message);
+    data = fallbackRes.data;
+  }
+
+  // Se caímos no modo legado, normalize os campos novos para `null` / `[]`
+  // para satisfazer o tipo ExerciseListItem (campos nullable no client).
+  const rows = (data ?? []) as Array<Record<string, unknown>>;
+  if (!useV2Search) {
+    for (const row of rows) {
+      if (row.category === undefined) row.category = null;
+      if (row.aliases === undefined) row.aliases = [];
+      if (row.machine_type === undefined) row.machine_type = null;
+      if (row.instructions === undefined) row.instructions = null;
+    }
+  }
+  return rows as ExerciseListItem[];
 }
 
 export async function getExercise(id: string): Promise<ExerciseListItem | null> {
@@ -187,15 +247,26 @@ export async function getExercise(id: string): Promise<ExerciseListItem | null> 
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado.");
 
-  const { data, error } = await supabase
+  const res = await supabase
     .from("exercises")
     .select(EXERCISE_SELECT_COLUMNS)
     .eq("id", id)
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
-  return (data ?? null) as ExerciseListItem | null;
+  if (res.error) {
+    // Fallback se as colunas v2 não existem no banco (migration não aplicada).
+    const fallback = await supabase
+      .from("exercises")
+      .select(EXERCISE_SELECT_COLUMNS_LEGACY)
+      .eq("id", id)
+      .or(`user_id.is.null,user_id.eq.${user.id}`)
+      .maybeSingle();
+    if (fallback.error) throw new Error(fallback.error.message);
+    return (fallback.data ?? null) as ExerciseListItem | null;
+  }
+
+  return (res.data ?? null) as ExerciseListItem | null;
 }
 
 export async function createExercise(input: {
@@ -240,11 +311,21 @@ export async function createExercise(input: {
     .select(EXERCISE_SELECT_COLUMNS)
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Falha ao criar exercício.");
+  let created = data;
+  if (error) {
+    // Fallback se as colunas v2 não existem no banco (migration não aplicada).
+    const fallback = await supabase
+      .from("exercises")
+      .insert(insert)
+      .select(EXERCISE_SELECT_COLUMNS_LEGACY)
+      .maybeSingle();
+    if (fallback.error) throw new Error(fallback.error.message);
+    created = fallback.data;
+  }
+  if (!created) throw new Error("Falha ao criar exercício.");
 
   revalidatePath("/treinos");
-  return data as ExerciseListItem;
+  return created as ExerciseListItem;
 }
 
 export async function updateExercise(
@@ -314,11 +395,22 @@ export async function updateExercise(
     .select(EXERCISE_SELECT_COLUMNS)
     .maybeSingle();
 
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Exercício não encontrado.");
+  let updated = data;
+  if (error) {
+    // Fallback se as colunas v2 não existem no banco (migration não aplicada).
+    const fallback = await supabase
+      .from("exercises")
+      .update(update)
+      .eq("id", id)
+      .select(EXERCISE_SELECT_COLUMNS_LEGACY)
+      .maybeSingle();
+    if (fallback.error) throw new Error(fallback.error.message);
+    updated = fallback.data;
+  }
+  if (!updated) throw new Error("Exercício não encontrado.");
 
   revalidatePath("/treinos");
-  return data as ExerciseListItem;
+  return updated as ExerciseListItem;
 }
 
 export async function deleteExercise(id: string): Promise<void> {

@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { Search, X, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { Button } from "@/components/ui/Button";
 import { ExerciseMedia } from "./ExerciseMedia";
 import type {
   EquipmentKind,
@@ -37,15 +36,14 @@ type Props = {
   /** Ids já adicionados (para mostrar ✓ em vez de "+ Adicionar"). */
   selectedIds?: string[];
   onAdd: (exercise: ExerciseForPicker) => Promise<void> | void;
-  onCreateCustom?: () => void;
 };
 
 /**
  * Cardápio visual de exercícios. Modal full-screen com busca + grupos
  * musculares. Cada card mostra mídia + nome + grupo + equipamento + botão.
  *
- * Projetado para ser usado durante a montagem de um treino (FASE F).
- * Zero mock: usa exercícios reais do banco (catálogo global + do usuário).
+ * Mostra apenas exercícios pré-determinados pelo sistema (catálogo
+ * global). O caller deve passar `exercises` já filtrado para `scope: "global"`.
  */
 export function ExercisePicker({
   open,
@@ -54,7 +52,6 @@ export function ExercisePicker({
   signedUrls,
   selectedIds = [],
   onAdd,
-  onCreateCustom,
 }: Props) {
   const [query, setQuery] = useState("");
 
@@ -200,19 +197,6 @@ export function ExercisePicker({
               </ul>
             </section>
           ))
-        )}
-
-        {onCreateCustom && (
-          <div className="pt-2">
-            <Button
-              variant="ghost"
-              fullWidth
-              leadingIcon={<Plus size={14} />}
-              onClick={onCreateCustom}
-            >
-              + Criar exercício personalizado
-            </Button>
-          </div>
         )}
       </div>
     </div>

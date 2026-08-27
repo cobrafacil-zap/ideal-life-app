@@ -61,27 +61,47 @@ export type ExerciseListItem = Pick<
 >;
 
 /**
- * Lista exercícios do catálogo (user_id NULL) + do próprio usuário.
+ * Lista exercícios do catálogo (user_id NULL) e/ou do próprio usuário.
  * A RLS já aplica essa lógica, mas mantemos o filtro explícito
  * pra evitar resultados espúrios caso a RLS mude no futuro.
+ *
+ * `scope`:
+ * - "all"   (default): catálogo global + exercícios do próprio usuário
+ * - "global": só catálogo global (user_id IS NULL) — usado no picker
+ *   ao montar plano e na sessão de treino, onde o usuário só escolhe
+ *   exercícios pré-determinados pelo sistema.
+ * - "mine":  só exercícios do próprio usuário
  */
-export async function listExercises(filters?: {
-  search?: string;
-  primary_muscle?: PrimaryMuscleGroup | null;
-  equipment?: EquipmentKind | null;
-}): Promise<ExerciseListItem[]> {
+export async function listExercises(
+  filters?: {
+    search?: string;
+    primary_muscle?: PrimaryMuscleGroup | null;
+    equipment?: EquipmentKind | null;
+    scope?: "all" | "global" | "mine";
+  },
+): Promise<ExerciseListItem[]> {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado.");
 
+  const scope = filters?.scope ?? "all";
+  let userFilter: string;
+  if (scope === "global") {
+    userFilter = "user_id.is.null";
+  } else if (scope === "mine") {
+    userFilter = `user_id.eq.${user.id}`;
+  } else {
+    userFilter = `user_id.is.null,user_id.eq.${user.id}`;
+  }
+
   let query = supabase
     .from("exercises")
     .select(
       "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
     )
-    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .or(userFilter)
     .order("name", { ascending: true })
     .limit(300);
 

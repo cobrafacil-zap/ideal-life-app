@@ -51,7 +51,7 @@ export default async function SessaoPage({
           .eq("user_id", user.id)
           .order("sort_order", { ascending: true })
       : Promise.resolve({ data: [] as any[] }),
-    listExercises(),
+    listExercises({ scope: "global" }),
   ]);
 
   // Signed URLs (animation_url > image_url) para todos os exercícios da library.

@@ -20,7 +20,9 @@ export default async function PlanoDetalhePage({
 
   let library: Awaited<ReturnType<typeof listExercises>> = [];
   try {
-    library = await listExercises();
+    // Apenas catálogo global: ao montar um plano, o usuário só escolhe
+    // exercícios pré-determinados pelo sistema.
+    library = await listExercises({ scope: "global" });
   } catch (err) {
     // Não derruba a página se a library falhar (ex: coluna não existe).
     console.error("[plan detail] listExercises falhou:", err);

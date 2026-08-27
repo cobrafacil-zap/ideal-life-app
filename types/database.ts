@@ -129,6 +129,7 @@ export interface Exercise {
   /** NULL = exercício do catálogo global; preenchido = exercício próprio. */
   user_id: string | null;
   name: string;
+  /** Legado: classificação ampla. Mantida para retrocompat. Use `category` para o picker. */
   primary_muscle: string;
   secondary_muscles: string[];
   equipment: string | null;
@@ -137,8 +138,26 @@ export interface Exercise {
   image_url: string | null;
   /** Storage path opcional para GIF/vídeo curto. Tem prioridade sobre image_url quando presente. */
   animation_url: string | null;
-  /** Instruções curtas de execução (texto neutro, sem diagnóstico). */
+  /** Instruções curtas de execução (texto neutro, sem diagnóstico). Legado. */
   execution_notes: string | null;
+  /** Categoria fina usada na navegação do picker (Quadríceps, Posterior, Glúteos, ...). */
+  category: ExerciseCategory | null;
+  /** Sinônimos / nomes alternativos para a busca. */
+  aliases: string[];
+  /** Tipo de máquina: selectorized, plate_loaded, cable, smith, free_weight, bodyweight, cardio, other. */
+  machine_type: MachineType | null;
+  /** Indica se o exercício é executado de um lado, dos dois, ou em máquina iso-lateral. */
+  laterality: Laterality | null;
+  /** Nível de dificuldade percebido (1=fácil, 5=muito difícil). */
+  difficulty: 1 | 2 | 3 | 4 | 5 | null;
+  /** Padrão de movimento: composto ou isolado. */
+  movement_pattern: MovementPattern | null;
+  /** Instruções resumidas de execução. */
+  instructions: string | null;
+  /** Erros comuns ao executar o exercício. */
+  common_mistakes: string | null;
+  /** URL externa de vídeo demonstrativo (opcional). */
+  video_url: string | null;
   created_at: string;
 }
 
@@ -208,6 +227,47 @@ export type EquipmentKind =
   | "cabo"
   | "kettlebell"
   | "outro";
+
+/**
+ * Categoria fina do exercício, usada no picker para agrupar.
+ * Mais granular que `primary_muscle` (que continua existindo como legado).
+ */
+export type ExerciseCategory =
+  | "peito"
+  | "costas"
+  | "ombros"
+  | "biceps"
+  | "triceps"
+  | "quadriceps"
+  | "posterior"
+  | "gluteos"
+  | "adutores"
+  | "abdutores"
+  | "panturrilha"
+  | "tibial"
+  | "abdomen"
+  | "lombar"
+  | "trapezio"
+  | "antebraco"
+  | "corpo_inteiro"
+  | "cardio";
+
+/** Tipo de máquina / equipamento. */
+export type MachineType =
+  | "selectorized"
+  | "plate_loaded"
+  | "cable"
+  | "smith"
+  | "free_weight"
+  | "bodyweight"
+  | "cardio"
+  | "other";
+
+/** Lateralidade de execução. */
+export type Laterality = "unilateral" | "bilateral" | "iso_lateral";
+
+/** Padrão de movimento. */
+export type MovementPattern = "compound" | "isolation";
 
 export interface MenstrualCycle {
   id: string;

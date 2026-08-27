@@ -1,5 +1,7 @@
 import type {
   EquipmentKind,
+  ExerciseCategory,
+  MachineType,
   PrimaryMuscleGroup,
 } from "@/types/database";
 
@@ -64,6 +66,139 @@ export const EQUIPMENT_ORDER: EquipmentKind[] = [
   "kettlebell",
   "outro",
 ];
+
+/* =========================================================================
+   Categoria fina do exercício (v2 da biblioteca).
+   Substitui `primary_muscle` na navegação do picker. Mantém as chaves
+   estáveis para que `EXERCISE_CATEGORY_ORDER` determine a ordem visual.
+   ========================================================================= */
+
+export const EXERCISE_CATEGORY_LABEL: Record<ExerciseCategory, string> = {
+  peito: "Peito",
+  costas: "Costas",
+  ombros: "Ombros",
+  biceps: "Bíceps",
+  triceps: "Tríceps",
+  quadriceps: "Quadríceps",
+  posterior: "Posterior de coxa",
+  gluteos: "Glúteos",
+  adutores: "Adutores",
+  abdutores: "Abdutores",
+  panturrilha: "Panturrilha",
+  tibial: "Tibial",
+  abdomen: "Abdômen / Core",
+  lombar: "Lombar / Cadeia posterior",
+  trapezio: "Trapézio",
+  antebraco: "Antebraço / Pegada",
+  corpo_inteiro: "Corpo inteiro",
+  cardio: "Cardio",
+};
+
+/** Ordem em que as categorias aparecem no picker. */
+export const EXERCISE_CATEGORY_ORDER: ExerciseCategory[] = [
+  "peito",
+  "costas",
+  "ombros",
+  "biceps",
+  "triceps",
+  "quadriceps",
+  "posterior",
+  "gluteos",
+  "adutores",
+  "abdutores",
+  "panturrilha",
+  "tibial",
+  "abdomen",
+  "lombar",
+  "trapezio",
+  "antebraco",
+  "corpo_inteiro",
+  "cardio",
+];
+
+/** Tailwind classes para o fundo do placeholder por categoria. */
+export const EXERCISE_CATEGORY_BG: Record<ExerciseCategory, string> = {
+  peito: "bg-ember-gradient",
+  costas: "bg-moss-gradient",
+  ombros: "bg-gold-gradient",
+  biceps: "bg-ember-soft text-ember-dark",
+  triceps: "bg-ember-soft text-ember-dark",
+  quadriceps: "bg-lilac-gradient",
+  posterior: "bg-lilac-gradient",
+  gluteos: "bg-lilac-gradient",
+  adutores: "bg-lilac-soft text-lilac-dark",
+  abdutores: "bg-lilac-soft text-lilac-dark",
+  panturrilha: "bg-line",
+  tibial: "bg-line",
+  abdomen: "bg-moss-soft text-moss-dark",
+  lombar: "bg-moss-gradient",
+  trapezio: "bg-gold-soft text-gold-dark",
+  antebraco: "bg-line",
+  corpo_inteiro: "bg-rose-gradient",
+  cardio: "bg-rose-gradient",
+};
+
+/* =========================================================================
+   Tipo de máquina (v2 da biblioteca).
+   ========================================================================= */
+
+export const MACHINE_TYPE_LABEL: Record<MachineType, string> = {
+  selectorized: "Selectorized",
+  plate_loaded: "Plate-loaded",
+  cable: "Cabo / Polia",
+  smith: "Smith",
+  free_weight: "Peso livre",
+  bodyweight: "Peso corporal",
+  cardio: "Cardio",
+  other: "Outro",
+};
+
+export const MACHINE_TYPE_ORDER: MachineType[] = [
+  "selectorized",
+  "plate_loaded",
+  "cable",
+  "smith",
+  "free_weight",
+  "bodyweight",
+  "cardio",
+  "other",
+];
+
+/** Rótulos amplos para agrupar categorias em “Membros superiores / inferiores / core / cardio”. */
+export type ExerciseGroup =
+  | "membros_superiores"
+  | "membros_inferiores"
+  | "core"
+  | "cardio";
+
+export const EXERCISE_GROUP_LABEL: Record<ExerciseGroup, string> = {
+  membros_superiores: "Membros superiores",
+  membros_inferiores: "Membros inferiores",
+  core: "Core",
+  cardio: "Cardio",
+};
+
+/** Mapa categoria → grupo amplo. */
+export const CATEGORY_TO_GROUP: Record<ExerciseCategory, ExerciseGroup> = {
+  peito: "membros_superiores",
+  costas: "membros_superiores",
+  ombros: "membros_superiores",
+  biceps: "membros_superiores",
+  triceps: "membros_superiores",
+  antebraco: "membros_superiores",
+  trapezio: "membros_superiores",
+  quadriceps: "membros_inferiores",
+  posterior: "membros_inferiores",
+  gluteos: "membros_inferiores",
+  adutores: "membros_inferiores",
+  abdutores: "membros_inferiores",
+  panturrilha: "membros_inferiores",
+  tibial: "membros_inferiores",
+  abdomen: "core",
+  lombar: "core",
+  corpo_inteiro: "membros_inferiores",
+  cardio: "cardio",
+};
 
 /** Converte minutos em horas decimais (1 casa) com clamp defensivo. */
 export function minutesToHours(min: number): number {

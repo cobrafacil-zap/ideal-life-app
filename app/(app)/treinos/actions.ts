@@ -9,6 +9,8 @@ import {
 import type {
   Exercise,
   EquipmentKind,
+  ExerciseCategory,
+  MachineType,
   PrimaryMuscleGroup,
 } from "@/types/database";
 
@@ -34,6 +36,38 @@ const EQUIPMENT_VALUES: EquipmentKind[] = [
   "outro",
 ];
 
+const EXERCISE_CATEGORY_VALUES: ExerciseCategory[] = [
+  "peito",
+  "costas",
+  "ombros",
+  "biceps",
+  "triceps",
+  "quadriceps",
+  "posterior",
+  "gluteos",
+  "adutores",
+  "abdutores",
+  "panturrilha",
+  "tibial",
+  "abdomen",
+  "lombar",
+  "trapezio",
+  "antebraco",
+  "corpo_inteiro",
+  "cardio",
+];
+
+const MACHINE_TYPE_VALUES: MachineType[] = [
+  "selectorized",
+  "plate_loaded",
+  "cable",
+  "smith",
+  "free_weight",
+  "bodyweight",
+  "cardio",
+  "other",
+];
+
 function clean(value: string | null | undefined, max = 200): string | null {
   if (value == null) return null;
   const trimmed = value.trim().slice(0, max);
@@ -48,6 +82,19 @@ function isEquipment(value: string): value is EquipmentKind {
   return (EQUIPMENT_VALUES as string[]).includes(value);
 }
 
+function isExerciseCategory(value: string): value is ExerciseCategory {
+  return (EXERCISE_CATEGORY_VALUES as string[]).includes(value);
+}
+
+function isMachineType(value: string): value is MachineType {
+  return (MACHINE_TYPE_VALUES as string[]).includes(value);
+}
+
+/** Lista enxuta das colunas usadas em todas as queries `exercises`.
+ *  Mantém em um só lugar para evitar drift entre SELECTs. */
+const EXERCISE_SELECT_COLUMNS =
+  "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, category, aliases, machine_type, instructions";
+
 export type ExerciseListItem = Pick<
   Exercise,
   | "id"
@@ -58,6 +105,10 @@ export type ExerciseListItem = Pick<
   | "equipment"
   | "image_url"
   | "animation_url"
+  | "category"
+  | "aliases"
+  | "machine_type"
+  | "instructions"
 >;
 
 /**
@@ -76,6 +127,8 @@ export async function listExercises(
   filters?: {
     search?: string;
     primary_muscle?: PrimaryMuscleGroup | null;
+    /** Filtro fino pela nova categoria (v2). Aceita qualquer ExerciseCategory. */
+    category?: ExerciseCategory | null;
     equipment?: EquipmentKind | null;
     scope?: "all" | "global" | "mine";
   },
@@ -98,9 +151,7 @@ export async function listExercises(
 
   let query = supabase
     .from("exercises")
-    .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
-    )
+    .select(EXERCISE_SELECT_COLUMNS)
     .or(userFilter)
     .order("name", { ascending: true })
     .limit(300);
@@ -108,15 +159,18 @@ export async function listExercises(
   if (filters?.primary_muscle) {
     query = query.eq("primary_muscle", filters.primary_muscle);
   }
+  if (filters?.category && isExerciseCategory(filters.category)) {
+    query = query.eq("category", filters.category);
+  }
   if (filters?.equipment) {
     query = query.eq("equipment", filters.equipment);
   }
   if (filters?.search) {
     const term = filters.search.trim();
     if (term) {
-      // ilike em duas colunas principais (nome + equipamento).
+      // ilike em name + equipment + aliases (cs = contains no array text[]).
       query = query.or(
-        `name.ilike.%${term}%,equipment.ilike.%${term}%`,
+        `name.ilike.%${term}%,equipment.ilike.%${term}%,aliases.cs.{"${term.replace(/"/g, "")}"}`,
       );
     }
   }
@@ -135,9 +189,7 @@ export async function getExercise(id: string): Promise<ExerciseListItem | null> 
 
   const { data, error } = await supabase
     .from("exercises")
-    .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
-    )
+    .select(EXERCISE_SELECT_COLUMNS)
     .eq("id", id)
     .or(`user_id.is.null,user_id.eq.${user.id}`)
     .maybeSingle();
@@ -185,9 +237,7 @@ export async function createExercise(input: {
   const { data, error } = await supabase
     .from("exercises")
     .insert(insert)
-    .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
-    )
+    .select(EXERCISE_SELECT_COLUMNS)
     .maybeSingle();
 
   if (error) throw new Error(error.message);
@@ -261,9 +311,7 @@ export async function updateExercise(
     .from("exercises")
     .update(update)
     .eq("id", id)
-    .select(
-      "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
-    )
+    .select(EXERCISE_SELECT_COLUMNS)
     .maybeSingle();
 
   if (error) throw new Error(error.message);

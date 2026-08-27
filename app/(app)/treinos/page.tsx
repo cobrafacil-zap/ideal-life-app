@@ -44,7 +44,7 @@ export default async function TreinosPage() {
     supabase
       .from("exercises")
       .select(
-        "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url",
+        "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, category, aliases, machine_type, instructions",
       )
       .or(`user_id.is.null,user_id.eq.${user.id}`)
       .order("name", { ascending: true })
@@ -94,6 +94,10 @@ export default async function TreinosPage() {
     | "equipment"
     | "image_url"
     | "animation_url"
+    | "category"
+    | "aliases"
+    | "machine_type"
+    | "instructions"
   >[];
 
   const signedUrlMap: Record<string, string | null> = {};

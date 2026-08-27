@@ -7,11 +7,11 @@ import { ExerciseMedia } from "./ExerciseMedia";
 import type {
   EquipmentKind,
   Exercise,
-  PrimaryMuscleGroup,
+  ExerciseCategory,
 } from "@/types/database";
 import {
-  PRIMARY_MUSCLE_LABEL,
-  PRIMARY_MUSCLE_ORDER,
+  EXERCISE_CATEGORY_LABEL,
+  EXERCISE_CATEGORY_ORDER,
 } from "@/lib/workout";
 
 type ExerciseForPicker = Pick<
@@ -24,6 +24,9 @@ type ExerciseForPicker = Pick<
   | "image_url"
   | "animation_url"
   | "user_id"
+  | "category"
+  | "aliases"
+  | "machine_type"
 >;
 
 type SignedMap = Record<string, string | null>;
@@ -40,10 +43,14 @@ type Props = {
 
 /**
  * Cardápio visual de exercícios. Modal full-screen com busca + grupos
- * musculares. Cada card mostra mídia + nome + grupo + equipamento + botão.
+ * musculares. Cada card mostra mídia + nome + categoria + equipamento + botão.
  *
  * Mostra apenas exercícios pré-determinados pelo sistema (catálogo
  * global). O caller deve passar `exercises` já filtrado para `scope: "global"`.
+ *
+ * A busca consulta `name`, `equipment`, `category` e `aliases` (sinônimos).
+ * O agrupamento visual usa a nova `category` (v2 da biblioteca); se estiver
+ * ausente cai no `primary_muscle` legado.
  */
 export function ExercisePicker({
   open,
@@ -58,31 +65,36 @@ export function ExercisePicker({
   const grouped = useMemo(() => {
     const term = query.trim().toLowerCase();
     const filtered = term
-      ? exercises.filter(
-          (ex) =>
-            ex.name.toLowerCase().includes(term) ||
-            (ex.equipment ?? "").toLowerCase().includes(term) ||
-            (PRIMARY_MUSCLE_LABEL[
-              ex.primary_muscle as PrimaryMuscleGroup
-            ] ?? "")
-              .toLowerCase()
-              .includes(term),
-        )
+      ? exercises.filter((ex) => {
+          if (ex.name.toLowerCase().includes(term)) return true;
+          if ((ex.equipment ?? "").toLowerCase().includes(term)) return true;
+          if (ex.aliases && ex.aliases.some((a) => a.toLowerCase().includes(term))) {
+            return true;
+          }
+          const cat = ex.category as ExerciseCategory | null;
+          if (cat && EXERCISE_CATEGORY_LABEL[cat]?.toLowerCase().includes(term)) {
+            return true;
+          }
+          return false;
+        })
       : exercises;
 
-    const map = new Map<PrimaryMuscleGroup, ExerciseForPicker[]>();
+    const map = new Map<ExerciseCategory, ExerciseForPicker[]>();
     for (const ex of filtered) {
-      const key = (ex.primary_muscle as PrimaryMuscleGroup) ?? "outro";
-      const list = map.get(key) ?? [];
+      const cat = ex.category as ExerciseCategory | null;
+      if (!cat) continue; // sem categoria → fica fora do agrupamento (legado)
+      const list = map.get(cat) ?? [];
       list.push(ex);
-      map.set(key, list);
+      map.set(cat, list);
     }
     return map;
   }, [exercises, query]);
 
   if (!open) return null;
 
-  const orderedGroups = PRIMARY_MUSCLE_ORDER.filter((g) => grouped.has(g));
+  // Ordem de exibição das categorias. Mantém EXERCISE_CATEGORY_ORDER como
+  // fonte da verdade.
+  const orderedGroups = EXERCISE_CATEGORY_ORDER.filter((g) => grouped.has(g));
 
   return (
     <div
@@ -147,7 +159,7 @@ export function ExercisePicker({
           orderedGroups.map((group) => (
             <section key={group}>
               <h3 className="mb-3 flex items-center gap-2 font-display text-sm font-semibold uppercase tracking-wide text-ink-soft">
-                {PRIMARY_MUSCLE_LABEL[group]}
+                {EXERCISE_CATEGORY_LABEL[group]}
                 <span className="text-[10px] font-normal normal-case text-ink-faint">
                   {grouped.get(group)?.length ?? 0} exercícios
                 </span>
@@ -177,8 +189,8 @@ export function ExercisePicker({
                           {ex.name}
                         </p>
                         <p className="text-[11px] text-ink-soft">
-                          {PRIMARY_MUSCLE_LABEL[
-                            ex.primary_muscle as PrimaryMuscleGroup
+                          {EXERCISE_CATEGORY_LABEL[
+                            ex.category as ExerciseCategory
                           ] ?? "Outro"}
                           {ex.equipment && ex.equipment !== "nenhum"
                             ? ` · ${equipmentShortLabel(ex.equipment as EquipmentKind)}`

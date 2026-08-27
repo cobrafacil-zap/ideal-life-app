@@ -51,6 +51,10 @@ type ExerciseLibraryItem = Pick<
   | "image_url"
   | "animation_url"
   | "user_id"
+  | "category"
+  | "aliases"
+  | "machine_type"
+  | "instructions"
 > & { signedUrl: string | null };
 
 export function PlanEditor({

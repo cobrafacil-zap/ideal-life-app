@@ -20,7 +20,9 @@ import {
   PRIMARY_MUSCLE_LABEL,
   EQUIPMENT_ORDER,
   EQUIPMENT_LABEL,
+  EXERCISE_CATEGORY_LABEL,
 } from "@/lib/workout";
+import { matchesAny, normalizeSearch } from "@/lib/text-search";
 import type {
   EquipmentKind,
   PrimaryMuscleGroup,
@@ -55,14 +57,24 @@ export function ExerciseLibrary({
   const [editing, setEditing] = useState<ExerciseListItem | "new" | null>(null);
 
   const visible = useMemo(() => {
-    const term = search.trim().toLowerCase();
+    const term = normalizeSearch(search);
     return items.filter((it) => {
       if (scope === "mine" && it.user_id == null) return false;
       if (muscle !== "all" && it.primary_muscle !== muscle) return false;
       if (equipment !== "all" && it.equipment !== equipment) return false;
       if (term) {
-        const hay = `${it.name} ${it.equipment ?? ""}`.toLowerCase();
-        if (!hay.includes(term)) return false;
+        // Busca por nome principal + aliases + equipamento + grupo
+        // muscular (legado) + categoria fina (v2). Tudo case/acento
+        // insensitive via matchesAny.
+        const aliases = it.aliases ?? [];
+        const categoryLabel = it.category
+          ? EXERCISE_CATEGORY_LABEL[it.category as keyof typeof EXERCISE_CATEGORY_LABEL] ?? ""
+          : "";
+        const muscleLabel = PRIMARY_MUSCLE_LABEL[
+          it.primary_muscle as PrimaryMuscleGroup
+        ] ?? it.primary_muscle ?? "";
+        const hay = [it.name, it.equipment ?? "", muscleLabel, categoryLabel, ...aliases];
+        if (!hay.some((h) => matchesAny(term, [h]))) return false;
       }
       return true;
     });
@@ -173,9 +185,23 @@ function Filters({
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar exercício ou equipamento…"
-            className="w-full rounded-pill border border-line bg-surface pl-9 pr-3 py-2.5 text-sm text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-base"
+            placeholder="🔍 Pesquisar exercício…"
+            aria-label="Pesquisar exercício"
+            className={cn(
+              "w-full rounded-pill border border-line bg-surface py-2.5 pl-9 text-sm text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-base",
+              search ? "pr-9" : "pr-3",
+            )}
           />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              aria-label="Limpar pesquisa"
+              className="absolute right-2 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-ink-soft hover:bg-base/60 hover:text-ink"
+            >
+              <X size={14} aria-hidden="true" />
+            </button>
+          )}
         </div>
         <Button
           onClick={onNew}

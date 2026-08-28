@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -13,6 +13,7 @@ import {
   X,
   Pencil,
   Save,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
@@ -25,8 +26,15 @@ import {
   type ExerciseListItem,
 } from "./actions";
 import { cn } from "@/lib/cn";
-import { RPE_DESCRIPTORS, minutesToHours } from "@/lib/workout";
+import {
+  RPE_DESCRIPTORS,
+  minutesToHours,
+  EXERCISE_CATEGORY_LABEL,
+  PRIMARY_MUSCLE_LABEL,
+} from "@/lib/workout";
+import { matchesAny } from "@/lib/text-search";
 import { ExerciseMedia } from "./ExerciseMedia";
+import type { PrimaryMuscleGroup, ExerciseCategory } from "@/types/database";
 
 type PlanExerciseRow = {
   id: string;
@@ -965,9 +973,21 @@ function AdHocExercisePicker({
   onPick: (ex: ExerciseListItem) => void;
 }) {
   const [search, setSearch] = useState("");
-  const filtered = library.filter((ex) =>
-    !search ? true : ex.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = library.filter((ex) => {
+    const term = search.trim();
+    if (!term) return true;
+    const cat = ex.category as ExerciseCategory | null;
+    const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
+    const categoryLabel = cat ? (EXERCISE_CATEGORY_LABEL[cat] ?? "") : "";
+    const muscleLabel = pm ? (PRIMARY_MUSCLE_LABEL[pm] ?? "") : "";
+    return matchesAny(term, [
+      ex.name,
+      ex.equipment ?? "",
+      muscleLabel,
+      categoryLabel,
+      ...(ex.aliases ?? []),
+    ]);
+  });
   return (
     <div
       role="dialog"
@@ -995,12 +1015,35 @@ function AdHocExercisePicker({
         </div>
 
         <div className="space-y-3 px-4 py-4 sm:px-6 sm:py-5">
-          <TextField
-            label="Buscar"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            autoFocus
-          />
+          <div className="relative">
+            <Search
+              size={14}
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
+            />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="🔍 Pesquisar exercício…"
+              aria-label="Pesquisar exercício"
+              className={cn(
+                "w-full rounded-pill border border-line bg-surface py-2.5 pl-9 text-sm text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-base",
+                search ? "pr-9" : "pr-3",
+              )}
+              autoFocus
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                aria-label="Limpar pesquisa"
+                className="absolute right-2 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-ink-soft hover:bg-base/60 hover:text-ink"
+              >
+                <X size={14} aria-hidden="true" />
+              </button>
+            )}
+          </div>
           {filtered.length === 0 ? (
             <p className="rounded-2xl bg-base/40 p-4 text-center text-[12px] text-ink-soft">
               Nada por aqui.

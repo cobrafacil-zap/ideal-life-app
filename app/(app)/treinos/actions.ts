@@ -604,7 +604,6 @@ export type PlanDetail = {
     target_reps: string;
     target_load: number | null;
     load_unit: "kg" | "lb";
-    rest_seconds: number;
     notes: string | null;
     sort_order: number;
   }[];
@@ -618,7 +617,7 @@ export async function getWorkoutPlan(id: string): Promise<PlanDetail | null> {
   const { data, error } = await supabase
     .from("workout_plans")
     .select(
-      "id, name, description, is_active, sort_order, updated_at, workout_plan_exercises(id, exercise_id, exercise_name, target_sets, target_reps, target_load, load_unit, rest_seconds, notes, sort_order)",
+      "id, name, description, is_active, sort_order, updated_at, workout_plan_exercises(id, exercise_id, exercise_name, target_sets, target_reps, target_load, load_unit, notes, sort_order)",
     )
     .eq("id", id)
     .eq("user_id", user.id)
@@ -635,7 +634,6 @@ export async function getWorkoutPlan(id: string): Promise<PlanDetail | null> {
       target_reps: row.target_reps,
       target_load: row.target_load,
       load_unit: row.load_unit,
-      rest_seconds: row.rest_seconds,
       notes: row.notes,
       sort_order: row.sort_order,
     }))
@@ -787,12 +785,6 @@ function parseSets(value: string | number | null | undefined): number {
   return Math.min(Math.max(Math.round(n), 1), 20);
 }
 
-function parseRest(value: string | number | null | undefined): number {
-  const n = typeof value === "number" ? value : parseInt(String(value ?? ""), 10);
-  if (!Number.isFinite(n) || n < 0) return 60;
-  return Math.min(Math.max(Math.round(n), 0), 600);
-}
-
 export async function addPlanExercise(
   planId: string,
   input: {
@@ -802,7 +794,6 @@ export async function addPlanExercise(
     target_reps: string;
     target_load?: string | number | null;
     load_unit?: "kg" | "lb";
-    rest_seconds?: number | string;
     notes?: string | null;
   },
 ): Promise<{ id: string }> {
@@ -834,7 +825,6 @@ export async function addPlanExercise(
     target_reps: clean(input.target_reps, 40) ?? "10",
     target_load: parseLoad(input.target_load ?? null),
     load_unit: input.load_unit === "lb" ? "lb" : "kg",
-    rest_seconds: parseRest(input.rest_seconds ?? 60),
     notes: clean(input.notes ?? null, 280),
     sort_order: nextOrder,
   };
@@ -858,7 +848,6 @@ export async function updatePlanExercise(
     target_reps?: string;
     target_load?: string | number | null;
     load_unit?: "kg" | "lb";
-    rest_seconds?: number | string;
     notes?: string | null;
   },
 ): Promise<void> {
@@ -875,7 +864,6 @@ export async function updatePlanExercise(
   }
   if (input.target_load !== undefined) update.target_load = parseLoad(input.target_load);
   if (input.load_unit !== undefined) update.load_unit = input.load_unit === "lb" ? "lb" : "kg";
-  if (input.rest_seconds !== undefined) update.rest_seconds = parseRest(input.rest_seconds);
   if (input.notes !== undefined) update.notes = clean(input.notes, 280);
   if (Object.keys(update).length === 0) return;
 

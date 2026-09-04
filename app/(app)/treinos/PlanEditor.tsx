@@ -160,7 +160,6 @@ export function PlanEditor({
           target_reps: "10-12",
           target_load: null,
           load_unit: "kg",
-          rest_seconds: 60,
           notes: null,
           sort_order: prev.exercises.length,
         },
@@ -353,7 +352,6 @@ export function PlanEditor({
                 target_reps: "10-12",
                 target_load: null,
                 load_unit: "kg",
-                rest_seconds: 60,
               });
               onExerciseAdded(res.id, exercise.id, exercise.name);
             } catch (err) {
@@ -391,7 +389,6 @@ function PlanExerciseRow({
   const [sets, setSets] = useState(row.target_sets.toString());
   const [reps, setReps] = useState(row.target_reps);
   const [load, setLoad] = useState(row.target_load?.toString() ?? "");
-  const [rest, setRest] = useState(row.rest_seconds.toString());
   const [unit, setUnit] = useState<"kg" | "lb">(row.load_unit);
   const [saved, setSaved] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -406,7 +403,6 @@ function PlanExerciseRow({
           target_reps: reps,
           target_load: load === "" ? null : load,
           load_unit: unit,
-          rest_seconds: rest,
         });
         setSaved(true);
         setTimeout(() => setSaved(false), 1500);
@@ -476,7 +472,7 @@ function PlanExerciseRow({
             </p>
           </div>
 
-          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
             <TextField
               label="Séries"
               type="text"
@@ -517,14 +513,6 @@ function PlanExerciseRow({
                 </select>
               </div>
             </div>
-            <TextField
-              label="Descanso (s)"
-              type="text"
-              inputMode="numeric"
-              value={rest}
-              onChange={(e) => setRest(e.target.value)}
-              size="sm"
-            />
           </div>
 
           {error && (

@@ -45,7 +45,7 @@ export default async function SessaoPage({
       ? supabase
           .from("workout_plan_exercises")
           .select(
-            "id, exercise_id, exercise_name, target_sets, target_reps, target_load, load_unit, rest_seconds",
+            "id, exercise_id, exercise_name, target_sets, target_reps, target_load, load_unit",
           )
           .eq("workout_plan_id", session.workout_plan_id)
           .eq("user_id", user.id)

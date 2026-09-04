@@ -186,7 +186,6 @@ export interface WorkoutPlanExercise {
   target_reps: string;
   target_load: number | null;
   load_unit: "kg" | "lb";
-  rest_seconds: number;
   notes: string | null;
   sort_order: number;
 }

@@ -6,7 +6,6 @@ import {
   ArrowLeft,
   Plus,
   Check,
-  Timer as TimerIcon,
   Trash2,
   AlertTriangle,
   Flag,
@@ -44,7 +43,6 @@ type PlanExerciseRow = {
   target_reps: string;
   target_load: number | null;
   load_unit: "kg" | "lb";
-  rest_seconds: number;
 };
 
 export type ExistingSet = {
@@ -81,7 +79,6 @@ export function WorkoutRunner({
   const [now, setNow] = useState(() => Date.now());
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [restEndsAt, setRestEndsAt] = useState<number | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [finishing, setFinishing] = useState(false);
 
@@ -121,9 +118,8 @@ export function WorkoutRunner({
     [grouped, planNames],
   );
 
-  function startRest(seconds: number) {
-    if (seconds <= 0) return;
-    setRestEndsAt(Date.now() + seconds * 1000);
+  function startRest(_seconds: number) {
+    // Cronômetro de descanso removido — produto não usa mais.
   }
 
   function addSet(input: {
@@ -136,7 +132,6 @@ export function WorkoutRunner({
     discomfort: number | null;
     targetLoad: number | null;
     targetReps: string;
-    restSeconds: number;
   }) {
     const exerciseGroups = grouped.get(input.exerciseName) ?? [];
     const nextSetNumber = exerciseGroups.length + 1;
@@ -165,7 +160,7 @@ export function WorkoutRunner({
           discomfort: input.discomfort,
         };
         setSets((prev) => [...prev, created]);
-        startRest(input.restSeconds);
+        // Cronômetro de descanso removido — não inicia mais timer.
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro ao registrar.");
@@ -260,14 +255,7 @@ export function WorkoutRunner({
         </p>
       )}
 
-      {restEndsAt && (
-        <RestTimer
-          endsAt={restEndsAt}
-          now={now}
-          onSkip={() => setRestEndsAt(null)}
-          onFinish={() => setRestEndsAt(null)}
-        />
-      )}
+      {/* Cronômetro de descanso removido. */}
 
       <section className="space-y-3">
         {planExercises.length > 0 ? (
@@ -290,7 +278,6 @@ export function WorkoutRunner({
                   exerciseId: row.exercise_id,
                   targetLoad: row.target_load,
                   targetReps: row.target_reps,
-                  restSeconds: row.rest_seconds,
                   ...payload,
                 })
               }
@@ -347,7 +334,6 @@ export function WorkoutRunner({
                       exerciseId: libraryMatch?.id ?? null,
                       targetLoad: null,
                       targetReps: "10",
-                      restSeconds: 60,
                       ...payload,
                     })
                   }
@@ -408,7 +394,6 @@ export function WorkoutRunner({
               discomfort: null,
               targetLoad: null,
               targetReps: "10",
-              restSeconds: 60,
             });
           }}
         />
@@ -485,8 +470,6 @@ function ExerciseBlock({
             {planRow.target_load != null
               ? ` · ${planRow.target_load} ${planRow.load_unit}`
               : ""}
-            {" · descanso "}
-            {planRow.rest_seconds}s
           </p>
         </div>
         <span className="rounded-pill bg-line/60 px-2 py-0.5 text-[10px] font-semibold text-ink-soft">
@@ -736,43 +719,6 @@ function NewSetForm({
         Adicionar
       </Button>
     </form>
-  );
-}
-
-function RestTimer({
-  endsAt,
-  now,
-  onSkip,
-  onFinish,
-}: {
-  endsAt: number;
-  now: number;
-  onSkip: () => void;
-  onFinish: () => void;
-}) {
-  const remainingMs = Math.max(0, endsAt - now);
-  const secs = Math.ceil(remainingMs / 1000);
-
-  useEffect(() => {
-    if (remainingMs <= 0) onFinish();
-  }, [remainingMs, onFinish]);
-
-  if (remainingMs <= 0) return null;
-
-  return (
-    <div className="flex items-center justify-between rounded-2xl border border-moss/30 bg-moss-soft px-3 py-2">
-      <span className="inline-flex items-center gap-2 text-sm font-semibold text-moss-dark">
-        <TimerIcon size={14} aria-hidden="true" />
-        Descanso · {Math.floor(secs / 60)}:{String(secs % 60).padStart(2, "0")}
-      </span>
-      <button
-        type="button"
-        onClick={onSkip}
-        className="text-[11px] font-semibold text-moss-dark underline-offset-2 hover:underline"
-      >
-        Pular
-      </button>
-    </div>
   );
 }
 

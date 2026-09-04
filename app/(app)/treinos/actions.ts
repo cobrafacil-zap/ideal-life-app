@@ -455,6 +455,9 @@ const EXERCISE_IMAGE_MAX = 4 * 1024 * 1024;
  * Server Action que recebe FormData com `image: File` e sobe para o bucket
  * `workout-images` (pasta `userId/exerciseId.ext`). Retorna o storage_path
  * gravado no exercício.
+ *
+ * Tolera `image_url` prévio sendo uma URL externa (Wikimedia, etc.) — nesse
+ * caso só sobrescreve sem tentar remover do storage.
  */
 export async function uploadExerciseImageAction(formData: FormData) {
   const supabase = createClient();
@@ -522,10 +525,14 @@ export async function removeExerciseImageAction(exerciseId: string) {
   }
   if (!own.image_url) return;
 
-  try {
-    await removeFile(supabase, "workout-images", [own.image_url]);
-  } catch {
-    // ignora falha de storage — a remoção visual vai acontecer de qualquer forma.
+  // Se for URL externa (Wikimedia, etc.), só zera o campo.
+  // Se for storage path, tenta remover o objeto no bucket também.
+  if (!/^https?:\/\//i.test(own.image_url)) {
+    try {
+      await removeFile(supabase, "workout-images", [own.image_url]);
+    } catch {
+      // ignora falha de storage — a remoção visual vai acontecer de qualquer forma.
+    }
   }
 
   const { error } = await supabase

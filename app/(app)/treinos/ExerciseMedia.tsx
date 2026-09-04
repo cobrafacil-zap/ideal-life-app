@@ -26,6 +26,10 @@ type Props = {
   size?: "sm" | "md" | "lg";
   /** Tipo de mídia preferido quando ambas existirem. */
   prefer?: "image" | "animation";
+  /** Quando true, a imagem vira um botão que chama `onActivate` ao clicar. */
+  zoomable?: boolean;
+  /** Recebido apenas quando `zoomable=true` e o usuário clica na imagem. */
+  onActivate?: () => void;
 };
 
 /**
@@ -33,7 +37,9 @@ type Props = {
  * grupo muscular. Aceita `image_url` (estático) e `animation_url` (gif/vídeo).
  * Por padrão prioriza animation_url quando presente.
  *
- * Zero imagens de internet — apenas cor + iniciais ou mídia do bucket privado.
+ * Quando `zoomable` é true e o exercício tem imagem, o conteúdo vira um
+ * `<button>` que dispara `onActivate` — o caller (geralmente `ZoomableMedia`)
+ * cuida do lightbox. Placeholder SVG não é clicável.
  */
 export function ExerciseMedia({
   exercise,
@@ -41,6 +47,8 @@ export function ExerciseMedia({
   full = false,
   size = "md",
   prefer = "animation",
+  zoomable = false,
+  onActivate,
 }: Props) {
   const [errored, setErrored] = useState(false);
   const showMedia = signedUrl && !errored;
@@ -56,47 +64,39 @@ export function ExerciseMedia({
       exercise.primary_muscle as keyof typeof PRIMARY_MUSCLE_BG
     ] ?? PRIMARY_MUSCLE_BG.outro;
 
+  const activate = zoomable && showMedia ? onActivate : undefined;
+
+  const commonImgProps = {
+    src: signedUrl ?? undefined,
+    alt: exercise.name,
+    onError: () => setErrored(true),
+  };
+
   if (showMedia && isAnimation) {
-    // GIF — usa <img> para preservar loop/animação.
     return full ? (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={signedUrl}
-        alt={exercise.name}
-        onError={() => setErrored(true)}
-        className="h-full w-full rounded-2xl object-cover"
-      />
+      <MediaWrap onClick={activate} ariaLabel={`Ampliar imagem de ${exercise.name}`} full>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img {...commonImgProps} className="h-full w-full rounded-2xl object-cover" />
+      </MediaWrap>
     ) : (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={signedUrl}
-        alt={exercise.name}
-        onError={() => setErrored(true)}
-        className={cn(
-          "shrink-0 rounded-2xl object-cover",
-          sizeDims(size),
-        )}
-      />
+      <MediaWrap onClick={activate} ariaLabel={`Ampliar imagem de ${exercise.name}`} size={size}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img {...commonImgProps} className={cn("shrink-0 rounded-2xl object-cover", sizeDims(size))} />
+      </MediaWrap>
     );
   }
 
   if (showMedia) {
     return full ? (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={signedUrl}
-        alt={exercise.name}
-        onError={() => setErrored(true)}
-        className="h-full w-full rounded-2xl object-cover"
-      />
+      <MediaWrap onClick={activate} ariaLabel={`Ampliar imagem de ${exercise.name}`} full>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img {...commonImgProps} className="h-full w-full rounded-2xl object-cover" />
+      </MediaWrap>
     ) : (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={signedUrl}
-        alt={exercise.name}
-        onError={() => setErrored(true)}
-        className={cn("shrink-0 rounded-2xl object-cover", sizeDims(size))}
-      />
+      <MediaWrap onClick={activate} ariaLabel={`Ampliar imagem de ${exercise.name}`} size={size}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img {...commonImgProps} className={cn("shrink-0 rounded-2xl object-cover", sizeDims(size))} />
+      </MediaWrap>
     );
   }
 
@@ -151,9 +151,60 @@ function sizeDims(size: "sm" | "md" | "lg"): string {
   return "h-14 w-14 text-[16px]";
 }
 
+/**
+ * Wrap que vira `<button>` quando recebe onClick (modo zoomable) ou
+ * `<div>` pass-through caso contrário. Mantém as dimensões/espaçamento
+ * idênticos para os dois casos.
+ */
+function MediaWrap({
+  children,
+  onClick,
+  ariaLabel,
+  full,
+  size,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  ariaLabel?: string;
+  full?: boolean;
+  size?: "sm" | "md" | "lg";
+}) {
+  if (onClick) {
+    const className = full
+      ? "block w-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-base"
+      : cn(
+          "block shrink-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-base",
+          size ? sizeDims(size) : "",
+        );
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={ariaLabel}
+        className={className}
+      >
+        {children}
+      </button>
+    );
+  }
+  if (full) return <div className="w-full">{children}</div>;
+  return <div className={cn("shrink-0", size ? sizeDims(size) : "")}>{children}</div>;
+}
+
 /** Wrapper legado que delega para ExerciseMedia. Mantido para compat. */
 export function ExerciseImage(
-  props: Omit<Props, "full" | "prefer"> & { size?: "sm" | "md" | "lg" },
+  props: Omit<Props, "full" | "prefer" | "zoomable" | "onActivate"> & {
+    size?: "sm" | "md" | "lg";
+    zoomable?: boolean;
+    onActivate?: () => void;
+  },
 ) {
-  return <ExerciseMedia {...props} prefer="image" />;
+  return (
+    <ExerciseMedia
+      {...props}
+      prefer="image"
+      zoomable={props.zoomable ?? false}
+      onActivate={props.onActivate}
+    />
+  );
 }

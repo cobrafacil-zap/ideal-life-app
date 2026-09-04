@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, X, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { ExerciseMedia } from "./ExerciseMedia";
+import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
 import type {
   EquipmentKind,
   Exercise,
@@ -202,13 +202,11 @@ export function ExercisePicker({
                           : "hover:border-ember/40",
                       )}
                     >
-                      <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl">
-                        <ExerciseMedia
-                          exercise={ex}
-                          signedUrl={signedUrls[ex.id] ?? null}
-                          size="lg"
-                        />
-                      </div>
+                      <ZoomableMedia
+                        exercise={ex}
+                        signedUrl={signedUrls[ex.id] ?? null}
+                        size="lg"
+                      />
                       <div className="flex min-w-0 flex-1 flex-col">
                         <p className="truncate font-display text-sm font-semibold text-ink">
                           {ex.name}

@@ -33,7 +33,7 @@ import {
   PRIMARY_MUSCLE_LABEL,
 } from "@/lib/workout";
 import { matchesAny } from "@/lib/text-search";
-import { ExerciseMedia } from "./ExerciseMedia";
+import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
 import type { PrimaryMuscleGroup, ExerciseCategory } from "@/types/database";
 
 type PlanExerciseRow = {
@@ -458,7 +458,7 @@ function ExerciseBlock({
     <div className="rounded-card border border-line/60 bg-surface p-4">
       {/* Mídia grande — fundamental pra reconhecer o exercício em tempo real. */}
       <div className="mb-3">
-        <ExerciseMedia
+        <ZoomableMedia
           exercise={
             libraryMatch ?? {
               id: planRow.id,
@@ -906,7 +906,7 @@ function AdHocBlock({
     <div className="rounded-card border border-line/60 bg-surface p-4">
       {/* Mídia grande — fundamental pra reconhecer o exercício em tempo real. */}
       <div className="mb-3">
-        <ExerciseMedia
+        <ZoomableMedia
           exercise={
             libraryMatch ?? {
               id: exerciseName,

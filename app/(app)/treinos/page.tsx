@@ -108,6 +108,7 @@ export default async function TreinosPage() {
           supabase,
           ex.image_url,
           ex.animation_url,
+          ex.name,
         );
       } catch {
         // Storage/RLS falhou pra esse item — segue sem mídia.

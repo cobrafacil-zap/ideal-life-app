@@ -27,15 +27,20 @@ import type {
   EquipmentKind,
   PrimaryMuscleGroup,
 } from "@/types/database";
-import { ExerciseImage } from "./ExerciseImage";
+import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
 import {
   createExercise,
   deleteExercise,
-  removeExerciseImageAction,
   updateExercise,
   uploadExerciseImageAction,
   type ExerciseListItem,
 } from "./actions";
+import {
+  setExerciseImageFromMapAction,
+  setExerciseExternalImageAction,
+  clearExerciseImageAction,
+} from "./actions.image";
+import { lookupExerciseImage } from "@/lib/exercise-image-map";
 import { cn } from "@/lib/cn";
 
 type SignedMap = Record<string, string | null>;
@@ -320,7 +325,7 @@ function ExerciseRow({
   const isMine = exercise.user_id != null;
   return (
     <div className="flex items-start gap-3 rounded-2xl border border-line/60 bg-surface p-3">
-      <ExerciseImage exercise={exercise} signedUrl={signedUrl} size="md" />
+      <ZoomableMedia exercise={exercise} signedUrl={signedUrl} size="md" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <p className="truncate font-display text-sm font-semibold text-ink">
@@ -409,6 +414,12 @@ function ExerciseEditorDialog({
 
   const [signedUrl, setSignedUrl] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [applyingMap, setApplyingMap] = useState(false);
+  const [externalUrlInput, setExternalUrlInput] = useState("");
+  const [showExternalInput, setShowExternalInput] = useState(false);
+
+  const isOwnExercise = !isNew && target.user_id != null;
+  const mappedEntry = lookupExerciseImage(name);
 
   function close() {
     onClose();
@@ -471,12 +482,57 @@ function ExerciseEditorDialog({
 
   function handleRemoveImage() {
     if (isNew) return;
-    removeExerciseImageAction(target.id)
+    clearExerciseImageAction(target.id)
       .then(() => {
         setSignedUrl(null);
       })
       .catch((err) => {
         setError(err instanceof Error ? err.message : "Erro ao remover.");
+      });
+  }
+
+  function handleApplyMap() {
+    if (isNew || !target.user_id) {
+      setError("Salve o exercício antes de aplicar uma imagem padrão.");
+      return;
+    }
+    setApplyingMap(true);
+    setError(null);
+    setExerciseImageFromMapAction(target.id)
+      .then((res) => {
+        setApplyingMap(false);
+        if (res?.url) {
+          setSignedUrl(res.url);
+        }
+      })
+      .catch((err) => {
+        setApplyingMap(false);
+        setError(err instanceof Error ? err.message : "Erro ao aplicar imagem padrão.");
+      });
+  }
+
+  function handleApplyExternal() {
+    if (isNew || !target.user_id) {
+      setError("Salve o exercício antes de colar uma URL.");
+      return;
+    }
+    const url = externalUrlInput.trim();
+    if (!url) {
+      setError("Cole uma URL de imagem primeiro.");
+      return;
+    }
+    setError(null);
+    setApplyingMap(true);
+    setExerciseExternalImageAction(target.id, url)
+      .then(() => {
+        setApplyingMap(false);
+        setSignedUrl(url);
+        setExternalUrlInput("");
+        setShowExternalInput(false);
+      })
+      .catch((err) => {
+        setApplyingMap(false);
+        setError(err instanceof Error ? err.message : "Erro ao salvar URL.");
       });
   }
 
@@ -532,8 +588,8 @@ function ExerciseEditorDialog({
         </div>
 
         <div className="space-y-4 px-4 py-4 sm:px-6 sm:py-5">
-          <div className="flex items-center gap-3">
-            <ExerciseImage
+          <div className="flex items-start gap-3">
+            <ZoomableMedia
               exercise={exerciseForImage}
               signedUrl={signedUrl}
               size="lg"
@@ -542,7 +598,7 @@ function ExerciseEditorDialog({
               <div className="flex flex-col gap-1.5">
                 <label className={cn(
                   "inline-flex cursor-pointer items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-ink-soft hover:text-ink",
-                  uploadingImage && "pointer-events-none opacity-60",
+                  (uploadingImage || applyingMap) && "pointer-events-none opacity-60",
                 )}>
                   {uploadingImage ? (
                     <Loader2 size={14} className="animate-spin" aria-hidden="true" />
@@ -560,7 +616,58 @@ function ExerciseEditorDialog({
                     }}
                   />
                 </label>
-                {signedUrl && (
+
+                {isOwnExercise && mappedEntry && !signedUrl && (
+                  <button
+                    type="button"
+                    onClick={handleApplyMap}
+                    disabled={applyingMap}
+                    className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-ink-soft hover:text-ink disabled:opacity-60"
+                  >
+                    {applyingMap ? (
+                      <Loader2 size={12} className="animate-spin" aria-hidden="true" />
+                    ) : (
+                      <ImagePlus size={12} aria-hidden="true" />
+                    )}
+                    Usar imagem padrão
+                  </button>
+                )}
+
+                {isOwnExercise && (
+                  <button
+                    type="button"
+                    onClick={() => setShowExternalInput((v) => !v)}
+                    className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-ink-soft hover:text-ink"
+                  >
+                    <ImagePlus size={12} aria-hidden="true" />
+                    Colar URL externa
+                  </button>
+                )}
+
+                {showExternalInput && isOwnExercise && (
+                  <div className="flex flex-col gap-1.5">
+                    <input
+                      type="url"
+                      value={externalUrlInput}
+                      onChange={(e) => setExternalUrlInput(e.target.value)}
+                      placeholder="https://…/imagem.jpg"
+                      className="w-full rounded-xl border border-line bg-surface px-2 py-1.5 text-[12px] text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyExternal}
+                      disabled={applyingMap}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-ember px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-ember-dark disabled:opacity-60"
+                    >
+                      {applyingMap ? (
+                        <Loader2 size={12} className="animate-spin" aria-hidden="true" />
+                      ) : null}
+                      Aplicar URL
+                    </button>
+                  </div>
+                )}
+
+                {signedUrl && isOwnExercise && (
                   <button
                     type="button"
                     onClick={handleRemoveImage}

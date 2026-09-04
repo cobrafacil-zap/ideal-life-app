@@ -9,6 +9,8 @@ import {
   listExerciseHistory,
   listWorkoutHistory,
 } from "../actions";
+import { getExerciseMediaSignedUrl } from "@/lib/exercise-images";
+import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
 import { formatHours, formatLongDate } from "@/lib/format";
 import { PRIMARY_MUSCLE_LABEL } from "@/lib/workout";
 import type { PrimaryMuscleGroup } from "@/types/database";
@@ -16,6 +18,17 @@ import { fmtKg } from "@/lib/workout-volume";
 import { HistoryClient } from "./HistoryClient";
 
 export const dynamic = "force-dynamic";
+
+type ExerciseMediaRow = {
+  id: string;
+  name: string;
+  primary_muscle: string;
+  secondary_muscles: string[];
+  equipment: string | null;
+  image_url: string | null;
+  animation_url: string | null;
+  user_id: string | null;
+};
 
 export default async function HistoricoPage({
   searchParams,
@@ -33,6 +46,50 @@ export default async function HistoricoPage({
     listWorkoutHistory({ rangeDays, limit: 60 }),
     listExerciseHistory({ rangeDays }),
   ]);
+
+  // Carrega mídia por exercício (id real OU sentinel orphan:name).
+  const exerciseIds = exercises
+    .map((e) => e.exercise_id)
+    .filter((id) => !id.startsWith("orphan:"));
+  const exerciseRows: ExerciseMediaRow[] = [];
+  if (exerciseIds.length > 0) {
+    const { data } = await supabase
+      .from("exercises")
+      .select(
+        "id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, user_id",
+      )
+      .in("id", exerciseIds)
+      .or(`user_id.is.null,user_id.eq.${user.id}`);
+    if (Array.isArray(data)) exerciseRows.push(...(data as ExerciseMediaRow[]));
+  }
+  const mediaById = new Map(exerciseRows.map((r) => [r.id, r]));
+  const mediaByName = new Map(exerciseRows.map((r) => [r.name.toLowerCase(), r]));
+
+  // Resolve signed URL (ou fallback de mapa) em paralelo.
+  const signedByExerciseId: Record<string, string | null> = {};
+  await Promise.all(
+    exercises.map(async (e) => {
+      const row = mediaById.get(e.exercise_id)
+        ?? (e.exercise_name ? mediaByName.get(e.exercise_name.toLowerCase()) : undefined);
+      const fallbackName = e.exercise_name ?? row?.name ?? null;
+      if (!row) {
+        // Sentinel orphan:name — só temos o nome.
+        signedByExerciseId[e.exercise_id] = await getExerciseMediaSignedUrl(
+          supabase,
+          null,
+          null,
+          fallbackName,
+        );
+        return;
+      }
+      signedByExerciseId[e.exercise_id] = await getExerciseMediaSignedUrl(
+        supabase,
+        row.image_url,
+        row.animation_url,
+        row.name,
+      );
+    }),
+  );
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -108,34 +165,53 @@ export default async function HistoricoPage({
           </p>
         ) : (
           <ul className="space-y-2">
-            {exercises.map((ex) => (
-              <li key={ex.exercise_id}>
-                <Link
-                  href={`/treinos/historico/exercicio/${ex.exercise_id}`}
-                  className="flex items-center gap-3 rounded-2xl border border-line/60 bg-surface p-3 hover:border-ember/40 hover:shadow-card"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-display text-sm font-semibold text-ink">
-                      {ex.exercise_name}
-                    </p>
-                    <p className="text-[11px] text-ink-soft">
-                      {PRIMARY_MUSCLE_LABEL[ex.primary_muscle as PrimaryMuscleGroup] ?? ex.primary_muscle ?? "—"}
-                      {" · "}
-                      {ex.sessions} {ex.sessions === 1 ? "sessão" : "sessões"}
-                      {" · "}
-                      {ex.total_sets} séries
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-mono text-sm font-bold text-ink">
-                      {fmtKg(ex.top_load_kg)}
-                    </p>
-                    <p className="text-[10px] text-ink-faint">carga máxima</p>
-                  </div>
-                  <ChevronRight size={14} aria-hidden="true" className="text-ink-faint" />
-                </Link>
-              </li>
-            ))}
+            {exercises.map((ex) => {
+              const row = mediaById.get(ex.exercise_id)
+                ?? (ex.exercise_name ? mediaByName.get(ex.exercise_name.toLowerCase()) : undefined);
+              const exerciseForImage = row ?? {
+                id: ex.exercise_id,
+                name: ex.exercise_name ?? "Exercício",
+                primary_muscle: ex.primary_muscle ?? "outro",
+                secondary_muscles: [],
+                equipment: null,
+                image_url: null,
+                animation_url: null,
+                user_id: null,
+              };
+              return (
+                <li key={ex.exercise_id}>
+                  <Link
+                    href={`/treinos/historico/exercicio/${ex.exercise_id}`}
+                    className="flex items-center gap-3 rounded-2xl border border-line/60 bg-surface p-3 hover:border-ember/40 hover:shadow-card"
+                  >
+                    <ZoomableMedia
+                      exercise={exerciseForImage}
+                      signedUrl={signedByExerciseId[ex.exercise_id] ?? null}
+                      size="sm"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-display text-sm font-semibold text-ink">
+                        {ex.exercise_name}
+                      </p>
+                      <p className="text-[11px] text-ink-soft">
+                        {PRIMARY_MUSCLE_LABEL[ex.primary_muscle as PrimaryMuscleGroup] ?? ex.primary_muscle ?? "—"}
+                        {" · "}
+                        {ex.sessions} {ex.sessions === 1 ? "sessão" : "sessões"}
+                        {" · "}
+                        {ex.total_sets} séries
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-mono text-sm font-bold text-ink">
+                        {fmtKg(ex.top_load_kg)}
+                      </p>
+                      <p className="text-[10px] text-ink-faint">carga máxima</p>
+                    </div>
+                    <ChevronRight size={14} aria-hidden="true" className="text-ink-faint" />
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         )}
       </Card>

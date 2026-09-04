@@ -31,7 +31,7 @@ import {
 } from "./actions";
 import { cn } from "@/lib/cn";
 import { ExercisePicker } from "./ExercisePicker";
-import { ExerciseMedia } from "./ExerciseMedia";
+import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
 import type {
   Exercise,
   PrimaryMuscleGroup,
@@ -455,9 +455,9 @@ function PlanExerciseRow({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-              <ExerciseMedia
-                exercise={match ?? {
+            <ZoomableMedia
+              exercise={
+                match ?? {
                   id: row.id,
                   name: row.exercise_name,
                   primary_muscle: "outro",
@@ -466,10 +466,11 @@ function PlanExerciseRow({
                   image_url: null,
                   animation_url: null,
                   user_id: null,
-                }}
-                signedUrl={match?.signedUrl ?? null}
-              />
-            </div>
+                }
+              }
+              signedUrl={match?.signedUrl ?? null}
+              size="md"
+            />
             <p className="truncate font-display text-sm font-semibold text-ink">
               {row.exercise_name}
             </p>

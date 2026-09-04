@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { getExerciseProgression } from "../../../actions";
+import { getExerciseMediaSignedUrl } from "@/lib/exercise-images";
+import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
 import { formatShortDate } from "@/lib/format";
 import { fmtKg } from "@/lib/workout-volume";
 import { cn } from "@/lib/cn";
@@ -21,24 +23,59 @@ export default async function HistoricoExercicioPage({
 
   const points = await getExerciseProgression(params.id, { rangeDays: 180 });
 
-  // Busca o nome do exercício (seja id real ou sentinel orphan:name).
+  // Busca o exercício (id real OU sentinel orphan:name) para nome + mídia.
   let exerciseName = "Exercício";
+  let exerciseForImage: {
+    id: string;
+    name: string;
+    primary_muscle: string;
+    secondary_muscles: string[];
+    equipment: string | null;
+    image_url: string | null;
+    animation_url: string | null;
+    user_id: string | null;
+  } | null = null;
+
   if (params.id.startsWith("orphan:")) {
     exerciseName = decodeURIComponent(params.id.slice("orphan:".length));
+    exerciseForImage = {
+      id: params.id,
+      name: exerciseName,
+      primary_muscle: "outro",
+      secondary_muscles: [],
+      equipment: null,
+      image_url: null,
+      animation_url: null,
+      user_id: null,
+    };
   } else {
     const { data } = await supabase
       .from("exercises")
-      .select("name")
+      .select(
+        "id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, user_id",
+      )
       .eq("id", params.id)
       .or(`user_id.is.null,user_id.eq.${user.id}`)
       .maybeSingle();
-    if (data?.name) exerciseName = data.name;
+    if (data?.name) {
+      exerciseName = data.name;
+      exerciseForImage = data;
+    }
   }
+
+  const signedUrl = exerciseForImage
+    ? await getExerciseMediaSignedUrl(
+        supabase,
+        exerciseForImage.image_url,
+        exerciseForImage.animation_url,
+        exerciseForImage.name,
+      )
+    : null;
 
   if (points.length === 0) {
     return (
       <div className="mx-auto max-w-2xl space-y-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Link
             href="/treinos/historico"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-ink-soft hover:bg-base/60 hover:text-ink"
@@ -46,6 +83,13 @@ export default async function HistoricoExercicioPage({
           >
             <ArrowLeft size={16} aria-hidden="true" />
           </Link>
+          {exerciseForImage && (
+            <ZoomableMedia
+              exercise={exerciseForImage}
+              signedUrl={signedUrl}
+              size="md"
+            />
+          )}
           <h1 className="font-display text-xl font-bold text-ink">
             {exerciseName}
           </h1>
@@ -65,7 +109,7 @@ export default async function HistoricoExercicioPage({
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <Link
           href="/treinos/historico"
           className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-ink-soft hover:bg-base/60 hover:text-ink"
@@ -73,6 +117,13 @@ export default async function HistoricoExercicioPage({
         >
           <ArrowLeft size={16} aria-hidden="true" />
         </Link>
+        {exerciseForImage && (
+          <ZoomableMedia
+            exercise={exerciseForImage}
+            signedUrl={signedUrl}
+            size="md"
+          />
+        )}
         <div className="min-w-0 flex-1">
           <h1 className="truncate font-display text-xl font-bold text-ink">
             {exerciseName}

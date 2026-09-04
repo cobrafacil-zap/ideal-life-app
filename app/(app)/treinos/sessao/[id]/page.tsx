@@ -62,6 +62,7 @@ export default async function SessaoPage({
         supabase,
         ex.image_url,
         ex.animation_url,
+        ex.name,
       ),
     })),
   );

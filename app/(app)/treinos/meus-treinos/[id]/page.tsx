@@ -39,6 +39,7 @@ export default async function PlanoDetalhePage({
             supabase,
             ex.image_url,
             ex.animation_url,
+            ex.name,
           ),
         };
       } catch {

@@ -11,7 +11,6 @@ import {
   Flag,
   X,
   Pencil,
-  Save,
   Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -25,6 +24,7 @@ import {
   type ExerciseListItem,
 } from "./actions";
 import { cn } from "@/lib/cn";
+import { SuccessOverlay } from "@/components/ui/SuccessOverlay";
 import {
   RPE_DESCRIPTORS,
   minutesToHours,
@@ -122,6 +122,8 @@ export function WorkoutRunner({
     // Cronômetro de descanso removido — produto não usa mais.
   }
 
+  const [success, setSuccess] = useState<string | null>(null);
+
   function addSet(input: {
     exerciseName: string;
     exerciseId: string | null;
@@ -217,7 +219,9 @@ export function WorkoutRunner({
           duration_min: elapsedMin,
           user_rpe: rpe,
         });
-        router.push("/treinos/historico");
+        setSuccess("Treino finalizado");
+        // Tempo para o usuário ver o overlay antes de navegar.
+        setTimeout(() => router.push("/treinos/historico"), 800);
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro ao finalizar.");
@@ -227,6 +231,11 @@ export function WorkoutRunner({
 
   return (
     <div className="space-y-5">
+      <SuccessOverlay
+        open={success !== null}
+        onDone={() => setSuccess(null)}
+        title={success ?? ""}
+      />
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -1030,4 +1039,4 @@ function formatElapsed(ms: number): string {
 }
 
 // re-exporta pra não dar warning de "import unused"
-export { Pencil, Save };
+export { Pencil };

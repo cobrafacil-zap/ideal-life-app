@@ -11,13 +11,12 @@ import {
   ChevronUp,
   ChevronDown,
   Pencil,
-  Save,
   Power,
-  Check,
   X,
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { SuccessOverlay } from "@/components/ui/SuccessOverlay";
 import { TextField } from "@/components/ui/TextField";
 import {
   addPlanExercise,
@@ -69,8 +68,9 @@ export function PlanEditor({
   const [name, setName] = useState(plan.name);
   const [description, setDescription] = useState(plan.description ?? "");
   const [isActive, setIsActive] = useState(plan.is_active);
-  const [savedName, setSavedName] = useState(false);
-  const [savedMeta, setSavedMeta] = useState(false);
+  const [success, setSuccess] = useState<{ title: string } | null>(null);
+  const showSuccess = (title: string) => setSuccess({ title });
+  const closeSuccess = () => setSuccess(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -80,8 +80,7 @@ export function PlanEditor({
     startTransition(async () => {
       try {
         await updateWorkoutPlan(plan.id, { name });
-        setSavedName(true);
-        setTimeout(() => setSavedName(false), 1500);
+        showSuccess("Nome salvo");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro.");
       }
@@ -93,8 +92,7 @@ export function PlanEditor({
     startTransition(async () => {
       try {
         await updateWorkoutPlan(plan.id, { description });
-        setSavedMeta(true);
-        setTimeout(() => setSavedMeta(false), 1500);
+        showSuccess("Descrição salva");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro.");
       }
@@ -139,7 +137,9 @@ export function PlanEditor({
     startTransition(async () => {
       try {
         await deleteWorkoutPlan(plan.id);
-        router.push("/treinos");
+        showSuccess("Plano excluído");
+        // Dá tempo do overlay aparecer antes de navegar.
+        setTimeout(() => router.push("/treinos"), 700);
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro ao excluir.");
@@ -185,6 +185,11 @@ export function PlanEditor({
 
   return (
     <div className="space-y-6">
+      <SuccessOverlay
+        open={success !== null}
+        onDone={closeSuccess}
+        title={success?.title ?? ""}
+      />
       <div className="flex items-center gap-2">
         <Link
           href="/treinos"
@@ -213,10 +218,9 @@ export function PlanEditor({
             <Button
               onClick={saveName}
               loading={isPending}
-              variant={savedName ? "outline" : "secondary"}
-              leadingIcon={savedName ? <Check size={14} /> : <Save size={14} />}
+              variant="secondary"
             >
-              {savedName ? "Salvo" : "Salvar"}
+              Salvar
             </Button>
           </div>
         </label>
@@ -237,10 +241,10 @@ export function PlanEditor({
             <Button
               onClick={saveDescription}
               loading={isPending}
-              variant={savedMeta ? "outline" : "ghost"}
+              variant="ghost"
               size="sm"
             >
-              {savedMeta ? "Descrição salva" : "Salvar descrição"}
+              Salvar descrição
             </Button>
           </div>
         </label>
@@ -305,6 +309,7 @@ export function PlanEditor({
                 onMove={moveItem}
                 onUpdate={onRowUpdated}
                 onRemove={onRowRemoved}
+                onSaved={() => showSuccess("Exercício salvo")}
               />
             ))}
           </ul>
@@ -372,6 +377,7 @@ function PlanExerciseRow({
   onMove,
   onUpdate,
   onRemove,
+  onSaved,
 }: {
   row: PlanDetail["exercises"][number];
   index: number;
@@ -380,6 +386,7 @@ function PlanExerciseRow({
   onMove: (id: string, dir: -1 | 1) => void;
   onUpdate: (id: string, patch: Partial<PlanDetail["exercises"][number]>) => void;
   onRemove: (id: string) => void;
+  onSaved: () => void;
 }) {
   // Acha mídia do exercício na library (caso exercise_id referencie o catálogo).
   const match =
@@ -390,7 +397,6 @@ function PlanExerciseRow({
   const [reps, setReps] = useState(row.target_reps);
   const [load, setLoad] = useState(row.target_load?.toString() ?? "");
   const [unit, setUnit] = useState<"kg" | "lb">(row.load_unit);
-  const [saved, setSaved] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -404,8 +410,7 @@ function PlanExerciseRow({
           target_load: load === "" ? null : load,
           load_unit: unit,
         });
-        setSaved(true);
-        setTimeout(() => setSaved(false), 1500);
+        onSaved();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro.");
       }
@@ -526,15 +531,10 @@ function PlanExerciseRow({
           <button
             type="button"
             onClick={save}
-            className={cn(
-              "inline-flex h-8 items-center gap-1 rounded-pill border px-2 text-[11px] font-semibold",
-              saved
-                ? "border-moss/40 bg-moss-soft text-moss-dark"
-                : "border-line bg-base/60 text-ink-soft hover:text-ink",
-            )}
+            disabled={isPending}
+            className="inline-flex h-8 items-center gap-1 rounded-pill border border-line bg-base/60 px-2 text-[11px] font-semibold text-ink-soft hover:text-ink disabled:opacity-60"
           >
-            {saved ? <Check size={12} aria-hidden="true" /> : <Save size={12} aria-hidden="true" />}
-            {saved ? "Salvo" : "Salvar"}
+            Salvar
           </button>
           <button
             type="button"

@@ -91,11 +91,16 @@ const config: Config = {
           "0%": { strokeDashoffset: "var(--ring-start)" },
           "100%": { strokeDashoffset: "var(--ring-end)" },
         },
+        "check-stroke": {
+          "0%": { strokeDashoffset: "26" },
+          "100%": { strokeDashoffset: "0" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.35s ease-out both",
         "fade-in": "fade-in 0.4s ease-out both",
         "ring-fill": "ring-fill 0.9s cubic-bezier(0.22,1,0.36,1) both",
+        "check-stroke": "check-stroke 0.45s cubic-bezier(0.22,1,0.36,1) 0.1s both",
       },
     },
   },

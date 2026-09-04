@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { removeFile } from "@/lib/storage";
 import { lookupExerciseImage } from "@/lib/exercise-image-map";
+import { proxyExternalImageUrl } from "@/lib/exercise-images";
 import type { Exercise } from "@/types/database";
 
 const IMAGE_EXT_RE = /\.(png|jpe?g|webp|gif|svg)(\?|$|#)/i;
@@ -52,7 +53,7 @@ export async function setExerciseImageFromMapAction(
   if (error) throw new Error(error.message);
 
   revalidatePath("/treinos");
-  return { url: mapped.url };
+  return { url: proxyExternalImageUrl(mapped.url) };
 }
 
 /**

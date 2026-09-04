@@ -12,7 +12,9 @@ import { lookupExerciseImage } from "./exercise-image-map";
  *   2. URL absoluta (http/https) — pode ter sido gravada via:
  *        - Migration de catálogo (Wikimedia Commons)
  *        - "Colar URL externa" no editor do usuário
- *      Nesse caso retornamos a URL direto, sem signed URL.
+ *      URLs da Wikimedia passam pelo proxy `/api/exercise-img` para
+ *      receber `Content-Type: image/svg+xml` correto (a Wikimedia
+ *      serve SVGs como `text/plain`, o que o navegador recusa em `<img>`).
  *   3. Fallback no mapa padrão por nome (cinto de segurança caso a
  *      migration ainda não tenha rodado em algum ambiente).
  *
@@ -27,7 +29,7 @@ export async function getExerciseImageSignedUrl(
   storagePath: string | null | undefined,
 ): Promise<string | null> {
   if (!storagePath) return null;
-  if (isAbsoluteHttpUrl(storagePath)) return storagePath;
+  if (isAbsoluteHttpUrl(storagePath)) return proxyExternalImageUrl(storagePath);
   return getSignedFileUrl(supabase, "workout-images", storagePath, 3600);
 }
 
@@ -40,12 +42,12 @@ export async function getExerciseMediaSignedUrl(
   // Prioridade: animation_url > image_url > mapa padrão por nome.
   const chosen = animationPath ?? imagePath ?? null;
   if (chosen) {
-    if (isAbsoluteHttpUrl(chosen)) return chosen;
+    if (isAbsoluteHttpUrl(chosen)) return proxyExternalImageUrl(chosen);
     return getSignedFileUrl(supabase, "workout-images", chosen, 3600);
   }
   if (fallbackName) {
     const mapped = lookupExerciseImage(fallbackName);
-    if (mapped?.url) return mapped.url;
+    if (mapped?.url) return proxyExternalImageUrl(mapped.url);
   }
   return null;
 }
@@ -54,3 +56,22 @@ export async function getExerciseMediaSignedUrl(
 function isAbsoluteHttpUrl(value: string): boolean {
   return /^https?:\/\//i.test(value);
 }
+
+/**
+ * Se a URL é de um host externo conhecido (Wikimedia), passa pelo
+ * proxy do app para garantir que o content-type seja aceito pelo
+ * navegador. URLs do usuário (ex: coladas manualmente) seguem
+ * diretas.
+ */
+export function proxyExternalImageUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.hostname === "upload.wikimedia.org" || u.hostname === "commons.wikimedia.org") {
+      return `/api/exercise-img?url=${encodeURIComponent(url)}`;
+    }
+  } catch {
+    // mantém URL original se malformada.
+  }
+  return url;
+}
+

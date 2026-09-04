@@ -55,8 +55,11 @@ export default async function SessaoPage({
   ]);
 
   // Signed URLs (animation_url > image_url) para todos os exercícios da library.
+  // O WorkoutRunner pode mostrar qualquer exercício do catálogo, então
+  // geramos a URL para todos. Para storage path é uma chamada barata ao
+  // Storage; para absoluta é passthrough; sem image_url cai no mapa TS.
   const signedEntries = await Promise.all(
-    library.slice(0, 100).map(async (ex) => ({
+    library.map(async (ex) => ({
       id: ex.id,
       url: await getExerciseMediaSignedUrl(
         supabase,

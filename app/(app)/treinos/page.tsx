@@ -102,7 +102,7 @@ export default async function TreinosPage() {
 
   const signedUrlMap: Record<string, string | null> = {};
   await Promise.all(
-    exerciseList.slice(0, 60).map(async (ex) => {
+    exerciseList.map(async (ex) => {
       try {
         signedUrlMap[ex.id] = await getExerciseMediaSignedUrl(
           supabase,

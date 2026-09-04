@@ -29,9 +29,13 @@ export default async function PlanoDetalhePage({
   }
 
   // Signed URLs com prioridade para animation_url (gif/vídeo) > image_url.
-  // Limite a 80 entradas para evitar custos altos de signed URL.
+  // O picker só mostra exercícios do catálogo global (~140), então
+  // geramos a URL pra todos para garantir que cada card renderize sua
+  // imagem. Para storage path a chamada a getSignedFileUrl é barata;
+  // para absoluta é passthrough. Para entradas sem image_url/animation_url
+  // o helper consulta o mapa TS (in-memory), sem custo de I/O.
   const signedEntries = await Promise.all(
-    library.slice(0, 80).map(async (ex) => {
+    library.map(async (ex) => {
       try {
         return {
           id: ex.id,

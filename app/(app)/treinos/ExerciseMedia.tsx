@@ -72,6 +72,12 @@ export function ExerciseMedia({
     onError: () => setErrored(true),
   };
 
+  // Silhuetas Wikimedia vêm em SVG preto (default fill) sem fundo.
+  // object-contain garante que o desenho apareça inteiro; bg-white dá
+  // contraste para silhuetas escuras. Para animação gif/vídeo queremos
+  // object-cover.
+  const imgClassForSvg = "h-full w-full rounded-2xl bg-white object-contain";
+
   if (showMedia && isAnimation) {
     return full ? (
       <MediaWrap onClick={activate} ariaLabel={`Ampliar imagem de ${exercise.name}`} full>
@@ -90,12 +96,12 @@ export function ExerciseMedia({
     return full ? (
       <MediaWrap onClick={activate} ariaLabel={`Ampliar imagem de ${exercise.name}`} full>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img {...commonImgProps} className="h-full w-full rounded-2xl object-cover" />
+        <img {...commonImgProps} className={imgClassForSvg} />
       </MediaWrap>
     ) : (
       <MediaWrap onClick={activate} ariaLabel={`Ampliar imagem de ${exercise.name}`} size={size}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img {...commonImgProps} className={cn("shrink-0 rounded-2xl object-cover", sizeDims(size))} />
+        <img {...commonImgProps} className={cn("shrink-0 rounded-2xl bg-white object-contain", sizeDims(size))} />
       </MediaWrap>
     );
   }

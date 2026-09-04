@@ -64,8 +64,13 @@ export async function GET(req: NextRequest) {
   }
 
   const upstream = await fetch(parsed.toString(), {
-    // Não enviamos cookies do navegador para a origem.
-    headers: { Accept: "image/*,*/*;q=0.8" },
+    // User-Agent identifica a origem para a Wikimedia não recusar
+    // (eles rejeitam requisições com UA genérico "node" em algumas rotas
+    // de thumb). Accept prioriza imagem.
+    headers: {
+      Accept: "image/avif,image/webp,image/png,image/svg+xml,image/*,*/*;q=0.8",
+      "User-Agent": "VITTA-App/1.0 (https://ideal-life-app.vercel.app)",
+    },
     // Sem seguir redirecionamentos para destinos fora da allowlist.
     redirect: "follow",
     // Cacheable no edge.

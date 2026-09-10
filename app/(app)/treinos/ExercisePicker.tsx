@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
@@ -65,6 +65,15 @@ export function ExercisePicker({
   onAdd,
 }: Props) {
   const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Garante foco no input quando o modal monta. O `autoFocus` no JSX
+  // pode ser consumido pelo browser antes do componente terminar de
+  // montar em alguns navegadores; este useEffect re-aplica o foco
+  // imediatamente após a montagem.
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const grouped = useMemo(() => {
     const term = query.trim();
@@ -107,6 +116,12 @@ export function ExercisePicker({
     ...PRIMARY_MUSCLE_ORDER.filter((g) => grouped.has(g)),
   ];
 
+  // Total exibido após o filtro — usado pelo contador "Mostrando X de Y".
+  const totalFiltered = orderedGroups.reduce(
+    (n, key) => n + (grouped.get(key)?.length ?? 0),
+    0,
+  );
+
   return (
     <div
       role="dialog"
@@ -138,6 +153,15 @@ export function ExercisePicker({
             <p className="text-[11px] text-ink-soft">
               Toque em "+ Adicionar" para incluir no treino.
             </p>
+            {query.trim() && (
+              <p
+                className="text-[11px] text-ink-soft"
+                data-testid="picker-result-count"
+                aria-live="polite"
+              >
+                Mostrando {totalFiltered} de {exercises.length} exercícios
+              </p>
+            )}
           </div>
         </div>
         <div className="mx-auto max-w-3xl px-4 pb-3">
@@ -149,6 +173,7 @@ export function ExercisePicker({
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint"
             />
             <input
+              ref={inputRef}
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

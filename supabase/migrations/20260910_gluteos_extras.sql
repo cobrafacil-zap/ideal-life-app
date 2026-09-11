@@ -22,7 +22,7 @@ BEGIN
   INSERT INTO public.exercises
     (user_id, name, primary_muscle, secondary_muscles, equipment, machine_type,
      category, aliases, instructions)
-  SELECT NULL, t.name, t.primary, t.secondary, t.equipment, t.machine_type,
+  SELECT NULL, t.name, t."primary", t."secondary", t.equipment, t.machine_type,
          t.category, t.aliases, t.instructions
   FROM (VALUES
     ('Frog Pump', 'pernas', ARRAY['gluteos']::TEXT[], 'barra', 'free_weight',
@@ -61,7 +61,7 @@ BEGIN
     ('Cadeira abdutora', 'pernas', ARRAY[]::TEXT[], 'maquina', 'selectorized',
      'abdutores', ARRAY['Hip abduction machine','Abdução cadeira']::TEXT[],
      'Sentado na cadeira abdutora, abra as pernas contra a resistência. Trabalha glúteo médio/mínimo.')
-  ) AS t(name, primary, secondary, equipment, machine_type, category, aliases, instructions)
+  ) AS t(name, "primary", "secondary", equipment, machine_type, category, aliases, instructions)
   WHERE NOT EXISTS (
     SELECT 1 FROM public.exercises
     WHERE user_id IS NULL AND LOWER(name) = LOWER(t.name)

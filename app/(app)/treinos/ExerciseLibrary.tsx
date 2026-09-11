@@ -20,9 +20,8 @@ import {
   PRIMARY_MUSCLE_LABEL,
   EQUIPMENT_ORDER,
   EQUIPMENT_LABEL,
-  EXERCISE_CATEGORY_LABEL,
 } from "@/lib/workout";
-import { matchesAny, normalizeSearch } from "@/lib/text-search";
+import { rankExercisesByQuery } from "@/lib/text-search";
 import type {
   EquipmentKind,
   PrimaryMuscleGroup,
@@ -62,27 +61,16 @@ export function ExerciseLibrary({
   const [editing, setEditing] = useState<ExerciseListItem | "new" | null>(null);
 
   const visible = useMemo(() => {
-    const term = normalizeSearch(search);
-    return items.filter((it) => {
+    // Aplica os filtros de chip/escopo primeiro (sempre), depois passa
+    // para o ranker — que devolve a lista na ordem original quando o
+    // termo de busca está vazio.
+    const filtered = items.filter((it) => {
       if (scope === "mine" && it.user_id == null) return false;
       if (muscle !== "all" && it.primary_muscle !== muscle) return false;
       if (equipment !== "all" && it.equipment !== equipment) return false;
-      if (term) {
-        // Busca por nome principal + aliases + equipamento + grupo
-        // muscular (legado) + categoria fina (v2). Tudo case/acento
-        // insensitive via matchesAny.
-        const aliases = it.aliases ?? [];
-        const categoryLabel = it.category
-          ? EXERCISE_CATEGORY_LABEL[it.category as keyof typeof EXERCISE_CATEGORY_LABEL] ?? ""
-          : "";
-        const muscleLabel = PRIMARY_MUSCLE_LABEL[
-          it.primary_muscle as PrimaryMuscleGroup
-        ] ?? it.primary_muscle ?? "";
-        const hay = [it.name, it.equipment ?? "", muscleLabel, categoryLabel, ...aliases];
-        if (!hay.some((h) => matchesAny(term, [h]))) return false;
-      }
       return true;
     });
+    return rankExercisesByQuery(filtered, search);
   }, [items, search, muscle, equipment, scope]);
 
   return (

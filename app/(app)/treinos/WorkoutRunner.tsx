@@ -28,12 +28,9 @@ import { SuccessOverlay } from "@/components/ui/SuccessOverlay";
 import {
   RPE_DESCRIPTORS,
   minutesToHours,
-  EXERCISE_CATEGORY_LABEL,
-  PRIMARY_MUSCLE_LABEL,
 } from "@/lib/workout";
-import { matchesAny } from "@/lib/text-search";
+import { rankExercisesByQuery } from "@/lib/text-search";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
-import type { PrimaryMuscleGroup, ExerciseCategory } from "@/types/database";
 
 type PlanExerciseRow = {
   id: string;
@@ -928,21 +925,9 @@ function AdHocExercisePicker({
   onPick: (ex: ExerciseListItem) => void;
 }) {
   const [search, setSearch] = useState("");
-  const filtered = library.filter((ex) => {
-    const term = search.trim();
-    if (!term) return true;
-    const cat = ex.category as ExerciseCategory | null;
-    const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
-    const categoryLabel = cat ? (EXERCISE_CATEGORY_LABEL[cat] ?? "") : "";
-    const muscleLabel = pm ? (PRIMARY_MUSCLE_LABEL[pm] ?? "") : "";
-    return matchesAny(term, [
-      ex.name,
-      ex.equipment ?? "",
-      muscleLabel,
-      categoryLabel,
-      ...(ex.aliases ?? []),
-    ]);
-  });
+  // `rankExercisesByQuery` devolve a `library` na ordem original quando
+  // o termo está vazio, então é seguro usar direto sem `if (!term)`.
+  const filtered = rankExercisesByQuery(library, search);
   return (
     <div
       role="dialog"

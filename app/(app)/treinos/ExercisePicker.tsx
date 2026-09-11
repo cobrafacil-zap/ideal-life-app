@@ -16,7 +16,7 @@ import {
   PRIMARY_MUSCLE_LABEL,
   PRIMARY_MUSCLE_ORDER,
 } from "@/lib/workout";
-import { matchesAny, splitByMatch } from "@/lib/text-search";
+import { rankExercisesByQuery, splitByMatch } from "@/lib/text-search";
 
 type ExerciseForPicker = Pick<
   Exercise,
@@ -35,6 +35,21 @@ type ExerciseForPicker = Pick<
 
 type SignedMap = Record<string, string | null>;
 
+/** Categorias mostradas como chips de atalho no topo do picker. "all" é
+ *  o primeiro e reseta o filtro. Ordem definida pelo produto. */
+const CATEGORY_CHIPS: ReadonlyArray<ExerciseCategory | "all"> = [
+  "all",
+  "gluteos",
+  "quadriceps",
+  "posterior",
+  "panturrilha",
+  "peito",
+  "costas",
+  "ombros",
+  "biceps",
+  "triceps",
+];
+
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -52,9 +67,13 @@ type Props = {
  * Mostra apenas exercícios pré-determinados pelo sistema (catálogo
  * global). O caller deve passar `exercises` já filtrado para `scope: "global"`.
  *
- * A busca consulta `name`, `equipment`, `category` e `aliases` (sinônimos).
- * O agrupamento visual usa a nova `category` (v2 da biblioteca); se estiver
- * ausente cai no `primary_muscle` legado.
+ * A busca rankeia por nome, categoria, grupo muscular legado, aliases,
+ * músculos secundários, equipamento e instruções (ver
+ * `rankExercisesByQuery` em `lib/text-search.ts`). A linha de chips no
+ * topo do header filtra por `category` antes da busca; quando o termo é
+ * digitado, o chip é apenas um atalho extra (a busca por texto domina).
+ * O agrupamento visual usa a nova `category` (v2 da biblioteca); se
+ * estiver ausente cai no `primary_muscle` legado.
  */
 export function ExercisePicker({
   open,
@@ -65,6 +84,7 @@ export function ExercisePicker({
   onAdd,
 }: Props) {
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<ExerciseCategory | "all">("all");
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Garante foco no input quando o modal monta. O `autoFocus` no JSX
@@ -76,25 +96,19 @@ export function ExercisePicker({
   }, []);
 
   // Filtro reativo: recalcula a cada render (sem useMemo) para garantir
-  // que a lista visível sempre reflita `query`. Mantém o useState `query`
-  // acima; o React só re-renderiza quando `query` muda.
+  // que a lista visível sempre reflita `query` + chip de categoria.
+  //
+  // Fluxo:
+  //  1) Aplica o chip (se != "all") — restringe por `category` exato.
+  //  2) Se há termo de busca, rankeia por `rankExercisesByQuery`, que já
+  //     remove itens com score 0 — não sobra grupo vazio.
+  //  3) Se não há termo, devolve a lista pós-chip na ordem original.
   const term = query.trim();
-  const filtered = term
-    ? exercises.filter((ex) => {
-        const cat = ex.category as ExerciseCategory | null;
-        const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
-        const categoryLabel = cat ? (EXERCISE_CATEGORY_LABEL[cat] ?? "") : "";
-        const muscleLabel = pm ? (PRIMARY_MUSCLE_LABEL[pm] ?? "") : "";
-        const aliases = ex.aliases ?? [];
-        return matchesAny(term, [
-          ex.name,
-          ex.equipment ?? "",
-          muscleLabel,
-          categoryLabel,
-          ...aliases,
-        ]);
-      })
-    : exercises;
+  const byChip =
+    category === "all"
+      ? exercises
+      : exercises.filter((ex) => ex.category === category);
+  const filtered = term ? rankExercisesByQuery(byChip, query) : byChip;
 
   const grouped = (() => {
     const map = new Map<string, ExerciseForPicker[]>();
@@ -200,13 +214,47 @@ export function ExercisePicker({
             )}
           </label>
         </div>
+        <div className="mx-auto max-w-3xl px-4 pb-3">
+          <div
+            className="-mx-1 flex gap-1.5 overflow-x-auto pb-1"
+            role="tablist"
+            aria-label="Filtrar por grupo muscular"
+          >
+            {CATEGORY_CHIPS.map((c) => {
+              const active = category === c;
+              const label = c === "all" ? "Todos" : EXERCISE_CATEGORY_LABEL[c];
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCategory(c)}
+                  aria-pressed={active}
+                  className={cn(
+                    "shrink-0 rounded-pill border px-3 py-1.5 text-[12px] font-medium transition-colors",
+                    active
+                      ? "border-ember/40 bg-ember-soft text-ember-dark"
+                      : "border-line/70 bg-surface text-ink-soft hover:text-ink",
+                  )}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Body */}
       <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 py-4 space-y-6">
         {orderedGroups.length === 0 ? (
           <div className="rounded-card border border-dashed border-line bg-surface/60 p-6 text-center text-[13px] text-ink-soft">
-            Nenhum exercício encontrado para “{query}”.
+            Nenhum exercício encontrado
+            {term
+              ? ` para “${query}”`
+              : category !== "all"
+                ? ` em ${EXERCISE_CATEGORY_LABEL[category as ExerciseCategory]}`
+                : ""}
+            .
           </div>
         ) : (
           orderedGroups.map((group) => (

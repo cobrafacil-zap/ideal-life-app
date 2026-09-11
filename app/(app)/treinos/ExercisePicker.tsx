@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Search, X, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
@@ -75,25 +75,28 @@ export function ExercisePicker({
     inputRef.current?.focus();
   }, []);
 
-  const grouped = useMemo(() => {
-    const term = query.trim();
-    const filtered = term
-      ? exercises.filter((ex) => {
-          const cat = ex.category as ExerciseCategory | null;
-          const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
-          const categoryLabel = cat ? (EXERCISE_CATEGORY_LABEL[cat] ?? "") : "";
-          const muscleLabel = pm ? (PRIMARY_MUSCLE_LABEL[pm] ?? "") : "";
-          const aliases = ex.aliases ?? [];
-          return matchesAny(term, [
-            ex.name,
-            ex.equipment ?? "",
-            muscleLabel,
-            categoryLabel,
-            ...aliases,
-          ]);
-        })
-      : exercises;
+  // Filtro reativo: recalcula a cada render (sem useMemo) para garantir
+  // que a lista visível sempre reflita `query`. Mantém o useState `query`
+  // acima; o React só re-renderiza quando `query` muda.
+  const term = query.trim();
+  const filtered = term
+    ? exercises.filter((ex) => {
+        const cat = ex.category as ExerciseCategory | null;
+        const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
+        const categoryLabel = cat ? (EXERCISE_CATEGORY_LABEL[cat] ?? "") : "";
+        const muscleLabel = pm ? (PRIMARY_MUSCLE_LABEL[pm] ?? "") : "";
+        const aliases = ex.aliases ?? [];
+        return matchesAny(term, [
+          ex.name,
+          ex.equipment ?? "",
+          muscleLabel,
+          categoryLabel,
+          ...aliases,
+        ]);
+      })
+    : exercises;
 
+  const grouped = (() => {
     const map = new Map<string, ExerciseForPicker[]>();
     for (const ex of filtered) {
       const cat = ex.category as ExerciseCategory | null;
@@ -105,7 +108,7 @@ export function ExercisePicker({
       map.set(key, list);
     }
     return map;
-  }, [exercises, query]);
+  })();
 
   if (!open) return null;
 

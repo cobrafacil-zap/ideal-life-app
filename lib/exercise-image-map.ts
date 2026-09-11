@@ -4,19 +4,22 @@
  * Cada chave é o NOME CANÔNICO gravado em `exercises.name` (catálogo
  * global `user_id IS NULL`). O lookup é case-insensitive.
  *
- * Os URLs apontam para arquivos SVG didáticos já publicados na
- * Wikimedia Commons — conteúdo livre, sem dependência de build, sem
- * bundle bloat. Cada URL foi resolvida via `imageinfo` da API do
- * Wikimedia (resposta 200 OK) antes de entrar neste arquivo.
+ * Os URLs vêm em duas famílias:
+ *   - Wikimedia Commons: SVGs didáticos reais (peito, costas, braços,
+ *     quadríceps, posterior) — conteúdo livre, sem bundle bloat. Cada
+ *     URL foi resolvida via `imageinfo` da API do Wikimedia antes de
+ *     entrar no mapa.
+ *   - Silhuetas SVG inline (data URI): geradas localmente via o helper
+ *     `makeSilhoueta(...)` para exercícios sem correspondente Wikimedia
+ *     adequado. Padronizadas: viewBox 0 0 256 256, cabeça `#E76F51`,
+ *     juntas `#264653`, body group `stroke-width=5`. A cor do stroke
+ *     identifica o grupo muscular (lilac/yellow para glúteo, pink para
+ *     cardio, blue para core, etc.).
  *
- * Extensibilidade: para adicionar novos exercícios, basta:
- *   1) Pesquisar na Wikimedia Commons (ou outro host público).
- *   2) Resolver a URL final via API.
- *   3) Inserir a entrada no map.
+ * Para adicionar um novo exercício silhueta, basta:
+ *   `"nome do exercício": { url: makeSilhoueta({...}) }`
  *
- * Os arquivos vêm em duas variantes ("1" e "2" — geralmente vistas de
- * lados opostos ou início/fim do movimento). A função `lookupExerciseImage`
- * retorna o primeiro disponível; se quiser variar, use `lookupExerciseImages`.
+ * Para usar uma imagem Wikimedia, basta colar a URL externa.
  */
 
 export type ExerciseImageEntry = {
@@ -24,6 +27,83 @@ export type ExerciseImageEntry = {
   /** Crédito opcional exibido em lightbox/caption (autor ou fonte). */
   credit?: string;
 };
+
+/**
+ * Paleta de cores por grupo muscular — usada como `stroke` da silhueta.
+ * Mantém o mesmo padrão de `tailwind.config.ts` e `globals.css`.
+ */
+const STROKE = {
+  gluteos: "#E9C46A",   // amarelo mostarda
+  cardio: "#FF006E",    // rosa
+  abdomen: "#3A86FF",   // azul
+  panturrilha: "#8338EC", // roxo
+  costas: "#2A9D8F",    // verde-azulado
+  bracos: "#F4A261",    // laranja
+  pernas: "#264653",    // cinza-azulado escuro
+  outro: "#6C757D",     // cinza neutro
+} as const;
+
+type StrokeKey = keyof typeof STROKE;
+
+type SilhouetteOpts = {
+  /** Nome exibido na legenda inferior (em minúsculas, com acentos). */
+  name: string;
+  /** Cor do stroke do corpo. Use uma chave de STROKE ou um hex. */
+  stroke: StrokeKey | `#${string}`;
+  /** Conteúdo do body group (lines/rects) — sem o `<g>` wrapper. */
+  body: string;
+  /** Acessórios extras (cabo, barra, banco) — ficam no mesmo `<g>`. */
+  extras?: string;
+};
+
+/**
+ * Gera o data URI de uma silhueta SVG padronizada.
+ *
+ * Envelope fixo (não duplicar em cada entrada):
+ *   - viewBox 0 0 256 256, largura/altura 256
+ *   - Fundo `#F7F5F0`
+ *   - Cabeça `<circle>` centralizada no topo, `fill="#E76F51"`, `r=18`
+ *   - Body group `fill="none" stroke-width="5" stroke-linecap="round"`
+ *   - Legenda `<text>` centralizada em y=244, font-size 13, peso 600
+ *
+ * O `body` recebido é injetado dentro do `<g>` que já tem o stroke
+ * configurado — assim cada pose específica fica mínima e legível.
+ */
+function makeSilhoueta({ name, stroke, body, extras = "" }: SilhouetteOpts): string {
+  const color = STROKE[stroke as StrokeKey] ?? stroke;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><rect width="256" height="256" fill="#F7F5F0"/><text x="128" y="244" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#1A1A1A">${name}</text><g fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">${body}${extras}</g></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+/** Poses reutilizáveis para silhuetas. Cada uma cobre o body + extras
+ *  padronizados e parametrizados pela cor do stroke. */
+
+// Pessoa em pé neutra — base para máquina/cabo/cardio genérico.
+const STANDING_BODY = `<circle cx="128" cy="48" r="18" fill="#E76F51"/><line x1="128" y1="68" x2="128" y2="148"/><line x1="128" y1="80" x2="98" y2="120"/><line x1="128" y1="80" x2="158" y2="120"/><line x1="128" y1="148" x2="108" y2="220"/><line x1="128" y1="148" x2="148" y2="220"/>`;
+
+// Pessoa em pé com barra nos ombros — base para agachamento.
+const SQUAT_BODY = `<circle cx="128" cy="48" r="18" fill="#E76F51"/><line x1="128" y1="68" x2="128" y2="148"/><line x1="128" y1="80" x2="98" y2="120"/><line x1="128" y1="80" x2="158" y2="120"/><line x1="128" y1="148" x2="108" y2="220"/><line x1="128" y1="148" x2="148" y2="220"/><line x1="80" y1="80" x2="176" y2="80" stroke-width="6"/><rect x="70" y="72" width="14" height="16" fill="#264653"/><rect x="172" y="72" width="14" height="16" fill="#264653"/>`;
+
+// Pessoa sentada em máquina — base para cadeira extensora/flexora.
+const SEATED_BODY = `<circle cx="128" cy="68" r="18" fill="#E76F51"/><line x1="128" y1="88" x2="128" y2="148"/><line x1="128" y1="100" x2="98" y2="140"/><line x1="128" y1="100" x2="158" y2="140"/><line x1="128" y1="148" x2="108" y2="220"/><line x1="128" y1="148" x2="148" y2="220"/>`;
+
+// Pessoa deitada — base para supino/banco.
+const LYING_BODY = `<circle cx="60" cy="128" r="18" fill="#E76F51"/><line x1="78" y1="128" x2="200" y2="128"/><line x1="100" y1="128" x2="100" y2="100"/><line x1="100" y1="100" x2="160" y2="100"/><line x1="100" y1="100" x2="160" y2="60"/><line x1="200" y1="128" x2="220" y2="180"/><line x1="200" y1="128" x2="200" y2="180"/><line x1="20" y1="200" x2="236" y2="200" stroke-width="3" stroke="#999"/>`;
+
+// Pessoa em prancha — base para core/abdômen.
+const PLANK_BODY = `<line x1="40" y1="140" x2="216" y2="140"/><line x1="216" y1="140" x2="216" y2="100"/><line x1="216" y1="100" x2="216" y2="76"/><circle cx="216" cy="60" r="14" fill="#E76F51"/><line x1="216" y1="140" x2="200" y2="180"/><line x1="40" y1="140" x2="60" y2="180"/><line x1="20" y1="200" x2="236" y2="200" stroke-width="3" stroke="#999"/>`;
+
+// Hip thrust: pessoa deitada com quadril elevado e barra sobre o quadril.
+const HIP_THRUST_BODY = `<circle cx="128" cy="60" r="18" fill="#E76F51"/><line x1="128" y1="80" x2="128" y2="140"/><line x1="128" y1="140" x2="98" y2="140"/><line x1="128" y1="140" x2="158" y2="140"/><line x1="98" y1="140" x2="78" y2="200"/><line x1="158" y1="140" x2="178" y2="200"/><line x1="80" y1="130" x2="176" y2="130" stroke-width="6"/><rect x="70" y="122" width="14" height="16" fill="#264653"/><rect x="172" y="122" width="14" height="16" fill="#264653"/><line x1="40" y1="210" x2="216" y2="210" stroke-width="3" stroke="#999"/>`;
+
+// Elevação pélvica (sem barra) — corpo igual ao hip thrust, sem a barra.
+const PELVIC_BRIDGE_BODY = `<circle cx="128" cy="60" r="18" fill="#E76F51"/><line x1="128" y1="80" x2="128" y2="140"/><line x1="128" y1="140" x2="98" y2="140"/><line x1="128" y1="140" x2="158" y2="140"/><line x1="98" y1="140" x2="78" y2="200"/><line x1="158" y1="140" x2="178" y2="200"/><line x1="40" y1="210" x2="216" y2="210" stroke-width="3" stroke="#999"/>`;
+
+// Glúteo na máquina: pessoa sentada, pernas estendidas com peso.
+const GLUTE_MACHINE_BODY = `<circle cx="100" cy="60" r="18" fill="#E76F51"/><line x1="100" y1="80" x2="100" y2="140"/><line x1="100" y1="92" x2="140" y2="92"/><line x1="100" y1="140" x2="80" y2="200"/><line x1="100" y1="140" x2="120" y2="200"/><line x1="140" y1="92" x2="200" y2="120"/><line x1="200" y1="120" x2="220" y2="200"/><line x1="220" y1="200" x2="200" y2="220"/><rect x="190" y="108" width="22" height="40" fill="#264653" rx="2"/><line x1="40" y1="220" x2="236" y2="220" stroke-width="3" stroke="#999"/>`;
+
+// Abdução de quadril: pessoa sentada, pernas abrindo lateralmente.
+const HIP_ABDUCTION_BODY = `<circle cx="128" cy="50" r="18" fill="#E76F51"/><line x1="128" y1="70" x2="128" y2="140"/><line x1="128" y1="82" x2="98" y2="120"/><line x1="128" y1="82" x2="158" y2="120"/><line x1="128" y1="140" x2="78" y2="200"/><line x1="128" y1="140" x2="178" y2="200"/><line x1="40" y1="200" x2="216" y2="200" stroke-width="3" stroke="#999"/>`;
 
 const M: Record<string, ExerciseImageEntry> = {
   // ───── OMBROS ─────
@@ -265,22 +345,10 @@ const M: Record<string, ExerciseImageEntry> = {
   },
 
   // ───── GLÚTEOS ─────
-  "hip thrust": {
-    url: "https://upload.wikimedia.org/wikipedia/commons/0/04/Squat_to_bench_with_barbell_1.svg",
-    credit: "Wikimedia Commons",
-  },
-  "glúteo na máquina": {
-    url: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Lying_squat_1.svg",
-    credit: "Wikimedia Commons",
-  },
-  "abdução de quadril": {
-    url: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Lying_squat_1.svg",
-    credit: "Wikimedia Commons",
-  },
-  "elevação pélvica": {
-    url: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Lying_squat_1.svg",
-    credit: "Wikimedia Commons",
-  },
+  "hip thrust": { url: makeSilhoueta({ name: "hip thrust", stroke: "gluteos", body: HIP_THRUST_BODY }) },
+  "glúteo na máquina": { url: makeSilhoueta({ name: "glúteo na máquina", stroke: "gluteos", body: GLUTE_MACHINE_BODY }) },
+  "abdução de quadril": { url: makeSilhoueta({ name: "abdução de quadril", stroke: "gluteos", body: HIP_ABDUCTION_BODY }) },
+  "elevação pélvica": { url: makeSilhoueta({ name: "elevação pélvica", stroke: "gluteos", body: PELVIC_BRIDGE_BODY }) },
 
   // ───── PANTURRILHA ─────
   "panturrilha em pé": {

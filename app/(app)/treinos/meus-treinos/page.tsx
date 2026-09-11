@@ -7,6 +7,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/EmptyState";
 import { listWorkoutPlans } from "../actions";
+import { QuickGlutePlanButton } from "./QuickGlutePlanButton";
 
 export const dynamic = "force-dynamic";
 
@@ -36,11 +37,14 @@ export default async function MeusTreinosPage() {
         title="Meus treinos"
         subtitle="Crie treinos com exercícios, séries e cargas alvo."
         action={
-          <Link href="/treinos/meus-treinos/novo">
-            <Button variant="secondary" leadingIcon={<Plus size={14} />}>
-              Criar treino
-            </Button>
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <QuickGlutePlanButton variant="primary" />
+            <Link href="/treinos/meus-treinos/novo">
+              <Button variant="secondary" leadingIcon={<Plus size={14} />}>
+                Criar treino
+              </Button>
+            </Link>
+          </div>
         }
       />
 
@@ -48,13 +52,16 @@ export default async function MeusTreinosPage() {
         <EmptyState
           icon={Dumbbell}
           title="Crie seu primeiro treino"
-          description="Escolha um nome, marque os dias da semana e adicione exercícios da biblioteca."
+          description="Use o atalho abaixo para já começar com um treino de glúteo pronto, ou crie um treino do zero."
           action={
-            <Link href="/treinos/meus-treinos/novo">
-              <Button variant="primary" leadingIcon={<Plus size={14} />}>
-                Criar treino
-              </Button>
-            </Link>
+            <div className="flex flex-col items-center gap-3 sm:flex-row">
+              <QuickGlutePlanButton variant="primary" />
+              <Link href="/treinos/meus-treinos/novo">
+                <Button variant="ghost" leadingIcon={<Plus size={14} />}>
+                  Começar do zero
+                </Button>
+              </Link>
+            </div>
           }
         />
       ) : (

@@ -16,7 +16,7 @@ import {
   PRIMARY_MUSCLE_LABEL,
   PRIMARY_MUSCLE_ORDER,
 } from "@/lib/workout";
-import { matchesAny } from "@/lib/text-search";
+import { matchesAny, splitByMatch } from "@/lib/text-search";
 
 type ExerciseForPicker = Pick<
   Exercise,
@@ -236,8 +236,8 @@ export function ExercisePicker({
                         size="lg"
                       />
                       <div className="flex min-w-0 flex-1 flex-col">
-                        <p className="truncate font-display text-sm font-semibold text-ink">
-                          {ex.name}
+                        <p className="line-clamp-2 font-display text-sm font-semibold text-ink">
+                          <HighlightedName name={ex.name} term={term} />
                         </p>
                         <p className="text-[11px] text-ink-soft">
                           {groupLabel(
@@ -316,5 +316,29 @@ function groupLabel(key: string): string {
     EXERCISE_CATEGORY_LABEL[key as ExerciseCategory] ??
     PRIMARY_MUSCLE_LABEL[key as PrimaryMuscleGroup] ??
     "Outro"
+  );
+}
+
+/** Renderiza o nome do exercício destacando a substring que casa com
+ *  `term` (mesma normalização do filtro). Usa `<mark>` para que leitores
+ *  de tela anunciem corretamente o trecho em destaque. */
+function HighlightedName({ name, term }: { name: string; term: string }) {
+  if (!term) return <>{name}</>;
+  const segments = splitByMatch(name, term);
+  return (
+    <>
+      {segments.map((seg, i) =>
+        seg.match ? (
+          <mark
+            key={i}
+            className="rounded bg-gold-soft/70 px-0.5 text-ink"
+          >
+            {seg.text}
+          </mark>
+        ) : (
+          <span key={i}>{seg.text}</span>
+        ),
+      )}
+    </>
   );
 }

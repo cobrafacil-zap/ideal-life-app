@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import { EmptyState } from "@/components/EmptyState";
 import {
+  EXERCISE_CATEGORY_LABEL,
+  EXERCISE_CATEGORY_ORDER,
   PRIMARY_MUSCLE_ORDER as MUSCLE_ORDER,
   PRIMARY_MUSCLE_LABEL,
   EQUIPMENT_ORDER,
@@ -24,6 +26,7 @@ import {
 import { rankExercisesByQuery } from "@/lib/text-search";
 import type {
   EquipmentKind,
+  ExerciseCategory,
   PrimaryMuscleGroup,
 } from "@/types/database";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
@@ -55,7 +58,7 @@ export function ExerciseLibrary({
 }) {
   const [items, setItems] = useState<ExerciseListItem[]>(initialExercises);
   const [search, setSearch] = useState("");
-  const [muscle, setMuscle] = useState<PrimaryMuscleGroup | "all">("all");
+  const [muscle, setMuscle] = useState<ExerciseCategory | "all">("all");
   const [equipment, setEquipment] = useState<EquipmentKind | "all">("all");
   const [scope, setScope] = useState<Filter>("all");
   const [editing, setEditing] = useState<ExerciseListItem | "new" | null>(null);
@@ -66,7 +69,15 @@ export function ExerciseLibrary({
     // termo de busca está vazio.
     const filtered = items.filter((it) => {
       if (scope === "mine" && it.user_id == null) return false;
-      if (muscle !== "all" && it.primary_muscle !== muscle) return false;
+      // Filtra pela nova taxonomia v2 (category). Se o exercício não tiver
+      // category preenchida (cadastros antigos), cai pro primary_muscle
+      // legado — preserva o que já aparecia antes da migração.
+      if (muscle !== "all") {
+        const matches =
+          it.category === muscle ||
+          (!it.category && it.primary_muscle === muscle);
+        if (!matches) return false;
+      }
       if (equipment !== "all" && it.equipment !== equipment) return false;
       return true;
     });
@@ -158,8 +169,8 @@ function Filters({
 }: {
   search: string;
   setSearch: (v: string) => void;
-  muscle: PrimaryMuscleGroup | "all";
-  setMuscle: (v: PrimaryMuscleGroup | "all") => void;
+  muscle: ExerciseCategory | "all";
+  setMuscle: (v: ExerciseCategory | "all") => void;
   equipment: EquipmentKind | "all";
   setEquipment: (v: EquipmentKind | "all") => void;
   scope: Filter;
@@ -228,13 +239,13 @@ function Filters({
           <Chip active={muscle === "all"} onClick={() => setMuscle("all")}>
             Todos
           </Chip>
-          {MUSCLE_ORDER.map((m) => (
+          {EXERCISE_CATEGORY_ORDER.map((c) => (
             <Chip
-              key={m}
-              active={muscle === m}
-              onClick={() => setMuscle(m)}
+              key={c}
+              active={muscle === c}
+              onClick={() => setMuscle(c)}
             >
-              {PRIMARY_MUSCLE_LABEL[m]}
+              {EXERCISE_CATEGORY_LABEL[c]}
             </Chip>
           ))}
         </ChipRow>

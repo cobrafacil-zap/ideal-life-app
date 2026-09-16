@@ -34,13 +34,21 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/login") ||
+  const isAuthRoute =
+    request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/signup") ||
     request.nextUrl.pathname.startsWith("/forgot-password");
+
+  // Páginas de auth: getSession() lê só o cookie, sem round-trip ao Supabase.
+  // Demais rotas (privadas): getUser() valida o token no servidor — necessário
+  // para redirecionar usuário não-autenticado para /login.
+  const { data: userData } = isAuthRoute
+    ? await supabase.auth.getSession().then((s) => ({
+        data: { user: s.data.session?.user ?? null },
+      }))
+    : await supabase.auth.getUser();
+
+  const user = userData?.user ?? null;
 
   const isAppRoute =
     request.nextUrl.pathname.startsWith("/hoje") ||

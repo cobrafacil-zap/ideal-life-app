@@ -6,7 +6,20 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Matcher positivo: o middleware só roda nas rotas que precisam decidir
+  // entre redirecionar logado/deslogado. Páginas públicas (incluindo a raiz
+  // `/`, que tem auth própria em app/page.tsx) e assets ficam de fora,
+  // evitando o round-trip ao Supabase Auth em toda requisição — o que
+  // causava 504 MIDDLEWARE_INVOCATION_TIMEOUT na Vercel.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/hoje/:path*",
+    "/saude/:path*",
+    "/alimentacao/:path*",
+    "/treinos/:path*",
+    "/ciclo/:path*",
+    "/perfil/:path*",
+    "/login",
+    "/signup",
+    "/forgot-password",
   ],
 };

@@ -30,55 +30,76 @@ export default function SignupPage() {
       return;
     }
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}/hoje`,
-      },
-    });
+    // Validação rápida de env no browser (evita "Failed to fetch" opaco)
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      setLoading(false);
+      setError("Configuração do Supabase ausente (NEXT_PUBLIC_SUPABASE_URL/ANON_KEY). Configure em Vercel → Settings → Environment Variables.");
+      return;
+    }
 
-    setLoading(false);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: { full_name: name.trim() },
+          emailRedirectTo: `${window.location.origin}/hoje`,
+        },
+      });
 
-    if (error) {
-      console.error("[signup] supabase error:", error);
-      const msg = (error.message || "").toLowerCase();
-      if (msg.includes("already registered") || msg.includes("already exists")) {
-        setError("Este e-mail já está cadastrado. Tente fazer login.");
-      } else if (msg.includes("database error saving new user")) {
-        setError(
-          "Erro ao salvar perfil (gatilho do banco). Rode a migration 20260924_fix_handle_new_user.sql no SQL Editor do Supabase e tente novamente. Detalhe: " +
-            error.message
-        );
-      } else if (msg.includes("email rate limit") || msg.includes("too many requests")) {
-        setError("Muitas tentativas. Aguarde alguns minutos e tente novamente.");
-      } else if (msg.includes("signups not allowed") || msg.includes("signup is disabled")) {
-        setError("Cadastros desabilitados neste projeto Supabase. Ative em Authentication → Providers → Email.");
-      } else {
-        // Mostra o erro real do Supabase para debug (em produção ainda é útil)
-        setError(error.message || "Não foi possível criar sua conta. Tente novamente.");
+      setLoading(false);
+
+      if (error) {
+        console.error("[signup] supabase error:", error);
+        const msg = (error.message || "").toLowerCase();
+        if (msg.includes("already registered") || msg.includes("already exists")) {
+          setError("Este e-mail já está cadastrado. Tente fazer login.");
+        } else if (msg.includes("database error saving new user")) {
+          setError(
+            "Erro ao salvar perfil (gatilho do banco). Rode a migration 20260924_fix_handle_new_user.sql no SQL Editor do Supabase e tente novamente. Detalhe: " +
+              error.message
+          );
+        } else if (msg.includes("failed to fetch") || msg.includes("fetch") || msg.includes("network")) {
+          setError(
+            "Falha de rede ao conectar no Supabase (Failed to fetch). Causas comuns: projeto Supabase pausado/excluído, NEXT_PUBLIC_SUPABASE_URL errado no Vercel, ou bloqueio de rede. Verifique Vercel → Settings → Environment Variables e Supabase Dashboard → Project Health. Detalhe: " +
+              error.message
+          );
+        } else if (msg.includes("email rate limit") || msg.includes("too many requests")) {
+          setError("Muitas tentativas. Aguarde alguns minutos e tente novamente.");
+        } else if (msg.includes("signups not allowed") || msg.includes("signup is disabled")) {
+          setError("Cadastros desabilitados neste projeto Supabase. Ative em Authentication → Providers → Email.");
+        } else {
+          setError(error.message || "Não foi possível criar sua conta. Tente novamente.");
+        }
+        return;
       }
-      return;
-    }
 
-    // Supabase pode retornar user sem session quando o e-mail já existe
-    // mas ainda não foi confirmado — trate como "já cadastrado"
-    if (data.user && !data.session && !data.user.email_confirmed_at && data.user.identities?.length === 0) {
-      setError("Este e-mail já está cadastrado. Verifique sua caixa de entrada ou tente fazer login.");
-      return;
-    }
+      // Supabase pode retornar user sem session quando o e-mail já existe
+      // mas ainda não foi confirmado — trate como "já cadastrado"
+      if (data.user && !data.session && !data.user.email_confirmed_at && data.user.identities?.length === 0) {
+        setError("Este e-mail já está cadastrado. Verifique sua caixa de entrada ou tente fazer login.");
+        return;
+      }
 
-    // Se o Supabase estiver com "Confirm email" DESATIVADO, o signUp
-    // já retorna session e o usuário pode entrar direto — sem e-mail.
-    // Se estiver ATIVADO, data.session será null e mostramos a tela de confirmação.
-    if (data.session) {
-      router.push("/hoje");
-      router.refresh();
-      return;
-    }
+      if (data.session) {
+        router.push("/hoje");
+        router.refresh();
+        return;
+      }
 
-    setSent(true);
+      setSent(true);
+    } catch (err: any) {
+      setLoading(false);
+      console.error("[signup] unexpected error:", err);
+      const msg = (err?.message || String(err) || "").toLowerCase();
+      if (msg.includes("failed to fetch")) {
+        setError(
+          "Falha de rede (Failed to fetch). O navegador não conseguiu falar com o Supabase. Verifique se NEXT_PUBLIC_SUPABASE_URL está correto no Vercel e se o projeto Supabase não está pausado. Tente em aba anônima sem adblock."
+        );
+      } else {
+        setError(err?.message || "Erro inesperado. Tente novamente.");
+      }
+    }
   }
 
   if (sent) {

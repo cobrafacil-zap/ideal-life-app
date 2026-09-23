@@ -126,9 +126,11 @@ cada formato a partir do mesmo código.
 
 6. Acesse `http://localhost:3000`, crie sua conta e comece a usar.
 
-> Por padrão o Supabase exige confirmação de e-mail no cadastro. Para
-> testar mais rápido em desenvolvimento, você pode desativar isso
-> temporariamente em **Authentication → Providers → Email → Confirm email**.
+> **Cadastro sem e-mail de confirmação:** o `app/(auth)/signup/page.tsx:20` já detecta automaticamente os dois modos. Se o Supabase estiver com **Confirm email DESATIVADO**, o usuário entra direto em `/hoje` após `signUp` (sem precisar abrir e-mail). Se estiver ATIVADO, mostra a tela "Confirme seu e-mail".
+>
+> Para **ativar o cadastro instantâneo** (recomendado para MVP/testes):
+> Supabase Dashboard → **Authentication → Providers → Email → Confirm email → OFF** → Save.
+> Nenhuma mudança de código é necessária.
 
 ## 📁 Estrutura do projeto
 

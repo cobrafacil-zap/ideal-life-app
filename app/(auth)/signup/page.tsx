@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { UserPlus, Check } from "lucide-react";
 
 export default function SignupPage() {
+  const router = useRouter();
   const supabase = createClient();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,7 +30,7 @@ export default function SignupPage() {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -45,6 +47,15 @@ export default function SignupPage() {
           ? "Este e-mail já está cadastrado."
           : "Não foi possível criar sua conta. Tente novamente."
       );
+      return;
+    }
+
+    // Se o Supabase estiver com "Confirm email" DESATIVADO, o signUp
+    // já retorna session e o usuário pode entrar direto — sem e-mail.
+    // Se estiver ATIVADO, data.session será null e mostramos a tela de confirmação.
+    if (data.session) {
+      router.push("/hoje");
+      router.refresh();
       return;
     }
 

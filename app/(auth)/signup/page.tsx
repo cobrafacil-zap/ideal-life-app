@@ -42,11 +42,30 @@ export default function SignupPage() {
     setLoading(false);
 
     if (error) {
-      setError(
-        error.message === "User already registered"
-          ? "Este e-mail já está cadastrado."
-          : "Não foi possível criar sua conta. Tente novamente."
-      );
+      console.error("[signup] supabase error:", error);
+      const msg = (error.message || "").toLowerCase();
+      if (msg.includes("already registered") || msg.includes("already exists")) {
+        setError("Este e-mail já está cadastrado. Tente fazer login.");
+      } else if (msg.includes("database error saving new user")) {
+        setError(
+          "Erro ao salvar perfil (gatilho do banco). Rode a migration 20260924_fix_handle_new_user.sql no SQL Editor do Supabase e tente novamente. Detalhe: " +
+            error.message
+        );
+      } else if (msg.includes("email rate limit") || msg.includes("too many requests")) {
+        setError("Muitas tentativas. Aguarde alguns minutos e tente novamente.");
+      } else if (msg.includes("signups not allowed") || msg.includes("signup is disabled")) {
+        setError("Cadastros desabilitados neste projeto Supabase. Ative em Authentication → Providers → Email.");
+      } else {
+        // Mostra o erro real do Supabase para debug (em produção ainda é útil)
+        setError(error.message || "Não foi possível criar sua conta. Tente novamente.");
+      }
+      return;
+    }
+
+    // Supabase pode retornar user sem session quando o e-mail já existe
+    // mas ainda não foi confirmado — trate como "já cadastrado"
+    if (data.user && !data.session && !data.user.email_confirmed_at && data.user.identities?.length === 0) {
+      setError("Este e-mail já está cadastrado. Verifique sua caixa de entrada ou tente fazer login.");
       return;
     }
 

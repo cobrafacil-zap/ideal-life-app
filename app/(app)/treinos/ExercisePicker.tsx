@@ -50,6 +50,48 @@ const CATEGORY_CHIPS: ReadonlyArray<ExerciseCategory | "all"> = [
   "triceps",
 ];
 
+/**
+ * Mapeamento de categoria fina (v2) -> primary_muscle (legado).
+ * Usado como fallback quando o campo `category` está NULL no banco
+ * (migration v2 ainda não aplicada).
+ */
+const CATEGORY_TO_PRIMARY_MUSCLE: Partial<
+  Record<ExerciseCategory, PrimaryMuscleGroup>
+> = {
+  gluteos: "pernas",
+  quadriceps: "pernas",
+  posterior: "pernas",
+  panturrilha: "pernas",
+  peito: "peito",
+  costas: "costas",
+  ombros: "ombros",
+  biceps: "bracos",
+  triceps: "bracos",
+  abdomen: "core",
+  lombar: "core",
+  corpo_inteiro: "core",
+  cardio: "cardio",
+};
+
+/**
+ * Resolve o grupo de filtro para um exercício.
+ * Se `category` existe, retorna a categoria fina.
+ * Se não, converte `primary_muscle` para a categoria fina mais próxima.
+ */
+function resolveExerciseCategory(
+  ex: ExerciseForPicker
+): ExerciseCategory | null {
+  if (ex.category) return ex.category;
+  // Fallback: converter primary_muscle para categoria fina
+  const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
+  if (!pm) return null;
+  // Buscar a categoria fina que mapeia para este primary_muscle
+  for (const [cat, mappedPm] of Object.entries(CATEGORY_TO_PRIMARY_MUSCLE)) {
+    if (mappedPm === pm) return cat as ExerciseCategory;
+  }
+  return null;
+}
+
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -107,13 +149,13 @@ export function ExercisePicker({
   const byChip =
     category === "all"
       ? exercises
-      : exercises.filter((ex) => ex.category === category);
+      : exercises.filter((ex) => resolveExerciseCategory(ex) === category);
   const filtered = term ? rankExercisesByQuery(byChip, query) : byChip;
 
   const grouped = (() => {
     const map = new Map<string, ExerciseForPicker[]>();
     for (const ex of filtered) {
-      const cat = ex.category as ExerciseCategory | null;
+      const cat = resolveExerciseCategory(ex);
       const pm = ex.primary_muscle as PrimaryMuscleGroup | null;
       // Bucket preferido: category v2; fallback para primary_muscle legado.
       const key: string = cat ?? pm ?? "outro";
@@ -289,7 +331,7 @@ export function ExercisePicker({
                         </p>
                         <p className="text-[11px] text-ink-soft">
                           {groupLabel(
-                            (ex.category as ExerciseCategory | null) ??
+                            resolveExerciseCategory(ex) ??
                               (ex.primary_muscle as PrimaryMuscleGroup | null) ??
                               "outro"
                           )}

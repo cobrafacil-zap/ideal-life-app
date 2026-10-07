@@ -158,6 +158,10 @@ export interface Exercise {
   common_mistakes: string | null;
   /** URL externa de vídeo demonstrativo (opcional). */
   video_url: string | null;
+  /** URL do GIF/vídeo curto (máx 10s) demonstrando a execução do exercício. */
+  demonstration_url: string | null;
+  /** Tipo da mídia de demonstração: gif, video ou image. */
+  demonstration_type: "gif" | "video" | "image" | null;
   created_at: string;
 }
 

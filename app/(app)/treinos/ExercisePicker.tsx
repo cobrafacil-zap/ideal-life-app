@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, X, Plus, Check } from "lucide-react";
+import { Search, X, Plus, Check, Play } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
+import { ExerciseDetailModal } from "./ExerciseDetailModal";
 import type {
   EquipmentKind,
   Exercise,
@@ -17,6 +18,9 @@ import {
   PRIMARY_MUSCLE_ORDER,
 } from "@/lib/workout";
 import { rankExercisesByQuery, splitByMatch } from "@/lib/text-search";
+import { hasDemonstration } from "./actions";
+import { ExerciseDetailModal } from "./ExerciseDetailModal";
+import { ExerciseDetailModal } from "./ExerciseDetailModal";
 
 type ExerciseForPicker = Pick<
   Exercise,
@@ -27,6 +31,10 @@ type ExerciseForPicker = Pick<
   | "equipment"
   | "image_url"
   | "animation_url"
+  | "demonstration_url"
+  | "demonstration_type"
+  | "instructions"
+  | "common_mistakes"
   | "user_id"
   | "category"
   | "aliases"
@@ -127,7 +135,24 @@ export function ExercisePicker({
 }: Props) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ExerciseCategory | "all">("all");
+  const [detailExercise, setDetailExercise] = useState<ExerciseForPicker | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Modal de detalhes do exercício
+  if (detailExercise) {
+    return (
+      <ExerciseDetailModal
+        exercise={detailExercise}
+        signedUrl={signedUrls[detailExercise.id] ?? null}
+        onClose={() => setDetailExercise(null)}
+        onAdd={(ex) => {
+          onAdd(ex);
+          setDetailExercise(null);
+        }}
+        isSelected={selectedIds.includes(detailExercise.id)}
+      />
+    );
+  }
 
   // Garante foco no input quando o modal monta. O `autoFocus` no JSX
   // pode ser consumido pelo browser antes do componente terminar de
@@ -167,6 +192,25 @@ export function ExercisePicker({
   })();
 
   if (!open) return null;
+
+  // Modal de detalhes do exercício
+  if (detailExercise) {
+    return (
+      <ExerciseDetailModal
+        exercise={detailExercise}
+        signedUrl={signedUrls[detailExercise.id] ?? null}
+        onClose={() => setDetailExercise(null)}
+        onAdd={(ex) => {
+          onAdd(ex);
+          setDetailExercise(null);
+        }}
+        isSelected={selectedIds.includes(detailExercise.id)}
+      />
+    );
+  }
+
+  // Placeholder para o modal de detalhes (será implementado abaixo)
+  // O modal de detalhes será aberto ao clicar em um exercício
 
   // Ordem de exibição: primeiro as categorias v2, depois as legado
   // (primary_muscle) que sobraram (migração ainda não aplicada no banco).
@@ -314,11 +358,12 @@ export function ExercisePicker({
                     <li
                       key={ex.id}
                       className={cn(
-                        "flex items-stretch gap-3 rounded-2xl border border-line/60 bg-surface p-3 transition-colors",
+                        "flex items-stretch gap-3 rounded-2xl border border-line/60 bg-surface p-3 transition-colors cursor-pointer",
                         isSelected
                           ? "border-moss/40 bg-moss-soft/30"
                           : "hover:border-ember/40",
                       )}
+                      onClick={() => setDetailExercise(ex)}
                     >
                       <ZoomableMedia
                         exercise={ex}
@@ -326,8 +371,28 @@ export function ExercisePicker({
                         size="lg"
                       />
                       <div className="flex min-w-0 flex-1 flex-col">
-                        <p className="line-clamp-2 font-display text-sm font-semibold text-ink">
-                          <HighlightedName name={ex.name} term={term} />
+                        <div className="flex items-center gap-1.5">
+                          <p className="line-clamp-2 font-display text-sm font-semibold text-ink">
+                            <HighlightedName name={ex.name} term={term} />
+                          </p>
+                          {hasDemonstration(ex) && (
+                            <span
+                              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ember-soft"
+                              title="Possui demonstração em vídeo"
+                            >
+                              <Play size={10} className="text-ember-dark" aria-hidden="true" />
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-ink-soft">
+                          {groupLabel(
+                            resolveExerciseCategory(ex) ??
+                              (ex.primary_muscle as PrimaryMuscleGroup | null) ??
+                              "outro"
+                          )}
+                          {ex.equipment && ex.equipment !== "nenhum"
+                            ? ` · ${equipmentShortLabel(ex.equipment as EquipmentKind)}`
+                            : ""}
                         </p>
                         <p className="text-[11px] text-ink-soft">
                           {groupLabel(

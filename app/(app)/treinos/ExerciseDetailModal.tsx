@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X, Play, Pause } from "lucide-react";
+import { X, Play, Pause, Check, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
 import type { Exercise } from "@/types/database";

@@ -14,8 +14,10 @@ import type {
   PrimaryMuscleGroup,
 } from "@/types/database";
 import { hasDemonstration, getDemonstrationUrl } from "@/lib/exercise-utils";
+import type { ExerciseListItem } from "@/lib/exercise-utils";
 
 export { hasDemonstration, getDemonstrationUrl };
+export type { ExerciseListItem };
 
 const PRIMARY_MUSCLE_VALUES: PrimaryMuscleGroup[] = [
   "peito",
@@ -103,24 +105,6 @@ const EXERCISE_SELECT_COLUMNS_LEGACY =
  *  somente a versão LEGACY. */
 const EXERCISE_SELECT_COLUMNS =
   "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, demonstration_url, demonstration_type, category, aliases, machine_type, instructions";
-
-export type ExerciseListItem = Pick<
-  Exercise,
-  | "id"
-  | "user_id"
-  | "name"
-  | "primary_muscle"
-  | "secondary_muscles"
-  | "equipment"
-  | "image_url"
-  | "animation_url"
-  | "demonstration_url"
-  | "demonstration_type"
-  | "category"
-  | "aliases"
-  | "machine_type"
-  | "instructions"
->;
 
 /**
  * Lista exercícios do catálogo (user_id NULL) e/ou do próprio usuário.

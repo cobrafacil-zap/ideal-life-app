@@ -1,4 +1,22 @@
-import type { ExerciseListItem } from "@/app/(app)/treinos/actions";
+import type { Exercise } from "@/types/database";
+
+export type ExerciseListItem = Pick<
+  Exercise,
+  | "id"
+  | "user_id"
+  | "name"
+  | "primary_muscle"
+  | "secondary_muscles"
+  | "equipment"
+  | "image_url"
+  | "animation_url"
+  | "demonstration_url"
+  | "demonstration_type"
+  | "category"
+  | "aliases"
+  | "machine_type"
+  | "instructions"
+>;
 
 /** Verifica se o exercício tem demonstração visual (GIF/vídeo) */
 export function hasDemonstration(ex: ExerciseListItem): boolean {

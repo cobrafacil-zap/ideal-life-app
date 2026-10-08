@@ -21,6 +21,9 @@ type ExerciseForDetail = Pick<
   | "instructions"
   | "common_mistakes"
   | "user_id"
+  | "category"
+  | "aliases"
+  | "machine_type"
 >;
 
 type Props = {

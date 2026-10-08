@@ -19,8 +19,6 @@ import {
 } from "@/lib/workout";
 import { rankExercisesByQuery, splitByMatch } from "@/lib/text-search";
 import { hasDemonstration } from "./actions";
-import { ExerciseDetailModal } from "./ExerciseDetailModal";
-import { ExerciseDetailModal } from "./ExerciseDetailModal";
 
 type ExerciseForPicker = Pick<
   Exercise,

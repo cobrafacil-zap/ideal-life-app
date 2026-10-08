@@ -99,7 +99,7 @@ const EXERCISE_SELECT_COLUMNS_LEGACY =
  *  Antes da migration v2 do schema ser aplicada em produção, usar
  *  somente a versão LEGACY. */
 const EXERCISE_SELECT_COLUMNS =
-  "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, category, aliases, machine_type, instructions";
+  "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, demonstration_url, demonstration_type, category, aliases, machine_type, instructions";
 
 export type ExerciseListItem = Pick<
   Exercise,
@@ -111,11 +111,459 @@ export type ExerciseListItem = Pick<
   | "equipment"
   | "image_url"
   | "animation_url"
+  | "demonstration_url"
+  | "demonstration_type"
   | "category"
   | "aliases"
   | "machine_type"
   | "instructions"
 >;
+
+/** Verifica se o exercício tem demonstração visual (GIF/vídeo) */
+export function hasDemonstration(ex: ExerciseListItem): boolean {
+  return ex.demonstration_url != null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
+
+/** Retorna a URL de demonstração resolvida (prioridade: demonstration > animation > image) */
+export function getDemonstrationUrl(
+  ex: ExerciseListItem,
+  signedUrls: Record<string, string | null>
+): string | null {
+  if (ex.demonstration_url) {
+    // Se for storage path, retorna a signed URL
+    if (!/^https?:\/\//i.test(ex.demonstration_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.demonstration_url;
+  }
+  if (ex.animation_url) {
+    if (!/^https?:\/\//i.test(ex.animation_url)) {
+      return signedUrls[ex.id] ?? null;
+    }
+    return ex.animation_url;
+  }
+  return null;
+}
 
 /**
  * Lista exercícios do catálogo (user_id NULL) e/ou do próprio usuário.

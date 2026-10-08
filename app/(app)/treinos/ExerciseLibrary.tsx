@@ -42,6 +42,10 @@ import {
   setExerciseExternalImageAction,
   clearExerciseImageAction,
 } from "./actions.image";
+import {
+  uploadExerciseDemonstrationAction,
+  removeExerciseDemonstrationAction,
+} from "./actions.demonstration";
 import { lookupExerciseImage } from "@/lib/exercise-image-map";
 import { cn } from "@/lib/cn";
 

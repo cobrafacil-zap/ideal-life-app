@@ -106,7 +106,7 @@ export async function getSignedFileUrl(
  */
 export async function removeFile(
   supabase: SupabaseClient<Database>,
-  bucket: "avatars" | "meal-photos" | "workout-images",
+  bucket: "avatars" | "meal-photos" | "workout-images" | "exercise-demonstrations",
   paths: string[],
 ): Promise<void> {
   if (paths.length === 0) return;

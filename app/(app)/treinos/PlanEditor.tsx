@@ -338,7 +338,23 @@ export function PlanEditor({
         <ExercisePicker
           open={pickerOpen}
           onClose={() => setPickerOpen(false)}
-          exercises={library}
+          exercises={library.map((ex) => ({
+            id: ex.id,
+            user_id: ex.user_id,
+            name: ex.name,
+            primary_muscle: ex.primary_muscle,
+            secondary_muscles: ex.secondary_muscles,
+            equipment: ex.equipment,
+            image_url: ex.image_url,
+            animation_url: ex.animation_url,
+            category: ex.category,
+            aliases: ex.aliases,
+            machine_type: ex.machine_type,
+            instructions: ex.instructions,
+            common_mistakes: ex.common_mistakes,
+            demonstration_url: ex.demonstration_url,
+            demonstration_type: ex.demonstration_type,
+          }))}
           signedUrls={Object.fromEntries(
             library.map((ex) => [ex.id, ex.signedUrl])
           )}

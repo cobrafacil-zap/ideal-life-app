@@ -191,25 +191,6 @@ export function ExercisePicker({
 
   if (!open) return null;
 
-  // Modal de detalhes do exercício
-  if (detailExercise) {
-    return (
-      <ExerciseDetailModal
-        exercise={detailExercise}
-        signedUrl={signedUrls[detailExercise.id] ?? null}
-        onClose={() => setDetailExercise(null)}
-        onAdd={(ex) => {
-          onAdd(ex);
-          setDetailExercise(null);
-        }}
-        isSelected={selectedIds.includes(detailExercise.id)}
-      />
-    );
-  }
-
-  // Placeholder para o modal de detalhes (será implementado abaixo)
-  // O modal de detalhes será aberto ao clicar em um exercício
-
   // Ordem de exibição: primeiro as categorias v2, depois as legado
   // (primary_muscle) que sobraram (migração ainda não aplicada no banco).
   const orderedGroups: string[] = [

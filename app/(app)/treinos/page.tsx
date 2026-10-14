@@ -98,6 +98,9 @@ export default async function TreinosPage() {
     | "aliases"
     | "machine_type"
     | "instructions"
+    | "common_mistakes"
+    | "demonstration_url"
+    | "demonstration_type"
   >[];
 
   const signedUrlMap: Record<string, string | null> = {};

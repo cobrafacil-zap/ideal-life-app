@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { removeFile } from "@/lib/storage";
+import { removeFile, uploadExerciseImage } from "@/lib/storage";
 
 const ALLOWED_DEMO_TYPES = ["gif", "video", "image"] as const;
 const MAX_DEMO_SIZE = 10 * 1024 * 1024; // 10MB

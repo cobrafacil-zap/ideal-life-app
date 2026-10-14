@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { X, Play, Pause, Check, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
+import { DemonstrationMedia } from "@/components/ui/DemonstrationMedia";
 import type { Exercise } from "@/types/database";
 import { cn } from "@/lib/cn";
+import { getDemonstrationUrl } from "@/lib/exercise-utils";
 
 type ExerciseForDetail = Pick<
   Exercise,
@@ -69,7 +71,8 @@ export function ExerciseDetailModal({
     setIsPlaying(!isPlaying);
   };
 
-  const hasDemonstration = exercise.demonstration_url != null;
+  const demonstrationUrl = getDemonstrationUrl(exercise, { [exercise.id]: signedUrl });
+  const hasDemonstration = demonstrationUrl != null;
   const isVideo = exercise.demonstration_type === "video";
 
   return (
@@ -109,7 +112,7 @@ export function ExerciseDetailModal({
                 <>
                   <video
                     ref={videoRef}
-                    src={exercise.demonstration_url!}
+                    src={demonstrationUrl!}
                     autoPlay
                     muted
                     loop
@@ -130,10 +133,11 @@ export function ExerciseDetailModal({
                   </button>
                 </>
               ) : (
-                <img
-                  src={exercise.demonstration_url!}
+                <DemonstrationMedia
+                  src={demonstrationUrl!}
+                  type="gif"
                   alt={`Demonstração de ${exercise.name}`}
-                  className="aspect-video w-full object-cover"
+                  className="aspect-video w-full"
                 />
               )}
             </div>

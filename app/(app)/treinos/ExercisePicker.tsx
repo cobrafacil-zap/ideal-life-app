@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search, X, Plus, Check, Play } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
+import { DemonstrationMedia } from "@/components/ui/DemonstrationMedia";
 import { ExerciseDetailModal } from "./ExerciseDetailModal";
 import type {
   EquipmentKind,
@@ -18,7 +19,7 @@ import {
   PRIMARY_MUSCLE_ORDER,
 } from "@/lib/workout";
 import { rankExercisesByQuery, splitByMatch } from "@/lib/text-search";
-import { hasDemonstration } from "./actions";
+import { hasDemonstration, getDemonstrationUrl } from "./actions";
 
 type ExerciseForPicker = Pick<
   Exercise,
@@ -344,11 +345,20 @@ export function ExercisePicker({
                       )}
                       onClick={() => setDetailExercise(ex)}
                     >
-                      <ZoomableMedia
-                        exercise={ex}
-                        signedUrl={signedUrls[ex.id] ?? null}
-                        size="lg"
-                      />
+                      {hasDemonstration(ex) ? (
+                        <DemonstrationMedia
+                          src={getDemonstrationUrl(ex, signedUrls) ?? ""}
+                          type={ex.demonstration_type === "video" ? "video" : "gif"}
+                          alt={`Demonstração de ${ex.name}`}
+                          className="h-20 w-20 shrink-0 object-cover"
+                        />
+                      ) : (
+                        <ZoomableMedia
+                          exercise={ex}
+                          signedUrl={signedUrls[ex.id] ?? null}
+                          size="lg"
+                        />
+                      )}
                       <div className="flex min-w-0 flex-1 flex-col">
                         <div className="flex items-center gap-1.5">
                           <p className="line-clamp-2 font-display text-sm font-semibold text-ink">

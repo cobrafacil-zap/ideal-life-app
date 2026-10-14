@@ -16,6 +16,7 @@ export type ExerciseListItem = Pick<
   | "aliases"
   | "machine_type"
   | "instructions"
+  | "common_mistakes"
 >;
 
 /** Verifica se o exercício tem demonstração visual (GIF/vídeo) */

@@ -70,6 +70,9 @@ export default async function PlanoDetalhePage({
           aliases: ex.aliases,
           machine_type: ex.machine_type,
           instructions: ex.instructions,
+          common_mistakes: ex.common_mistakes,
+          demonstration_url: ex.demonstration_url,
+          demonstration_type: ex.demonstration_type,
           signedUrl: urlMap.get(ex.id) ?? null,
         }))}
       />

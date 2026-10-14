@@ -58,7 +58,7 @@ export async function uploadExerciseDemonstrationAction(
   }
 
   // Upload para o bucket exercise-demonstrations
-  const path = await uploadExerciseImage(supabase, user.id, exerciseId, file);
+  const path = await uploadExerciseImage(supabase, user.id, exerciseId, file, file.type);
 
   // Atualiza o banco
   const { error } = await supabase

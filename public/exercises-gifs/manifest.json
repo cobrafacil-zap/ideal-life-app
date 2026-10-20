@@ -98,34 +98,34 @@
  {
   "name": "Afundo",
   "file": "afundo.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "dumbbell",
   "group": "quadriceps",
-  "bytes": 109188
+  "bytes": 110305
  },
  {
   "name": "Afundo com halteres",
   "file": "afundo-com-halteres.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "dumbbell",
   "group": "quadriceps",
-  "bytes": 109188
+  "bytes": 110305
  },
  {
   "name": "Afundo reverso",
   "file": "afundo-reverso.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "dumbbell",
   "group": "quadriceps",
-  "bytes": 109188
+  "bytes": 110305
  },
  {
   "name": "Agachamento búlgaro com halteres",
   "file": "agachamento-bulgaro-com-halteres.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "dumbbell",
   "group": "quadriceps",
-  "bytes": 109188
+  "bytes": 110305
  },
  {
   "name": "Agachamento com elástico",
@@ -203,25 +203,25 @@
   "name": "Barra fixa",
   "file": "barra-fixa.gif",
   "motion": "pull",
-  "equipment": "none",
+  "equipment": "machine",
   "group": "costas",
-  "bytes": 108876
+  "bytes": 155722
  },
  {
   "name": "Barra fixa com pegada neutra",
   "file": "barra-fixa-com-pegada-neutra.gif",
   "motion": "pull",
-  "equipment": "none",
+  "equipment": "machine",
   "group": "costas",
-  "bytes": 108876
+  "bytes": 155722
  },
  {
   "name": "Barra fixa com pegada supinada",
   "file": "barra-fixa-com-pegada-supinada.gif",
   "motion": "pull",
-  "equipment": "none",
+  "equipment": "machine",
   "group": "costas",
-  "bytes": 108876
+  "bytes": 155722
  },
  {
   "name": "Belt Squat",
@@ -675,9 +675,9 @@
   "name": "Glute Ham Developer",
   "file": "glute-ham-developer.gif",
   "motion": "hinge",
-  "equipment": "none",
+  "equipment": "bar",
   "group": "posterior",
-  "bytes": 103836
+  "bytes": 111794
  },
  {
   "name": "Glute Kickback Machine",
@@ -818,34 +818,34 @@
  {
   "name": "Leg press 45 unilateral",
   "file": "leg-press-45-unilateral.gif",
-  "motion": "squat",
+  "motion": "leg_press",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 114153
  },
  {
   "name": "Leg Press horizontal",
   "file": "leg-press-horizontal.gif",
-  "motion": "squat",
+  "motion": "leg_press",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 114153
  },
  {
   "name": "Leg Press linear",
   "file": "leg-press-linear.gif",
-  "motion": "squat",
+  "motion": "leg_press",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 114153
  },
  {
   "name": "Leg Press unilateral",
   "file": "leg-press-unilateral.gif",
-  "motion": "squat",
+  "motion": "leg_press",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 114153
  },
  {
   "name": "Levantamento terra com halteres",
@@ -1154,10 +1154,10 @@
  {
   "name": "Remada máquina com apoio peitoral",
   "file": "remada-maquina-com-apoio-peitoral.gif",
-  "motion": "row",
+  "motion": "row_machine",
   "equipment": "machine",
   "group": "costas",
-  "bytes": 86344
+  "bytes": 84376
  },
  {
   "name": "Remada no smith",
@@ -1178,10 +1178,10 @@
  {
   "name": "Remada sentada na máquina",
   "file": "remada-sentada-na-maquina.gif",
-  "motion": "row",
+  "motion": "row_machine",
   "equipment": "machine",
   "group": "costas",
-  "bytes": 86344
+  "bytes": 84376
  },
  {
   "name": "Remada sentada no cabo",
@@ -1410,18 +1410,18 @@
  {
   "name": "Smith Machine — Afundo",
   "file": "smith-machine-afundo.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 148449
  },
  {
   "name": "Smith Machine — Agachamento búlgaro",
   "file": "smith-machine-agachamento-bulgaro.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 148449
  },
  {
   "name": "Spinning Bike",
@@ -1450,18 +1450,18 @@
  {
   "name": "Step Up",
   "file": "step-up.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "dumbbell",
   "group": "gluteos",
-  "bytes": 109188
+  "bytes": 110305
  },
  {
   "name": "Step up com halteres",
   "file": "step-up-com-halteres.gif",
-  "motion": "squat",
+  "motion": "lunge",
   "equipment": "dumbbell",
   "group": "quadriceps",
-  "bytes": 109188
+  "bytes": 110305
  },
  {
   "name": "Stiff com halteres",

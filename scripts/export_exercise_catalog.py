@@ -17,6 +17,7 @@ mesmo JSON direto do banco.
 
 from __future__ import annotations
 
+import argparse
 import glob
 import json
 import re
@@ -196,32 +197,108 @@ def _parse_select_form(sql: str) -> List[Dict[str, Optional[str]]]:
 
 
 def main() -> int:
-    catalog: Dict[str, Dict[str, Optional[str]]] = {}
-    for path in MIGRATIONS:
-        sql = Path(path).read_text(encoding="utf-8", errors="replace")
-        for row in parse_inserts(sql):
-            key = row["name"].strip().lower()
-            prev = catalog.get(key)
-            # Mantém a entry mais completa (com category) entre duplicatas.
-            if prev is None or (not prev.get("category") and row.get("category")):
-                catalog[key] = row
+    ap = argparse.ArgumentParser(description="Exporta o catálogo de exercícios")
+    ap.add_argument(
+        "--from-db",
+        action="store_true",
+        help="Lê o catálogo real do Supabase (fonte de verdade) em vez das migrations",
+    )
+    ap.add_argument(
+        "--output", default=str(OUT), help="Arquivo JSON de saída"
+    )
+    args = ap.parse_args()
 
-    items = sorted(catalog.values(), key=lambda r: r["name"].lower())
-    out = [
-        {
-            "name": r["name"],
-            "category": r.get("category"),
-            "equipment": r.get("equipment"),
-            "primary_muscle": r.get("primary_muscle"),
-        }
-        for r in items
-    ]
-    OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    if args.from_db:
+        out = fetch_from_db()
+    else:
+        catalog: Dict[str, Dict[str, Optional[str]]] = {}
+        for path in MIGRATIONS:
+            sql = Path(path).read_text(encoding="utf-8", errors="replace")
+            for row in parse_inserts(sql):
+                key = row["name"].strip().lower()
+                prev = catalog.get(key)
+                # Mantém a entry mais completa (com category) entre duplicatas.
+                if prev is None or (not prev.get("category") and row.get("category")):
+                    catalog[key] = row
+        items = sorted(catalog.values(), key=lambda r: r["name"].lower())
+        out = [
+            {
+                "name": r["name"],
+                "category": r.get("category"),
+                "equipment": r.get("equipment"),
+                "primary_muscle": r.get("primary_muscle"),
+            }
+            for r in items
+        ]
+
+    out_path = Path(args.output)
+    out_path.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
 
     with_cat = sum(1 for r in out if r.get("category"))
-    print(f"Catálogo exportado: {len(out)} exercícios → {OUT.relative_to(ROOT)}")
+    print(f"Catálogo exportado: {len(out)} exercícios → {out_path}")
     print(f"  com category: {with_cat}  |  sem category: {len(out) - with_cat}")
     return 0
+
+
+def fetch_from_db() -> List[Dict[str, Optional[str]]]:
+    """Lê o catálogo global (user_id IS NULL) direto do Supabase."""
+    import os
+
+    import requests
+
+    root = Path(__file__).resolve().parent.parent
+    url = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
+    key = os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+    if not url or not key:
+        for fname in (".env.local", ".vercel-env.tmp"):
+            p = root / fname
+            if not p.exists():
+                continue
+            for line in p.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                v = v.strip().strip('"').strip("'")
+                if k == "NEXT_PUBLIC_SUPABASE_URL" and not url:
+                    url = v
+                if k == "NEXT_PUBLIC_SUPABASE_ANON_KEY" and not key:
+                    key = v
+    if not url or not key:
+        raise SystemExit("ERRO: NEXT_PUBLIC_SUPABASE_URL / ANON_KEY não definidos.")
+
+    headers = {"apikey": key, "Authorization": f"Bearer {key}"}
+    rows: List[Dict] = []
+    offset = 0
+    while True:
+        r = requests.get(
+            f"{url.rstrip('/')}/rest/v1/exercises",
+            headers=headers,
+            params={
+                "select": "name,category,equipment,primary_muscle",
+                "user_id": "is.null",
+                "order": "name.asc",
+                "limit": 1000,
+                "offset": offset,
+            },
+            timeout=90,
+        )
+        r.raise_for_status()
+        batch = r.json()
+        rows.extend(batch)
+        if len(batch) < 1000:
+            break
+        offset += 1000
+
+    return [
+        {
+            "name": x["name"],
+            "category": x.get("category"),
+            "equipment": x.get("equipment"),
+            "primary_muscle": x.get("primary_muscle"),
+        }
+        for x in rows
+    ]
 
 
 if __name__ == "__main__":

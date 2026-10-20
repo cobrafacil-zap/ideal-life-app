@@ -1,26 +1,14 @@
 [
  {
-  "name": "Ab Coaster",
-  "category": "abdomen",
-  "equipment": "bodyweight",
-  "primary_muscle": "abdomen"
- },
- {
-  "name": "Abdominal / Oblique Crunch Machine",
-  "category": "abdomen",
-  "equipment": "selectorized",
-  "primary_muscle": "abdomen"
- },
- {
   "name": "Abdominal bicicleta",
   "category": "abdomen",
   "equipment": "nenhum",
   "primary_muscle": "core"
  },
  {
-  "name": "Abdominal com rolo",
+  "name": "Abdominal canivete",
   "category": "abdomen",
-  "equipment": "outro",
+  "equipment": "nenhum",
   "primary_muscle": "core"
  },
  {
@@ -30,28 +18,22 @@
   "primary_muscle": "core"
  },
  {
-  "name": "Abdominal Crunch Machine",
+  "name": "Abdominal na roda",
   "category": "abdomen",
-  "equipment": "selectorized",
-  "primary_muscle": "abdomen"
- },
- {
-  "name": "Abdominal na máquina",
-  "category": "abdomen",
-  "equipment": "maquina",
+  "equipment": "nenhum",
   "primary_muscle": "core"
  },
  {
-  "name": "Abdominal no cabo",
+  "name": "Abdominal supra",
   "category": "abdomen",
-  "equipment": "cable",
-  "primary_muscle": "abdomen"
+  "equipment": "nenhum",
+  "primary_muscle": "core"
  },
  {
-  "name": "Abdução com elástico",
-  "category": "abdutores",
-  "equipment": "elastico",
-  "primary_muscle": null
+  "name": "Abdução de quadril",
+  "category": "quadriceps",
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
  },
  {
   "name": "Abdução de quadril com elástico",
@@ -60,34 +42,16 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Abdução em pé máquina",
-  "category": "abdutores",
-  "equipment": "selectorized",
-  "primary_muscle": "abdutores"
- },
- {
-  "name": "Abdução no cabo",
-  "category": "abdutores",
-  "equipment": "cable",
-  "primary_muscle": "abdutores"
- },
- {
-  "name": "Afundo",
+  "name": "Afundo búlgaro",
   "category": "quadriceps",
   "equipment": "haltere",
-  "primary_muscle": null
+  "primary_muscle": "pernas"
  },
  {
   "name": "Afundo com halteres",
   "category": "quadriceps",
   "equipment": "haltere",
   "primary_muscle": "pernas"
- },
- {
-  "name": "Afundo reverso",
-  "category": "quadriceps",
-  "equipment": "haltere",
-  "primary_muscle": null
  },
  {
   "name": "Agachamento búlgaro com halteres",
@@ -102,13 +66,31 @@
   "primary_muscle": "pernas"
  },
  {
+  "name": "Agachamento com halteres",
+  "category": "quadriceps",
+  "equipment": "haltere",
+  "primary_muscle": "pernas"
+ },
+ {
   "name": "Agachamento com kettlebell",
   "category": "quadriceps",
   "equipment": "kettlebell",
   "primary_muscle": "pernas"
  },
  {
+  "name": "Agachamento livre",
+  "category": "quadriceps",
+  "equipment": "barra",
+  "primary_muscle": "pernas"
+ },
+ {
   "name": "Agachamento no hack",
+  "category": "quadriceps",
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Agachamento no smith",
   "category": "quadriceps",
   "equipment": "maquina",
   "primary_muscle": "pernas"
@@ -120,34 +102,16 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Air Bike",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
+  "name": "Agachamento sumô",
+  "category": "quadriceps",
+  "equipment": "haltere",
+  "primary_muscle": "pernas"
  },
  {
-  "name": "Arc Trainer",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
- },
- {
-  "name": "Assisted Nordic Ham",
-  "category": "posterior",
-  "equipment": "plate_loaded",
-  "primary_muscle": "posterior"
- },
- {
-  "name": "Back Extension",
-  "category": "lombar",
-  "equipment": "bodyweight",
-  "primary_muscle": "lombar"
- },
- {
-  "name": "Back Extension Machine",
-  "category": "lombar",
-  "equipment": "selectorized",
-  "primary_muscle": "lombar"
+  "name": "Avanço",
+  "category": "quadriceps",
+  "equipment": "haltere",
+  "primary_muscle": "pernas"
  },
  {
   "name": "Barra fixa",
@@ -156,52 +120,22 @@
   "primary_muscle": "costas"
  },
  {
-  "name": "Barra fixa com pegada neutra",
-  "category": "costas",
-  "equipment": "nenhum",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Barra fixa com pegada supinada",
-  "category": "costas",
-  "equipment": "nenhum",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Belt Squat",
-  "category": "quadriceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Biceps Curl Machine",
-  "category": "biceps",
-  "equipment": "selectorized",
-  "primary_muscle": "biceps"
- },
- {
   "name": "Bicicleta ergométrica",
   "category": "cardio",
   "equipment": "maquina",
   "primary_muscle": "cardio"
  },
  {
-  "name": "Bicicleta horizontal",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
- },
- {
-  "name": "Bicicleta vertical",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
+  "name": "Bom dia",
+  "category": "quadriceps",
+  "equipment": "barra",
+  "primary_muscle": "pernas"
  },
  {
   "name": "Cadeira abdutora",
   "category": "abdutores",
   "equipment": "maquina",
-  "primary_muscle": null
+  "primary_muscle": "pernas"
  },
  {
   "name": "Cadeira adutora",
@@ -210,16 +144,16 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Cadeira flexora",
-  "category": null,
+  "name": "Cadeira extensora",
+  "category": "quadriceps",
   "equipment": "maquina",
   "primary_muscle": "pernas"
  },
  {
-  "name": "Calf Raise Machine",
-  "category": "panturrilha",
-  "equipment": "plate_loaded",
-  "primary_muscle": "panturrilha"
+  "name": "Caminhada",
+  "category": "cardio",
+  "equipment": "nenhum",
+  "primary_muscle": "cardio"
  },
  {
   "name": "Caminhada com elástico",
@@ -228,106 +162,52 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Chest Press",
-  "category": "peito",
-  "equipment": "selectorized",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Chest Press convergente",
-  "category": "peito",
-  "equipment": "plate_loaded",
-  "primary_muscle": "peito"
- },
- {
   "name": "Coice com elástico",
   "category": "gluteos",
   "equipment": "elastico",
   "primary_muscle": "pernas"
  },
  {
-  "name": "Coice unilateral no cabo",
-  "category": "gluteos",
-  "equipment": "cable",
-  "primary_muscle": "gluteos"
+  "name": "Corrida",
+  "category": "cardio",
+  "equipment": "nenhum",
+  "primary_muscle": "cardio"
  },
  {
-  "name": "Crossover alto",
+  "name": "Crossover",
   "category": "peito",
-  "equipment": "cable",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Crossover baixo",
-  "category": "peito",
-  "equipment": "cable",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Crucifixo inclinado com halteres",
-  "category": "peito",
-  "equipment": "haltere",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Crucifixo Invertido",
-  "category": "costas",
-  "equipment": "maquina",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Crucifixo invertido com halteres",
-  "category": "ombros",
-  "equipment": "haltere",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Crucifixo invertido no cabo",
-  "category": "ombros",
   "equipment": "cabo",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Crucifixo no cabo",
-  "category": "peito",
-  "equipment": "cable",
   "primary_muscle": "peito"
  },
  {
-  "name": "Crucifixo no crossover",
+  "name": "Crucifixo inclinado",
   "category": "peito",
+  "equipment": "haltere",
+  "primary_muscle": "peito"
+ },
+ {
+  "name": "Crucifixo inverso",
+  "category": "ombros",
+  "equipment": "haltere",
+  "primary_muscle": "ombros"
+ },
+ {
+  "name": "Crucifixo inverso na máquina",
+  "category": "ombros",
   "equipment": "maquina",
-  "primary_muscle": "peito"
+  "primary_muscle": "ombros"
  },
  {
-  "name": "Crucifixo reto com halteres",
+  "name": "Crucifixo reto",
   "category": "peito",
   "equipment": "haltere",
   "primary_muscle": "peito"
  },
  {
-  "name": "D.Y. Row",
-  "category": "costas",
-  "equipment": "cabo",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Decline Chest Press",
-  "category": "peito",
-  "equipment": "plate_loaded",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Desenvolvimento arnold",
-  "category": "ombros",
-  "equipment": "haltere",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Desenvolvimento articulado",
-  "category": "ombros",
-  "equipment": "plate_loaded",
-  "primary_muscle": "ombros"
+  "name": "Dead bug",
+  "category": "abdomen",
+  "equipment": "nenhum",
+  "primary_muscle": "core"
  },
  {
   "name": "Desenvolvimento com barra",
@@ -342,7 +222,7 @@
   "primary_muscle": "ombros"
  },
  {
-  "name": "Desenvolvimento no smith",
+  "name": "Desenvolvimento máquina",
   "category": "ombros",
   "equipment": "maquina",
   "primary_muscle": "ombros"
@@ -354,40 +234,34 @@
   "primary_muscle": "core"
  },
  {
-  "name": "Elevação de pernas na barra",
-  "category": "abdomen",
+  "name": "Elevação frontal",
+  "category": "ombros",
+  "equipment": "haltere",
+  "primary_muscle": "ombros"
+ },
+ {
+  "name": "Elevação frontal com barra",
+  "category": "ombros",
+  "equipment": "barra",
+  "primary_muscle": "ombros"
+ },
+ {
+  "name": "Elevação lateral",
+  "category": "ombros",
+  "equipment": "haltere",
+  "primary_muscle": "ombros"
+ },
+ {
+  "name": "Elevação lateral unilateral no cabo",
+  "category": "ombros",
+  "equipment": "cabo",
+  "primary_muscle": "ombros"
+ },
+ {
+  "name": "Elevação pélvica",
+  "category": "quadriceps",
   "equipment": "nenhum",
-  "primary_muscle": "core"
- },
- {
-  "name": "Elevação de pernas na Captain's Chair",
-  "category": "abdomen",
-  "equipment": "bodyweight",
-  "primary_muscle": "abdomen"
- },
- {
-  "name": "Elevação frontal com halteres",
-  "category": "ombros",
-  "equipment": "haltere",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Elevação frontal no cabo",
-  "category": "ombros",
-  "equipment": "cable",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Elevação lateral com halteres",
-  "category": "ombros",
-  "equipment": "haltere",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Elevação lateral no cabo",
-  "category": "ombros",
-  "equipment": "cable",
-  "primary_muscle": "ombros"
+  "primary_muscle": "pernas"
  },
  {
   "name": "Elíptico",
@@ -396,51 +270,15 @@
   "primary_muscle": "cardio"
  },
  {
-  "name": "Encolhimento com barra",
-  "category": "ombros",
-  "equipment": "barra",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Encolhimento com halteres",
+  "name": "Encolhimento",
   "category": "ombros",
   "equipment": "haltere",
   "primary_muscle": "ombros"
  },
  {
-  "name": "Encolhimento no cabo",
-  "category": "trapezio",
-  "equipment": "cable",
-  "primary_muscle": "trapezio"
- },
- {
-  "name": "Encolhimento no Smith",
-  "category": "trapezio",
-  "equipment": "smith",
-  "primary_muscle": "trapezio"
- },
- {
-  "name": "Escada ergométrica",
-  "category": "cardio",
-  "equipment": "maquina",
-  "primary_muscle": "cardio"
- },
- {
-  "name": "Escada infinita",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
- },
- {
   "name": "Esteira",
   "category": "cardio",
-  "equipment": "maquina",
-  "primary_muscle": "cardio"
- },
- {
-  "name": "Esteira curva",
-  "category": "cardio",
-  "equipment": "cardio",
+  "equipment": "nenhum",
   "primary_muscle": "cardio"
  },
  {
@@ -450,22 +288,10 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Extensão de quadril quatro apoios",
-  "category": "gluteos",
-  "equipment": "nenhum",
-  "primary_muscle": null
- },
- {
-  "name": "Flexora ajoelhada",
-  "category": "posterior",
-  "equipment": "selectorized",
-  "primary_muscle": "posterior"
- },
- {
-  "name": "Flexora em pé unilateral",
-  "category": "posterior",
-  "equipment": "maquina",
-  "primary_muscle": "pernas"
+  "name": "Face pull",
+  "category": "costas",
+  "equipment": "cabo",
+  "primary_muscle": "costas"
  },
  {
   "name": "Flexão de braço",
@@ -474,142 +300,52 @@
   "primary_muscle": "peito"
  },
  {
-  "name": "Flexão de braço declinada",
+  "name": "Flexão declinada",
   "category": "peito",
   "equipment": "nenhum",
   "primary_muscle": "peito"
  },
  {
-  "name": "Flexão de braço inclinada",
-  "category": "peito",
-  "equipment": "nenhum",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Frog Pump",
-  "category": "gluteos",
-  "equipment": "barra",
-  "primary_muscle": null
- },
- {
-  "name": "GHD Back Extension",
-  "category": "lombar",
-  "equipment": "other",
-  "primary_muscle": "lombar"
- },
- {
-  "name": "Glute Drive",
-  "category": "gluteos",
-  "equipment": "plate_loaded",
-  "primary_muscle": "gluteos"
- },
- {
-  "name": "Glute Ham Developer",
-  "category": "posterior",
-  "equipment": "other",
-  "primary_muscle": "posterior"
- },
- {
-  "name": "Glute Kickback Machine",
-  "category": "gluteos",
-  "equipment": "selectorized",
-  "primary_muscle": "gluteos"
- },
- {
-  "name": "Glute Kickback no cabo",
-  "category": "gluteos",
-  "equipment": "cable",
-  "primary_muscle": "gluteos"
- },
- {
-  "name": "Glúteo no Smith",
-  "category": "gluteos",
-  "equipment": "barra",
-  "primary_muscle": null
- },
- {
-  "name": "Glúteo quatro apoios",
-  "category": "gluteos",
-  "equipment": "nenhum",
-  "primary_muscle": null
- },
- {
-  "name": "Gripper Machine",
-  "category": "antebraco",
-  "equipment": "selectorized",
-  "primary_muscle": "antebraco"
- },
- {
-  "name": "Hack Squat reverso",
+  "name": "Flexora em pé",
   "category": "quadriceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
  },
  {
-  "name": "High Row articulado",
+  "name": "Flexora em pé unilateral",
+  "category": "posterior",
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Glúteo na máquina",
+  "category": "quadriceps",
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Hack squat",
+  "category": "quadriceps",
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Hip thrust",
+  "category": "quadriceps",
+  "equipment": "barra",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Hiperextensão",
   "category": "costas",
-  "equipment": "plate_loaded",
+  "equipment": "nenhum",
   "primary_muscle": "costas"
  },
  {
-  "name": "Hip Thrust Machine",
-  "category": "gluteos",
-  "equipment": "plate_loaded",
-  "primary_muscle": "gluteos"
- },
- {
-  "name": "Hip Thrust no Smith",
-  "category": "gluteos",
-  "equipment": "smith",
-  "primary_muscle": "gluteos"
- },
- {
-  "name": "Hiperextensão 45°",
-  "category": "lombar",
-  "equipment": "selectorized",
-  "primary_muscle": "lombar"
- },
- {
-  "name": "Horizontal Bench Press máquina",
-  "category": "peito",
-  "equipment": "plate_loaded",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Incline Chest Press",
-  "category": "peito",
-  "equipment": "selectorized",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Iso-Lateral Bench Press",
-  "category": "peito",
-  "equipment": "plate_loaded",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Iso-Lateral Incline Press",
-  "category": "peito",
-  "equipment": "plate_loaded",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Iso-Lateral Leg Curl",
-  "category": "posterior",
-  "equipment": "selectorized",
-  "primary_muscle": "posterior"
- },
- {
-  "name": "Iso-Lateral Shoulder Press",
-  "category": "ombros",
-  "equipment": "plate_loaded",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Leg Extension iso-lateral",
+  "name": "Leg press 45",
   "category": "quadriceps",
-  "equipment": "selectorized",
-  "primary_muscle": "quadriceps"
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
  },
  {
   "name": "Leg press 45 unilateral",
@@ -618,22 +354,10 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Leg Press horizontal",
+  "name": "Levantamento terra",
   "category": "quadriceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Leg Press linear",
-  "category": "quadriceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Leg Press unilateral",
-  "category": "quadriceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
+  "equipment": "barra",
+  "primary_muscle": "pernas"
  },
  {
   "name": "Levantamento terra com halteres",
@@ -642,28 +366,16 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Levantamento terra romeno",
-  "category": "posterior",
-  "equipment": "barra",
-  "primary_muscle": null
- },
- {
-  "name": "Levantamento terra sumô",
-  "category": "posterior",
-  "equipment": "barra",
-  "primary_muscle": null
- },
- {
-  "name": "Low Row articulado",
-  "category": "costas",
-  "equipment": "plate_loaded",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Mergulho entre bancos",
-  "category": "peito",
+  "name": "Mergulho",
+  "category": "biceps",
   "equipment": "nenhum",
-  "primary_muscle": "peito"
+  "primary_muscle": "bracos"
+ },
+ {
+  "name": "Mesa flexora",
+  "category": "quadriceps",
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
  },
  {
   "name": "Mesa flexora unilateral",
@@ -672,58 +384,28 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Multi-Hip Machine — abdução",
-  "category": "abdutores",
-  "equipment": "selectorized",
-  "primary_muscle": "abdutores"
- },
- {
-  "name": "Multi-Hip Machine — adução",
-  "category": "adutores",
-  "equipment": "selectorized",
-  "primary_muscle": "adutores"
- },
- {
-  "name": "Multi-Hip Machine — extensão do quadril",
-  "category": "gluteos",
-  "equipment": "selectorized",
-  "primary_muscle": "gluteos"
- },
- {
-  "name": "Multi-Hip Machine — flexão do quadril",
+  "name": "Panturrilha em pé",
   "category": "quadriceps",
-  "equipment": "selectorized",
-  "primary_muscle": "quadriceps"
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
  },
  {
-  "name": "Multi-Squat Machine",
-  "category": "corpo_inteiro",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Máquina adutora",
-  "category": "adutores",
-  "equipment": "selectorized",
-  "primary_muscle": "adutores"
- },
- {
-  "name": "Máquina de elevação lateral",
-  "category": "ombros",
-  "equipment": "selectorized",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Panturrilha no Smith",
-  "category": "panturrilha",
-  "equipment": "smith",
-  "primary_muscle": "panturrilha"
- },
- {
-  "name": "Pendulum Squat",
+  "name": "Panturrilha no leg press",
   "category": "quadriceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Panturrilha sentada",
+  "category": "quadriceps",
+  "equipment": "maquina",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Peck deck",
+  "category": "peito",
+  "equipment": "maquina",
+  "primary_muscle": "peito"
  },
  {
   "name": "Ponte de glúteo com barra",
@@ -738,7 +420,7 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Prancha isométrica",
+  "name": "Prancha",
   "category": "abdomen",
   "equipment": "nenhum",
   "primary_muscle": "core"
@@ -756,94 +438,28 @@
   "primary_muscle": "cardio"
  },
  {
-  "name": "Pull Through no cabo",
-  "category": "gluteos",
-  "equipment": "cabo",
-  "primary_muscle": null
- },
- {
-  "name": "Pulldown unilateral articulado",
-  "category": "costas",
-  "equipment": "plate_loaded",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Pullover com haltere",
-  "category": "costas",
-  "equipment": "haltere",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Pullover máquina",
-  "category": "costas",
-  "equipment": "selectorized",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Pullover no cabo",
-  "category": "costas",
-  "equipment": "cable",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Puxada Alta",
+  "name": "Pulldown com corda",
   "category": "costas",
   "equipment": "cabo",
   "primary_muscle": "costas"
  },
  {
-  "name": "Puxada Baixa",
+  "name": "Puxada frontal",
   "category": "costas",
   "equipment": "cabo",
   "primary_muscle": "costas"
  },
  {
-  "name": "Puxada unilateral no cabo",
-  "category": "costas",
-  "equipment": "cable",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Puxador aberto",
+  "name": "Puxada frontal pegada supinada",
   "category": "costas",
   "equipment": "cabo",
   "primary_muscle": "costas"
  },
  {
-  "name": "Puxador alto",
-  "category": "costas",
-  "equipment": "maquina",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Puxador alto articulado",
-  "category": "costas",
-  "equipment": "plate_loaded",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Puxador alto com pegada neutra",
-  "category": "costas",
-  "equipment": "maquina",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Puxador alto com pegada supinada",
-  "category": "costas",
-  "equipment": "maquina",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Puxador Alto na Máquina",
-  "category": "costas",
-  "equipment": "maquina",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Remada articulada iso-lateral",
-  "category": "costas",
-  "equipment": "plate_loaded",
-  "primary_muscle": "costas"
+  "name": "Remada alta",
+  "category": "ombros",
+  "equipment": "barra",
+  "primary_muscle": "ombros"
  },
  {
   "name": "Remada baixa no cabo",
@@ -852,49 +468,19 @@
   "primary_muscle": "costas"
  },
  {
-  "name": "Remada curvada com barra",
+  "name": "Remada cavalinho",
+  "category": "costas",
+  "equipment": "maquina",
+  "primary_muscle": "costas"
+ },
+ {
+  "name": "Remada curvada",
   "category": "costas",
   "equipment": "barra",
   "primary_muscle": "costas"
  },
  {
-  "name": "Remada curvada com halteres",
-  "category": "costas",
-  "equipment": "haltere",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Remada máquina com apoio peitoral",
-  "category": "costas",
-  "equipment": "selectorized",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Remada no smith",
-  "category": "costas",
-  "equipment": "maquina",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Remada sentada com pegada neutra",
-  "category": "costas",
-  "equipment": "cabo",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Remada sentada na máquina",
-  "category": null,
-  "equipment": "maquina",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Remada sentada no cabo",
-  "category": "costas",
-  "equipment": "cabo",
-  "primary_muscle": "costas"
- },
- {
-  "name": "Remada unilateral com haltere",
+  "name": "Remada unilateral",
   "category": "costas",
   "equipment": "haltere",
   "primary_muscle": "costas"
@@ -906,25 +492,7 @@
   "primary_muscle": "cardio"
  },
  {
-  "name": "Reverse Fly máquina",
-  "category": "ombros",
-  "equipment": "selectorized",
-  "primary_muscle": "ombros"
- },
- {
-  "name": "Reverse Hyper",
-  "category": "lombar",
-  "equipment": "plate_loaded",
-  "primary_muscle": "lombar"
- },
- {
-  "name": "Romanian Deadlift no Smith",
-  "category": "posterior",
-  "equipment": "smith",
-  "primary_muscle": "posterior"
- },
- {
-  "name": "Rosca alternada com halteres",
+  "name": "Rosca alternada",
   "category": "biceps",
   "equipment": "haltere",
   "primary_muscle": "bracos"
@@ -936,40 +504,22 @@
   "primary_muscle": "bracos"
  },
  {
-  "name": "Rosca direta com barra",
+  "name": "Rosca direta",
   "category": "biceps",
   "equipment": "barra",
   "primary_muscle": "bracos"
  },
  {
-  "name": "Rosca direta com halteres",
-  "category": "biceps",
-  "equipment": "haltere",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Rosca direta no cabo",
-  "category": "biceps",
-  "equipment": "cable",
-  "primary_muscle": "biceps"
- },
- {
-  "name": "Rosca inversa com barra",
+  "name": "Rosca inversa",
   "category": "biceps",
   "equipment": "barra",
   "primary_muscle": "bracos"
  },
  {
-  "name": "Rosca martelo com halteres",
+  "name": "Rosca martelo",
   "category": "biceps",
   "equipment": "haltere",
   "primary_muscle": "bracos"
- },
- {
-  "name": "Rosca martelo no cabo",
-  "category": "biceps",
-  "equipment": "cable",
-  "primary_muscle": "biceps"
  },
  {
   "name": "Rosca no cabo",
@@ -978,123 +528,33 @@
   "primary_muscle": "bracos"
  },
  {
-  "name": "Rosca no cabo com corda",
-  "category": "biceps",
-  "equipment": "cabo",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Rosca scott com barra",
+  "name": "Rosca scott",
   "category": "biceps",
   "equipment": "maquina",
   "primary_muscle": "bracos"
- },
- {
-  "name": "Rosca scott com halteres",
-  "category": "biceps",
-  "equipment": "maquina",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Rosca Scott no cabo",
-  "category": "biceps",
-  "equipment": "cable",
-  "primary_muscle": "biceps"
- },
- {
-  "name": "Rosca unilateral no cabo",
-  "category": "biceps",
-  "equipment": "cable",
-  "primary_muscle": "biceps"
- },
- {
-  "name": "Rotary Torso",
-  "category": "abdomen",
-  "equipment": "selectorized",
-  "primary_muscle": "abdomen"
  },
  {
   "name": "Russian twist",
   "category": "abdomen",
+  "equipment": "haltere",
+  "primary_muscle": "core"
+ },
+ {
+  "name": "Sissy squat",
+  "category": "quadriceps",
   "equipment": "nenhum",
-  "primary_muscle": "core"
- },
- {
-  "name": "Russian twist com haltere",
-  "category": "abdomen",
-  "equipment": "haltere",
-  "primary_muscle": "core"
- },
- {
-  "name": "Scott Machine",
-  "category": "biceps",
-  "equipment": "selectorized",
-  "primary_muscle": "biceps"
- },
- {
-  "name": "Seated Biceps Machine",
-  "category": "biceps",
-  "equipment": "selectorized",
-  "primary_muscle": "biceps"
- },
- {
-  "name": "Seated Dip Machine",
-  "category": "triceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "triceps"
- },
- {
-  "name": "Shrug Machine",
-  "category": "trapezio",
-  "equipment": "plate_loaded",
-  "primary_muscle": "trapezio"
- },
- {
-  "name": "Ski Erg",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
- },
- {
-  "name": "Smith Machine — Afundo",
-  "category": "quadriceps",
-  "equipment": "smith",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Smith Machine — Agachamento búlgaro",
-  "category": "quadriceps",
-  "equipment": "smith",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Spinning Bike",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
- },
- {
-  "name": "Squat Machine",
-  "category": "quadriceps",
-  "equipment": "selectorized",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Stair Climber",
-  "category": "cardio",
-  "equipment": "cardio",
-  "primary_muscle": "cardio"
- },
- {
-  "name": "Step Up",
-  "category": "gluteos",
-  "equipment": "haltere",
-  "primary_muscle": null
+  "primary_muscle": "pernas"
  },
  {
   "name": "Step up com halteres",
   "category": "quadriceps",
   "equipment": "haltere",
+  "primary_muscle": "pernas"
+ },
+ {
+  "name": "Stiff",
+  "category": "quadriceps",
+  "equipment": "barra",
   "primary_muscle": "pernas"
  },
  {
@@ -1110,33 +570,15 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Stiff no Smith",
-  "category": "posterior",
-  "equipment": "smith",
-  "primary_muscle": "posterior"
- },
- {
-  "name": "Super Incline Press",
+  "name": "Supino declinado",
   "category": "peito",
-  "equipment": "plate_loaded",
+  "equipment": "barra",
   "primary_muscle": "peito"
  },
  {
-  "name": "Super Squat Press",
-  "category": "corpo_inteiro",
-  "equipment": "plate_loaded",
-  "primary_muscle": "corpo_inteiro"
- },
- {
-  "name": "Supino fechado com barra",
-  "category": "triceps",
+  "name": "Supino fechado",
+  "category": "biceps",
   "equipment": "barra",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Supino fechado com halteres",
-  "category": "triceps",
-  "equipment": "haltere",
   "primary_muscle": "bracos"
  },
  {
@@ -1149,18 +591,6 @@
   "name": "Supino inclinado com halteres",
   "category": "peito",
   "equipment": "haltere",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Supino inclinado no smith",
-  "category": "peito",
-  "equipment": "maquina",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Supino no smith",
-  "category": "peito",
-  "equipment": "maquina",
   "primary_muscle": "peito"
  },
  {
@@ -1182,117 +612,27 @@
   "primary_muscle": "pernas"
  },
  {
-  "name": "Tibia Dorsi-Flexion Machine",
-  "category": "tibial",
-  "equipment": "selectorized",
-  "primary_muscle": "tibial"
- },
- {
-  "name": "Triceps Extension Machine",
-  "category": "triceps",
-  "equipment": "selectorized",
-  "primary_muscle": "triceps"
- },
- {
-  "name": "Tríceps barra reta",
-  "category": "triceps",
-  "equipment": "cable",
-  "primary_muscle": "triceps"
- },
- {
-  "name": "Tríceps coice com haltere",
-  "category": "triceps",
+  "name": "Tríceps coice",
+  "category": "biceps",
   "equipment": "haltere",
   "primary_muscle": "bracos"
  },
  {
-  "name": "Tríceps coice no cabo",
-  "category": "triceps",
+  "name": "Tríceps francês",
+  "category": "biceps",
+  "equipment": "haltere",
+  "primary_muscle": "bracos"
+ },
+ {
+  "name": "Tríceps na polia",
+  "category": "biceps",
   "equipment": "cabo",
   "primary_muscle": "bracos"
  },
  {
-  "name": "Tríceps corda",
-  "category": "triceps",
-  "equipment": "cable",
-  "primary_muscle": "triceps"
- },
- {
-  "name": "Tríceps francês no cabo",
-  "category": "triceps",
-  "equipment": "cable",
-  "primary_muscle": "triceps"
- },
- {
-  "name": "Tríceps mergulho",
-  "category": "triceps",
-  "equipment": "nenhum",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Tríceps no cabo",
-  "category": "triceps",
-  "equipment": "cabo",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Tríceps no cabo com corda",
-  "category": "triceps",
-  "equipment": "cabo",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Tríceps overhead no cabo",
-  "category": "triceps",
-  "equipment": "cable",
-  "primary_muscle": "triceps"
- },
- {
-  "name": "Tríceps testa com barra",
-  "category": "triceps",
+  "name": "Tríceps testa",
+  "category": "biceps",
   "equipment": "barra",
   "primary_muscle": "bracos"
- },
- {
-  "name": "Tríceps testa com halteres",
-  "category": "triceps",
-  "equipment": "haltere",
-  "primary_muscle": "bracos"
- },
- {
-  "name": "Tríceps unilateral no cabo",
-  "category": "triceps",
-  "equipment": "cable",
-  "primary_muscle": "triceps"
- },
- {
-  "name": "V-Squat",
-  "category": "quadriceps",
-  "equipment": "plate_loaded",
-  "primary_muscle": "quadriceps"
- },
- {
-  "name": "Wide Chest Press",
-  "category": "peito",
-  "equipment": "selectorized",
-  "primary_muscle": "peito"
- },
- {
-  "name": "Wood Chop no cabo",
-  "category": "abdomen",
-  "equipment": "cable",
-  "primary_muscle": "abdomen"
- },
- {
-  "name": "Wrist Curl Machine",
-  "category": "antebraco",
-  "equipment": "selectorized",
-  "primary_muscle": "antebraco"
- },
- {
-  "name": "Wrist Extension Machine",
-  "category": "antebraco",
-  "equipment": "selectorized",
-  "primary_muscle": "antebraco"
  }
 ]

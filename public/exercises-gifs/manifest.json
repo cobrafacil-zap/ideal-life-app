@@ -1,21 +1,5 @@
 [
  {
-  "name": "Ab Coaster",
-  "file": "ab-coaster.gif",
-  "motion": "curl",
-  "equipment": "none",
-  "group": "abdomen",
-  "bytes": 111898
- },
- {
-  "name": "Abdominal / Oblique Crunch Machine",
-  "file": "abdominal-oblique-crunch-machine.gif",
-  "motion": "crunch",
-  "equipment": "machine",
-  "group": "abdomen",
-  "bytes": 134153
- },
- {
   "name": "Abdominal bicicleta",
   "file": "abdominal-bicicleta.gif",
   "motion": "crunch",
@@ -24,8 +8,8 @@
   "bytes": 91308
  },
  {
-  "name": "Abdominal com rolo",
-  "file": "abdominal-com-rolo.gif",
+  "name": "Abdominal canivete",
+  "file": "abdominal-canivete.gif",
   "motion": "crunch",
   "equipment": "none",
   "group": "abdomen",
@@ -40,36 +24,28 @@
   "bytes": 91308
  },
  {
-  "name": "Abdominal Crunch Machine",
-  "file": "abdominal-crunch-machine.gif",
+  "name": "Abdominal na roda",
+  "file": "abdominal-na-roda.gif",
   "motion": "crunch",
-  "equipment": "machine",
+  "equipment": "none",
   "group": "abdomen",
-  "bytes": 134153
+  "bytes": 91308
  },
  {
-  "name": "Abdominal na máquina",
-  "file": "abdominal-na-maquina.gif",
+  "name": "Abdominal supra",
+  "file": "abdominal-supra.gif",
   "motion": "crunch",
-  "equipment": "machine",
+  "equipment": "none",
   "group": "abdomen",
-  "bytes": 134153
+  "bytes": 91308
  },
  {
-  "name": "Abdominal no cabo",
-  "file": "abdominal-no-cabo.gif",
-  "motion": "crunch",
-  "equipment": "cable",
-  "group": "abdomen",
-  "bytes": 119775
- },
- {
-  "name": "Abdução com elástico",
-  "file": "abducao-com-elastico.gif",
+  "name": "Abdução de quadril",
+  "file": "abducao-de-quadril.gif",
   "motion": "abduct",
-  "equipment": "band",
-  "group": "abdutores",
-  "bytes": 115621
+  "equipment": "machine",
+  "group": "quadriceps",
+  "bytes": 159291
  },
  {
   "name": "Abdução de quadril com elástico",
@@ -80,24 +56,8 @@
   "bytes": 115621
  },
  {
-  "name": "Abdução em pé máquina",
-  "file": "abducao-em-pe-maquina.gif",
-  "motion": "abduct",
-  "equipment": "machine",
-  "group": "abdutores",
-  "bytes": 159291
- },
- {
-  "name": "Abdução no cabo",
-  "file": "abducao-no-cabo.gif",
-  "motion": "abduct",
-  "equipment": "cable",
-  "group": "abdutores",
-  "bytes": 138924
- },
- {
-  "name": "Afundo",
-  "file": "afundo.gif",
+  "name": "Afundo búlgaro",
+  "file": "afundo-bulgaro.gif",
   "motion": "lunge",
   "equipment": "dumbbell",
   "group": "quadriceps",
@@ -106,14 +66,6 @@
  {
   "name": "Afundo com halteres",
   "file": "afundo-com-halteres.gif",
-  "motion": "lunge",
-  "equipment": "dumbbell",
-  "group": "quadriceps",
-  "bytes": 110305
- },
- {
-  "name": "Afundo reverso",
-  "file": "afundo-reverso.gif",
   "motion": "lunge",
   "equipment": "dumbbell",
   "group": "quadriceps",
@@ -136,6 +88,14 @@
   "bytes": 104644
  },
  {
+  "name": "Agachamento com halteres",
+  "file": "agachamento-com-halteres.gif",
+  "motion": "squat",
+  "equipment": "dumbbell",
+  "group": "quadriceps",
+  "bytes": 109188
+ },
+ {
   "name": "Agachamento com kettlebell",
   "file": "agachamento-com-kettlebell.gif",
   "motion": "squat",
@@ -144,8 +104,24 @@
   "bytes": 115582
  },
  {
+  "name": "Agachamento livre",
+  "file": "agachamento-livre.gif",
+  "motion": "squat",
+  "equipment": "bar",
+  "group": "quadriceps",
+  "bytes": 109281
+ },
+ {
   "name": "Agachamento no hack",
   "file": "agachamento-no-hack.gif",
+  "motion": "squat",
+  "equipment": "machine",
+  "group": "quadriceps",
+  "bytes": 146492
+ },
+ {
+  "name": "Agachamento no smith",
+  "file": "agachamento-no-smith.gif",
   "motion": "squat",
   "equipment": "machine",
   "group": "quadriceps",
@@ -160,44 +136,20 @@
   "bytes": 146492
  },
  {
-  "name": "Air Bike",
-  "file": "air-bike.gif",
-  "motion": "cardio",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 148518
+  "name": "Agachamento sumô",
+  "file": "agachamento-sumo.gif",
+  "motion": "squat",
+  "equipment": "dumbbell",
+  "group": "quadriceps",
+  "bytes": 109188
  },
  {
-  "name": "Arc Trainer",
-  "file": "arc-trainer.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 158471
- },
- {
-  "name": "Assisted Nordic Ham",
-  "file": "assisted-nordic-ham.gif",
-  "motion": "hinge",
-  "equipment": "machine",
-  "group": "posterior",
-  "bytes": 152229
- },
- {
-  "name": "Back Extension",
-  "file": "back-extension.gif",
-  "motion": "hip_flex",
-  "equipment": "none",
-  "group": "lombar",
-  "bytes": 80835
- },
- {
-  "name": "Back Extension Machine",
-  "file": "back-extension-machine.gif",
-  "motion": "hip_flex",
-  "equipment": "machine",
-  "group": "lombar",
-  "bytes": 116441
+  "name": "Avanço",
+  "file": "avanco.gif",
+  "motion": "lunge",
+  "equipment": "dumbbell",
+  "group": "quadriceps",
+  "bytes": 110305
  },
  {
   "name": "Barra fixa",
@@ -208,38 +160,6 @@
   "bytes": 155722
  },
  {
-  "name": "Barra fixa com pegada neutra",
-  "file": "barra-fixa-com-pegada-neutra.gif",
-  "motion": "pull",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 155722
- },
- {
-  "name": "Barra fixa com pegada supinada",
-  "file": "barra-fixa-com-pegada-supinada.gif",
-  "motion": "pull",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 155722
- },
- {
-  "name": "Belt Squat",
-  "file": "belt-squat.gif",
-  "motion": "squat",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 146492
- },
- {
-  "name": "Biceps Curl Machine",
-  "file": "biceps-curl-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "biceps",
-  "bytes": 158471
- },
- {
   "name": "Bicicleta ergométrica",
   "file": "bicicleta-ergometrica.gif",
   "motion": "cardio",
@@ -248,20 +168,12 @@
   "bytes": 148518
  },
  {
-  "name": "Bicicleta horizontal",
-  "file": "bicicleta-horizontal.gif",
-  "motion": "cardio",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 148518
- },
- {
-  "name": "Bicicleta vertical",
-  "file": "bicicleta-vertical.gif",
-  "motion": "cardio",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 148518
+  "name": "Bom dia",
+  "file": "bom-dia.gif",
+  "motion": "hinge",
+  "equipment": "bar",
+  "group": "quadriceps",
+  "bytes": 111794
  },
  {
   "name": "Cadeira abdutora",
@@ -280,20 +192,20 @@
   "bytes": 158471
  },
  {
-  "name": "Cadeira flexora",
-  "file": "cadeira-flexora.gif",
-  "motion": "hinge",
+  "name": "Cadeira extensora",
+  "file": "cadeira-extensora.gif",
+  "motion": "squat",
   "equipment": "machine",
-  "group": "posterior",
-  "bytes": 152229
+  "group": "quadriceps",
+  "bytes": 146492
  },
  {
-  "name": "Calf Raise Machine",
-  "file": "calf-raise-machine.gif",
-  "motion": "calf_raise",
-  "equipment": "machine",
-  "group": "panturrilha",
-  "bytes": 74437
+  "name": "Caminhada",
+  "file": "caminhada.gif",
+  "motion": "curl",
+  "equipment": "none",
+  "group": "cardio",
+  "bytes": 111898
  },
  {
   "name": "Caminhada com elástico",
@@ -304,22 +216,6 @@
   "bytes": 104644
  },
  {
-  "name": "Chest Press",
-  "file": "chest-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Chest Press convergente",
-  "file": "chest-press-convergente.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
   "name": "Coice com elástico",
   "file": "coice-com-elastico.gif",
   "motion": "bridge",
@@ -328,116 +224,60 @@
   "bytes": 90298
  },
  {
-  "name": "Coice unilateral no cabo",
-  "file": "coice-unilateral-no-cabo.gif",
-  "motion": "bridge",
-  "equipment": "cable",
-  "group": "gluteos",
-  "bytes": 121689
+  "name": "Corrida",
+  "file": "corrida.gif",
+  "motion": "cardio",
+  "equipment": "none",
+  "group": "cardio",
+  "bytes": 104714
  },
  {
-  "name": "Crossover alto",
-  "file": "crossover-alto.gif",
+  "name": "Crossover",
+  "file": "crossover.gif",
   "motion": "fly",
   "equipment": "cable",
   "group": "peito",
   "bytes": 87714
  },
  {
-  "name": "Crossover baixo",
-  "file": "crossover-baixo.gif",
-  "motion": "fly",
-  "equipment": "cable",
-  "group": "peito",
-  "bytes": 87714
- },
- {
-  "name": "Crucifixo inclinado com halteres",
-  "file": "crucifixo-inclinado-com-halteres.gif",
+  "name": "Crucifixo inclinado",
+  "file": "crucifixo-inclinado.gif",
   "motion": "fly",
   "equipment": "dumbbell",
   "group": "peito",
   "bytes": 75386
  },
  {
-  "name": "Crucifixo Invertido",
-  "file": "crucifixo-invertido.gif",
+  "name": "Crucifixo inverso",
+  "file": "crucifixo-inverso.gif",
+  "motion": "fly",
+  "equipment": "dumbbell",
+  "group": "ombros",
+  "bytes": 75386
+ },
+ {
+  "name": "Crucifixo inverso na máquina",
+  "file": "crucifixo-inverso-na-maquina.gif",
   "motion": "fly",
   "equipment": "machine",
-  "group": "costas",
+  "group": "ombros",
   "bytes": 107559
  },
  {
-  "name": "Crucifixo invertido com halteres",
-  "file": "crucifixo-invertido-com-halteres.gif",
-  "motion": "fly",
-  "equipment": "dumbbell",
-  "group": "ombros",
-  "bytes": 75386
- },
- {
-  "name": "Crucifixo invertido no cabo",
-  "file": "crucifixo-invertido-no-cabo.gif",
-  "motion": "fly",
-  "equipment": "cable",
-  "group": "ombros",
-  "bytes": 87714
- },
- {
-  "name": "Crucifixo no cabo",
-  "file": "crucifixo-no-cabo.gif",
-  "motion": "fly",
-  "equipment": "cable",
-  "group": "peito",
-  "bytes": 87714
- },
- {
-  "name": "Crucifixo no crossover",
-  "file": "crucifixo-no-crossover.gif",
-  "motion": "fly",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 107559
- },
- {
-  "name": "Crucifixo reto com halteres",
-  "file": "crucifixo-reto-com-halteres.gif",
+  "name": "Crucifixo reto",
+  "file": "crucifixo-reto.gif",
   "motion": "fly",
   "equipment": "dumbbell",
   "group": "peito",
   "bytes": 75386
  },
  {
-  "name": "D.Y. Row",
-  "file": "d-y-row.gif",
-  "motion": "row",
-  "equipment": "cable",
-  "group": "costas",
-  "bytes": 69462
- },
- {
-  "name": "Decline Chest Press",
-  "file": "decline-chest-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Desenvolvimento arnold",
-  "file": "desenvolvimento-arnold.gif",
-  "motion": "overhead_press",
-  "equipment": "dumbbell",
-  "group": "ombros",
-  "bytes": 118794
- },
- {
-  "name": "Desenvolvimento articulado",
-  "file": "desenvolvimento-articulado.gif",
-  "motion": "overhead_press",
-  "equipment": "machine",
-  "group": "ombros",
-  "bytes": 159011
+  "name": "Dead bug",
+  "file": "dead-bug.gif",
+  "motion": "plank",
+  "equipment": "none",
+  "group": "abdomen",
+  "bytes": 11490
  },
  {
   "name": "Desenvolvimento com barra",
@@ -456,8 +296,8 @@
   "bytes": 54315
  },
  {
-  "name": "Desenvolvimento no smith",
-  "file": "desenvolvimento-no-smith.gif",
+  "name": "Desenvolvimento máquina",
+  "file": "desenvolvimento-maquina.gif",
   "motion": "overhead_press",
   "equipment": "machine",
   "group": "ombros",
@@ -472,52 +312,44 @@
   "bytes": 88642
  },
  {
-  "name": "Elevação de pernas na barra",
-  "file": "elevacao-de-pernas-na-barra.gif",
-  "motion": "leg_raise",
-  "equipment": "none",
-  "group": "abdomen",
-  "bytes": 88642
- },
- {
-  "name": "Elevação de pernas na Captain's Chair",
-  "file": "elevacao-de-pernas-na-captain-s-chair.gif",
-  "motion": "leg_raise",
-  "equipment": "none",
-  "group": "abdomen",
-  "bytes": 88642
- },
- {
-  "name": "Elevação frontal com halteres",
-  "file": "elevacao-frontal-com-halteres.gif",
+  "name": "Elevação frontal",
+  "file": "elevacao-frontal.gif",
   "motion": "overhead_press",
   "equipment": "dumbbell",
   "group": "ombros",
   "bytes": 118794
  },
  {
-  "name": "Elevação frontal no cabo",
-  "file": "elevacao-frontal-no-cabo.gif",
+  "name": "Elevação frontal com barra",
+  "file": "elevacao-frontal-com-barra.gif",
   "motion": "overhead_press",
-  "equipment": "cable",
+  "equipment": "bar",
   "group": "ombros",
-  "bytes": 132322
+  "bytes": 118353
  },
  {
-  "name": "Elevação lateral com halteres",
-  "file": "elevacao-lateral-com-halteres.gif",
+  "name": "Elevação lateral",
+  "file": "elevacao-lateral.gif",
   "motion": "lateral_raise",
   "equipment": "dumbbell",
   "group": "ombros",
   "bytes": 118025
  },
  {
-  "name": "Elevação lateral no cabo",
-  "file": "elevacao-lateral-no-cabo.gif",
+  "name": "Elevação lateral unilateral no cabo",
+  "file": "elevacao-lateral-unilateral-no-cabo.gif",
   "motion": "lateral_raise",
   "equipment": "cable",
   "group": "ombros",
   "bytes": 131112
+ },
+ {
+  "name": "Elevação pélvica",
+  "file": "elevacao-pelvica.gif",
+  "motion": "bridge",
+  "equipment": "none",
+  "group": "quadriceps",
+  "bytes": 87596
  },
  {
   "name": "Elíptico",
@@ -528,68 +360,20 @@
   "bytes": 148518
  },
  {
-  "name": "Encolhimento com barra",
-  "file": "encolhimento-com-barra.gif",
-  "motion": "shrug",
-  "equipment": "bar",
-  "group": "ombros",
-  "bytes": 35895
- },
- {
-  "name": "Encolhimento com halteres",
-  "file": "encolhimento-com-halteres.gif",
+  "name": "Encolhimento",
+  "file": "encolhimento.gif",
   "motion": "shrug",
   "equipment": "dumbbell",
   "group": "ombros",
   "bytes": 35424
  },
  {
-  "name": "Encolhimento no cabo",
-  "file": "encolhimento-no-cabo.gif",
-  "motion": "shrug",
-  "equipment": "cable",
-  "group": "trapezio",
-  "bytes": 41397
- },
- {
-  "name": "Encolhimento no Smith",
-  "file": "encolhimento-no-smith.gif",
-  "motion": "shrug",
-  "equipment": "machine",
-  "group": "trapezio",
-  "bytes": 47205
- },
- {
-  "name": "Escada ergométrica",
-  "file": "escada-ergometrica.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 158471
- },
- {
-  "name": "Escada infinita",
-  "file": "escada-infinita.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 158471
- },
- {
   "name": "Esteira",
   "file": "esteira.gif",
   "motion": "curl",
-  "equipment": "machine",
+  "equipment": "none",
   "group": "cardio",
-  "bytes": 158471
- },
- {
-  "name": "Esteira curva",
-  "file": "esteira-curva.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 158471
+  "bytes": 111898
  },
  {
   "name": "Extensão de quadril no cabo",
@@ -600,19 +384,35 @@
   "bytes": 121689
  },
  {
-  "name": "Extensão de quadril quatro apoios",
-  "file": "extensao-de-quadril-quatro-apoios.gif",
-  "motion": "bridge",
-  "equipment": "none",
-  "group": "gluteos",
-  "bytes": 87596
+  "name": "Face pull",
+  "file": "face-pull.gif",
+  "motion": "row",
+  "equipment": "cable",
+  "group": "costas",
+  "bytes": 69462
  },
  {
-  "name": "Flexora ajoelhada",
-  "file": "flexora-ajoelhada.gif",
+  "name": "Flexão de braço",
+  "file": "flexao-de-braco.gif",
+  "motion": "push",
+  "equipment": "none",
+  "group": "peito",
+  "bytes": 54009
+ },
+ {
+  "name": "Flexão declinada",
+  "file": "flexao-declinada.gif",
+  "motion": "push",
+  "equipment": "none",
+  "group": "peito",
+  "bytes": 54009
+ },
+ {
+  "name": "Flexora em pé",
+  "file": "flexora-em-pe.gif",
   "motion": "hinge",
   "equipment": "machine",
-  "group": "posterior",
+  "group": "quadriceps",
   "bytes": 152229
  },
  {
@@ -624,196 +424,44 @@
   "bytes": 152229
  },
  {
-  "name": "Flexão de braço",
-  "file": "flexao-de-braco.gif",
-  "motion": "push",
-  "equipment": "none",
-  "group": "peito",
-  "bytes": 54009
+  "name": "Glúteo na máquina",
+  "file": "gluteo-na-maquina.gif",
+  "motion": "bridge",
+  "equipment": "machine",
+  "group": "quadriceps",
+  "bytes": 133435
  },
  {
-  "name": "Flexão de braço declinada",
-  "file": "flexao-de-braco-declinada.gif",
-  "motion": "push",
-  "equipment": "none",
-  "group": "peito",
-  "bytes": 54009
+  "name": "Hack squat",
+  "file": "hack-squat.gif",
+  "motion": "squat",
+  "equipment": "machine",
+  "group": "quadriceps",
+  "bytes": 146492
  },
  {
-  "name": "Flexão de braço inclinada",
-  "file": "flexao-de-braco-inclinada.gif",
-  "motion": "push",
-  "equipment": "none",
-  "group": "peito",
-  "bytes": 54009
- },
- {
-  "name": "Frog Pump",
-  "file": "frog-pump.gif",
+  "name": "Hip thrust",
+  "file": "hip-thrust.gif",
   "motion": "bridge",
   "equipment": "bar",
-  "group": "gluteos",
+  "group": "quadriceps",
   "bytes": 94626
  },
  {
-  "name": "GHD Back Extension",
-  "file": "ghd-back-extension.gif",
+  "name": "Hiperextensão",
+  "file": "hiperextensao.gif",
   "motion": "hip_flex",
   "equipment": "none",
-  "group": "lombar",
+  "group": "costas",
   "bytes": 80835
  },
  {
-  "name": "Glute Drive",
-  "file": "glute-drive.gif",
-  "motion": "bridge",
-  "equipment": "machine",
-  "group": "gluteos",
-  "bytes": 133435
- },
- {
-  "name": "Glute Ham Developer",
-  "file": "glute-ham-developer.gif",
-  "motion": "hinge",
-  "equipment": "bar",
-  "group": "posterior",
-  "bytes": 111794
- },
- {
-  "name": "Glute Kickback Machine",
-  "file": "glute-kickback-machine.gif",
-  "motion": "bridge",
-  "equipment": "machine",
-  "group": "gluteos",
-  "bytes": 133435
- },
- {
-  "name": "Glute Kickback no cabo",
-  "file": "glute-kickback-no-cabo.gif",
-  "motion": "bridge",
-  "equipment": "cable",
-  "group": "gluteos",
-  "bytes": 121689
- },
- {
-  "name": "Glúteo no Smith",
-  "file": "gluteo-no-smith.gif",
-  "motion": "squat",
-  "equipment": "bar",
-  "group": "gluteos",
-  "bytes": 109281
- },
- {
-  "name": "Glúteo quatro apoios",
-  "file": "gluteo-quatro-apoios.gif",
-  "motion": "bridge",
-  "equipment": "none",
-  "group": "gluteos",
-  "bytes": 87596
- },
- {
-  "name": "Gripper Machine",
-  "file": "gripper-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "antebraco",
-  "bytes": 158471
- },
- {
-  "name": "Hack Squat reverso",
-  "file": "hack-squat-reverso.gif",
-  "motion": "squat",
+  "name": "Leg press 45",
+  "file": "leg-press-45.gif",
+  "motion": "leg_press",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
- },
- {
-  "name": "High Row articulado",
-  "file": "high-row-articulado.gif",
-  "motion": "row",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 86344
- },
- {
-  "name": "Hip Thrust Machine",
-  "file": "hip-thrust-machine.gif",
-  "motion": "bridge",
-  "equipment": "machine",
-  "group": "gluteos",
-  "bytes": 133435
- },
- {
-  "name": "Hip Thrust no Smith",
-  "file": "hip-thrust-no-smith.gif",
-  "motion": "bridge",
-  "equipment": "machine",
-  "group": "gluteos",
-  "bytes": 133435
- },
- {
-  "name": "Hiperextensão 45°",
-  "file": "hiperextensao-45.gif",
-  "motion": "hip_flex",
-  "equipment": "machine",
-  "group": "lombar",
-  "bytes": 116441
- },
- {
-  "name": "Horizontal Bench Press máquina",
-  "file": "horizontal-bench-press-maquina.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Incline Chest Press",
-  "file": "incline-chest-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Iso-Lateral Bench Press",
-  "file": "iso-lateral-bench-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Iso-Lateral Incline Press",
-  "file": "iso-lateral-incline-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Iso-Lateral Leg Curl",
-  "file": "iso-lateral-leg-curl.gif",
-  "motion": "hinge",
-  "equipment": "machine",
-  "group": "posterior",
-  "bytes": 152229
- },
- {
-  "name": "Iso-Lateral Shoulder Press",
-  "file": "iso-lateral-shoulder-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "ombros",
-  "bytes": 76405
- },
- {
-  "name": "Leg Extension iso-lateral",
-  "file": "leg-extension-iso-lateral.gif",
-  "motion": "squat",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 114153
  },
  {
   "name": "Leg press 45 unilateral",
@@ -824,28 +472,12 @@
   "bytes": 114153
  },
  {
-  "name": "Leg Press horizontal",
-  "file": "leg-press-horizontal.gif",
-  "motion": "leg_press",
-  "equipment": "machine",
+  "name": "Levantamento terra",
+  "file": "levantamento-terra.gif",
+  "motion": "hinge",
+  "equipment": "bar",
   "group": "quadriceps",
-  "bytes": 114153
- },
- {
-  "name": "Leg Press linear",
-  "file": "leg-press-linear.gif",
-  "motion": "leg_press",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 114153
- },
- {
-  "name": "Leg Press unilateral",
-  "file": "leg-press-unilateral.gif",
-  "motion": "leg_press",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 114153
+  "bytes": 111794
  },
  {
   "name": "Levantamento terra com halteres",
@@ -856,36 +488,20 @@
   "bytes": 109824
  },
  {
-  "name": "Levantamento terra romeno",
-  "file": "levantamento-terra-romeno.gif",
-  "motion": "hinge",
-  "equipment": "bar",
-  "group": "posterior",
-  "bytes": 111794
- },
- {
-  "name": "Levantamento terra sumô",
-  "file": "levantamento-terra-sumo.gif",
-  "motion": "hinge",
-  "equipment": "bar",
-  "group": "posterior",
-  "bytes": 111794
- },
- {
-  "name": "Low Row articulado",
-  "file": "low-row-articulado.gif",
-  "motion": "row",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 86344
- },
- {
-  "name": "Mergulho entre bancos",
-  "file": "mergulho-entre-bancos.gif",
+  "name": "Mergulho",
+  "file": "mergulho.gif",
   "motion": "push",
   "equipment": "none",
-  "group": "peito",
+  "group": "biceps",
   "bytes": 54009
+ },
+ {
+  "name": "Mesa flexora",
+  "file": "mesa-flexora.gif",
+  "motion": "hinge",
+  "equipment": "machine",
+  "group": "quadriceps",
+  "bytes": 152229
  },
  {
   "name": "Mesa flexora unilateral",
@@ -896,76 +512,36 @@
   "bytes": 152229
  },
  {
-  "name": "Multi-Hip Machine — abdução",
-  "file": "multi-hip-machine-abducao.gif",
-  "motion": "abduct",
-  "equipment": "machine",
-  "group": "abdutores",
-  "bytes": 159291
- },
- {
-  "name": "Multi-Hip Machine — adução",
-  "file": "multi-hip-machine-aducao.gif",
-  "motion": "bridge",
-  "equipment": "machine",
-  "group": "adutores",
-  "bytes": 133435
- },
- {
-  "name": "Multi-Hip Machine — extensão do quadril",
-  "file": "multi-hip-machine-extensao-do-quadril.gif",
-  "motion": "bridge",
-  "equipment": "machine",
-  "group": "gluteos",
-  "bytes": 133435
- },
- {
-  "name": "Multi-Hip Machine — flexão do quadril",
-  "file": "multi-hip-machine-flexao-do-quadril.gif",
-  "motion": "hip_flex",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 116441
- },
- {
-  "name": "Multi-Squat Machine",
-  "file": "multi-squat-machine.gif",
-  "motion": "squat",
-  "equipment": "machine",
-  "group": "corpo_inteiro",
-  "bytes": 146492
- },
- {
-  "name": "Máquina adutora",
-  "file": "maquina-adutora.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "adutores",
-  "bytes": 158471
- },
- {
-  "name": "Máquina de elevação lateral",
-  "file": "maquina-de-elevacao-lateral.gif",
-  "motion": "lateral_raise",
-  "equipment": "machine",
-  "group": "ombros",
-  "bytes": 157876
- },
- {
-  "name": "Panturrilha no Smith",
-  "file": "panturrilha-no-smith.gif",
+  "name": "Panturrilha em pé",
+  "file": "panturrilha-em-pe.gif",
   "motion": "calf_raise",
   "equipment": "machine",
-  "group": "panturrilha",
+  "group": "quadriceps",
   "bytes": 74437
  },
  {
-  "name": "Pendulum Squat",
-  "file": "pendulum-squat.gif",
-  "motion": "squat",
+  "name": "Panturrilha no leg press",
+  "file": "panturrilha-no-leg-press.gif",
+  "motion": "calf_raise",
   "equipment": "machine",
   "group": "quadriceps",
-  "bytes": 146492
+  "bytes": 74437
+ },
+ {
+  "name": "Panturrilha sentada",
+  "file": "panturrilha-sentada.gif",
+  "motion": "calf_raise",
+  "equipment": "machine",
+  "group": "quadriceps",
+  "bytes": 74437
+ },
+ {
+  "name": "Peck deck",
+  "file": "peck-deck.gif",
+  "motion": "bench_press",
+  "equipment": "machine",
+  "group": "peito",
+  "bytes": 76405
  },
  {
   "name": "Ponte de glúteo com barra",
@@ -984,8 +560,8 @@
   "bytes": 94494
  },
  {
-  "name": "Prancha isométrica",
-  "file": "prancha-isometrica.gif",
+  "name": "Prancha",
+  "file": "prancha.gif",
   "motion": "plank",
   "equipment": "none",
   "group": "abdomen",
@@ -1008,124 +584,36 @@
   "bytes": 111898
  },
  {
-  "name": "Pull Through no cabo",
-  "file": "pull-through-no-cabo.gif",
-  "motion": "hinge",
-  "equipment": "cable",
-  "group": "gluteos",
-  "bytes": 132597
- },
- {
-  "name": "Pulldown unilateral articulado",
-  "file": "pulldown-unilateral-articulado.gif",
-  "motion": "pull",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 155722
- },
- {
-  "name": "Pullover com haltere",
-  "file": "pullover-com-haltere.gif",
-  "motion": "row",
-  "equipment": "dumbbell",
-  "group": "costas",
-  "bytes": 63209
- },
- {
-  "name": "Pullover máquina",
-  "file": "pullover-maquina.gif",
-  "motion": "row",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 86344
- },
- {
-  "name": "Pullover no cabo",
-  "file": "pullover-no-cabo.gif",
-  "motion": "row",
-  "equipment": "cable",
-  "group": "costas",
-  "bytes": 69462
- },
- {
-  "name": "Puxada Alta",
-  "file": "puxada-alta.gif",
+  "name": "Pulldown com corda",
+  "file": "pulldown-com-corda.gif",
   "motion": "pull",
   "equipment": "cable",
   "group": "costas",
   "bytes": 128171
  },
  {
-  "name": "Puxada Baixa",
-  "file": "puxada-baixa.gif",
+  "name": "Puxada frontal",
+  "file": "puxada-frontal.gif",
   "motion": "pull",
   "equipment": "cable",
   "group": "costas",
   "bytes": 128171
  },
  {
-  "name": "Puxada unilateral no cabo",
-  "file": "puxada-unilateral-no-cabo.gif",
+  "name": "Puxada frontal pegada supinada",
+  "file": "puxada-frontal-pegada-supinada.gif",
   "motion": "pull",
   "equipment": "cable",
   "group": "costas",
   "bytes": 128171
  },
  {
-  "name": "Puxador aberto",
-  "file": "puxador-aberto.gif",
-  "motion": "curl",
-  "equipment": "cable",
-  "group": "costas",
-  "bytes": 134305
- },
- {
-  "name": "Puxador alto",
-  "file": "puxador-alto.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 158471
- },
- {
-  "name": "Puxador alto articulado",
-  "file": "puxador-alto-articulado.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 158471
- },
- {
-  "name": "Puxador alto com pegada neutra",
-  "file": "puxador-alto-com-pegada-neutra.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 158471
- },
- {
-  "name": "Puxador alto com pegada supinada",
-  "file": "puxador-alto-com-pegada-supinada.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 158471
- },
- {
-  "name": "Puxador Alto na Máquina",
-  "file": "puxador-alto-na-maquina.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 158471
- },
- {
-  "name": "Remada articulada iso-lateral",
-  "file": "remada-articulada-iso-lateral.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 76405
+  "name": "Remada alta",
+  "file": "remada-alta.gif",
+  "motion": "row",
+  "equipment": "bar",
+  "group": "ombros",
+  "bytes": 62183
  },
  {
   "name": "Remada baixa no cabo",
@@ -1136,64 +624,24 @@
   "bytes": 69462
  },
  {
-  "name": "Remada curvada com barra",
-  "file": "remada-curvada-com-barra.gif",
-  "motion": "row",
-  "equipment": "bar",
-  "group": "costas",
-  "bytes": 62183
- },
- {
-  "name": "Remada curvada com halteres",
-  "file": "remada-curvada-com-halteres.gif",
-  "motion": "row",
-  "equipment": "dumbbell",
-  "group": "costas",
-  "bytes": 63209
- },
- {
-  "name": "Remada máquina com apoio peitoral",
-  "file": "remada-maquina-com-apoio-peitoral.gif",
-  "motion": "row_machine",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 84376
- },
- {
-  "name": "Remada no smith",
-  "file": "remada-no-smith.gif",
+  "name": "Remada cavalinho",
+  "file": "remada-cavalinho.gif",
   "motion": "row",
   "equipment": "machine",
   "group": "costas",
   "bytes": 86344
  },
  {
-  "name": "Remada sentada com pegada neutra",
-  "file": "remada-sentada-com-pegada-neutra.gif",
+  "name": "Remada curvada",
+  "file": "remada-curvada.gif",
   "motion": "row",
-  "equipment": "cable",
+  "equipment": "bar",
   "group": "costas",
-  "bytes": 69462
+  "bytes": 62183
  },
  {
-  "name": "Remada sentada na máquina",
-  "file": "remada-sentada-na-maquina.gif",
-  "motion": "row_machine",
-  "equipment": "machine",
-  "group": "costas",
-  "bytes": 84376
- },
- {
-  "name": "Remada sentada no cabo",
-  "file": "remada-sentada-no-cabo.gif",
-  "motion": "row",
-  "equipment": "cable",
-  "group": "costas",
-  "bytes": 69462
- },
- {
-  "name": "Remada unilateral com haltere",
-  "file": "remada-unilateral-com-haltere.gif",
+  "name": "Remada unilateral",
+  "file": "remada-unilateral.gif",
   "motion": "row",
   "equipment": "dumbbell",
   "group": "costas",
@@ -1208,32 +656,8 @@
   "bytes": 148518
  },
  {
-  "name": "Reverse Fly máquina",
-  "file": "reverse-fly-maquina.gif",
-  "motion": "fly",
-  "equipment": "machine",
-  "group": "ombros",
-  "bytes": 107559
- },
- {
-  "name": "Reverse Hyper",
-  "file": "reverse-hyper.gif",
-  "motion": "hinge",
-  "equipment": "machine",
-  "group": "lombar",
-  "bytes": 152229
- },
- {
-  "name": "Romanian Deadlift no Smith",
-  "file": "romanian-deadlift-no-smith.gif",
-  "motion": "hinge",
-  "equipment": "machine",
-  "group": "posterior",
-  "bytes": 152229
- },
- {
-  "name": "Rosca alternada com halteres",
-  "file": "rosca-alternada-com-halteres.gif",
+  "name": "Rosca alternada",
+  "file": "rosca-alternada.gif",
   "motion": "curl",
   "equipment": "dumbbell",
   "group": "biceps",
@@ -1248,52 +672,28 @@
   "bytes": 119281
  },
  {
-  "name": "Rosca direta com barra",
-  "file": "rosca-direta-com-barra.gif",
+  "name": "Rosca direta",
+  "file": "rosca-direta.gif",
   "motion": "curl",
   "equipment": "bar",
   "group": "biceps",
   "bytes": 119667
  },
  {
-  "name": "Rosca direta com halteres",
-  "file": "rosca-direta-com-halteres.gif",
-  "motion": "curl",
-  "equipment": "dumbbell",
-  "group": "biceps",
-  "bytes": 119281
- },
- {
-  "name": "Rosca direta no cabo",
-  "file": "rosca-direta-no-cabo.gif",
-  "motion": "curl",
-  "equipment": "cable",
-  "group": "biceps",
-  "bytes": 134305
- },
- {
-  "name": "Rosca inversa com barra",
-  "file": "rosca-inversa-com-barra.gif",
+  "name": "Rosca inversa",
+  "file": "rosca-inversa.gif",
   "motion": "curl",
   "equipment": "bar",
   "group": "biceps",
   "bytes": 119667
  },
  {
-  "name": "Rosca martelo com halteres",
-  "file": "rosca-martelo-com-halteres.gif",
+  "name": "Rosca martelo",
+  "file": "rosca-martelo.gif",
   "motion": "curl",
   "equipment": "dumbbell",
   "group": "biceps",
   "bytes": 119281
- },
- {
-  "name": "Rosca martelo no cabo",
-  "file": "rosca-martelo-no-cabo.gif",
-  "motion": "curl",
-  "equipment": "cable",
-  "group": "biceps",
-  "bytes": 134305
  },
  {
   "name": "Rosca no cabo",
@@ -1304,156 +704,28 @@
   "bytes": 134305
  },
  {
-  "name": "Rosca no cabo com corda",
-  "file": "rosca-no-cabo-com-corda.gif",
-  "motion": "curl",
-  "equipment": "cable",
-  "group": "biceps",
-  "bytes": 134305
- },
- {
-  "name": "Rosca scott com barra",
-  "file": "rosca-scott-com-barra.gif",
+  "name": "Rosca scott",
+  "file": "rosca-scott.gif",
   "motion": "curl",
   "equipment": "machine",
   "group": "biceps",
-  "bytes": 158471
- },
- {
-  "name": "Rosca scott com halteres",
-  "file": "rosca-scott-com-halteres.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "biceps",
-  "bytes": 158471
- },
- {
-  "name": "Rosca Scott no cabo",
-  "file": "rosca-scott-no-cabo.gif",
-  "motion": "curl",
-  "equipment": "cable",
-  "group": "biceps",
-  "bytes": 134305
- },
- {
-  "name": "Rosca unilateral no cabo",
-  "file": "rosca-unilateral-no-cabo.gif",
-  "motion": "curl",
-  "equipment": "cable",
-  "group": "biceps",
-  "bytes": 134305
- },
- {
-  "name": "Rotary Torso",
-  "file": "rotary-torso.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "abdomen",
   "bytes": 158471
  },
  {
   "name": "Russian twist",
   "file": "russian-twist.gif",
   "motion": "twist",
-  "equipment": "none",
-  "group": "abdomen",
-  "bytes": 103758
- },
- {
-  "name": "Russian twist com haltere",
-  "file": "russian-twist-com-haltere.gif",
-  "motion": "twist",
   "equipment": "dumbbell",
   "group": "abdomen",
   "bytes": 110389
  },
  {
-  "name": "Scott Machine",
-  "file": "scott-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "biceps",
-  "bytes": 158471
- },
- {
-  "name": "Seated Biceps Machine",
-  "file": "seated-biceps-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "biceps",
-  "bytes": 158471
- },
- {
-  "name": "Seated Dip Machine",
-  "file": "seated-dip-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "triceps",
-  "bytes": 158471
- },
- {
-  "name": "Shrug Machine",
-  "file": "shrug-machine.gif",
-  "motion": "shrug",
-  "equipment": "machine",
-  "group": "trapezio",
-  "bytes": 47205
- },
- {
-  "name": "Ski Erg",
-  "file": "ski-erg.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 158471
- },
- {
-  "name": "Smith Machine — Afundo",
-  "file": "smith-machine-afundo.gif",
-  "motion": "lunge",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 148449
- },
- {
-  "name": "Smith Machine — Agachamento búlgaro",
-  "file": "smith-machine-agachamento-bulgaro.gif",
-  "motion": "lunge",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 148449
- },
- {
-  "name": "Spinning Bike",
-  "file": "spinning-bike.gif",
-  "motion": "cardio",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 148518
- },
- {
-  "name": "Squat Machine",
-  "file": "squat-machine.gif",
+  "name": "Sissy squat",
+  "file": "sissy-squat.gif",
   "motion": "squat",
-  "equipment": "machine",
+  "equipment": "none",
   "group": "quadriceps",
-  "bytes": 146492
- },
- {
-  "name": "Stair Climber",
-  "file": "stair-climber.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "cardio",
-  "bytes": 158471
- },
- {
-  "name": "Step Up",
-  "file": "step-up.gif",
-  "motion": "lunge",
-  "equipment": "dumbbell",
-  "group": "gluteos",
-  "bytes": 110305
+  "bytes": 102151
  },
  {
   "name": "Step up com halteres",
@@ -1462,6 +734,14 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "bytes": 110305
+ },
+ {
+  "name": "Stiff",
+  "file": "stiff.gif",
+  "motion": "hinge",
+  "equipment": "bar",
+  "group": "quadriceps",
+  "bytes": 111794
  },
  {
   "name": "Stiff com halteres",
@@ -1480,44 +760,20 @@
   "bytes": 115824
  },
  {
-  "name": "Stiff no Smith",
-  "file": "stiff-no-smith.gif",
-  "motion": "hinge",
-  "equipment": "machine",
-  "group": "posterior",
-  "bytes": 152229
- },
- {
-  "name": "Super Incline Press",
-  "file": "super-incline-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Super Squat Press",
-  "file": "super-squat-press.gif",
-  "motion": "squat",
-  "equipment": "machine",
-  "group": "corpo_inteiro",
-  "bytes": 146492
- },
- {
-  "name": "Supino fechado com barra",
-  "file": "supino-fechado-com-barra.gif",
+  "name": "Supino declinado",
+  "file": "supino-declinado.gif",
   "motion": "bench_press",
   "equipment": "bar",
-  "group": "triceps",
+  "group": "peito",
   "bytes": 54237
  },
  {
-  "name": "Supino fechado com halteres",
-  "file": "supino-fechado-com-halteres.gif",
+  "name": "Supino fechado",
+  "file": "supino-fechado.gif",
   "motion": "bench_press",
-  "equipment": "dumbbell",
-  "group": "triceps",
-  "bytes": 54315
+  "equipment": "bar",
+  "group": "biceps",
+  "bytes": 54237
  },
  {
   "name": "Supino inclinado com barra",
@@ -1534,22 +790,6 @@
   "equipment": "dumbbell",
   "group": "peito",
   "bytes": 54315
- },
- {
-  "name": "Supino inclinado no smith",
-  "file": "supino-inclinado-no-smith.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Supino no smith",
-  "file": "supino-no-smith.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
  },
  {
   "name": "Supino reto com barra",
@@ -1576,155 +816,35 @@
   "bytes": 81375
  },
  {
-  "name": "Tibia Dorsi-Flexion Machine",
-  "file": "tibia-dorsi-flexion-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "tibial",
-  "bytes": 158471
- },
- {
-  "name": "Triceps Extension Machine",
-  "file": "triceps-extension-machine.gif",
-  "motion": "extend",
-  "equipment": "machine",
-  "group": "triceps",
-  "bytes": 148886
- },
- {
-  "name": "Tríceps barra reta",
-  "file": "triceps-barra-reta.gif",
-  "motion": "extend",
-  "equipment": "cable",
-  "group": "triceps",
-  "bytes": 126356
- },
- {
-  "name": "Tríceps coice com haltere",
-  "file": "triceps-coice-com-haltere.gif",
+  "name": "Tríceps coice",
+  "file": "triceps-coice.gif",
   "motion": "bridge",
   "equipment": "dumbbell",
-  "group": "triceps",
+  "group": "biceps",
   "bytes": 94494
  },
  {
-  "name": "Tríceps coice no cabo",
-  "file": "triceps-coice-no-cabo.gif",
-  "motion": "bridge",
-  "equipment": "cable",
-  "group": "triceps",
-  "bytes": 121689
- },
- {
-  "name": "Tríceps corda",
-  "file": "triceps-corda.gif",
-  "motion": "extend",
-  "equipment": "cable",
-  "group": "triceps",
-  "bytes": 126356
- },
- {
-  "name": "Tríceps francês no cabo",
-  "file": "triceps-frances-no-cabo.gif",
-  "motion": "extend",
-  "equipment": "cable",
-  "group": "triceps",
-  "bytes": 126356
- },
- {
-  "name": "Tríceps mergulho",
-  "file": "triceps-mergulho.gif",
-  "motion": "push",
-  "equipment": "none",
-  "group": "triceps",
-  "bytes": 54009
- },
- {
-  "name": "Tríceps no cabo",
-  "file": "triceps-no-cabo.gif",
-  "motion": "extend",
-  "equipment": "cable",
-  "group": "triceps",
-  "bytes": 126356
- },
- {
-  "name": "Tríceps no cabo com corda",
-  "file": "triceps-no-cabo-com-corda.gif",
-  "motion": "extend",
-  "equipment": "cable",
-  "group": "triceps",
-  "bytes": 126356
- },
- {
-  "name": "Tríceps overhead no cabo",
-  "file": "triceps-overhead-no-cabo.gif",
-  "motion": "extend",
-  "equipment": "cable",
-  "group": "triceps",
-  "bytes": 126356
- },
- {
-  "name": "Tríceps testa com barra",
-  "file": "triceps-testa-com-barra.gif",
-  "motion": "extend",
-  "equipment": "bar",
-  "group": "triceps",
-  "bytes": 111741
- },
- {
-  "name": "Tríceps testa com halteres",
-  "file": "triceps-testa-com-halteres.gif",
+  "name": "Tríceps francês",
+  "file": "triceps-frances.gif",
   "motion": "extend",
   "equipment": "dumbbell",
-  "group": "triceps",
+  "group": "biceps",
   "bytes": 111532
  },
  {
-  "name": "Tríceps unilateral no cabo",
-  "file": "triceps-unilateral-no-cabo.gif",
+  "name": "Tríceps na polia",
+  "file": "triceps-na-polia.gif",
   "motion": "extend",
   "equipment": "cable",
-  "group": "triceps",
+  "group": "biceps",
   "bytes": 126356
  },
  {
-  "name": "V-Squat",
-  "file": "v-squat.gif",
-  "motion": "squat",
-  "equipment": "machine",
-  "group": "quadriceps",
-  "bytes": 146492
- },
- {
-  "name": "Wide Chest Press",
-  "file": "wide-chest-press.gif",
-  "motion": "bench_press",
-  "equipment": "machine",
-  "group": "peito",
-  "bytes": 76405
- },
- {
-  "name": "Wood Chop no cabo",
-  "file": "wood-chop-no-cabo.gif",
-  "motion": "twist",
-  "equipment": "cable",
-  "group": "abdomen",
-  "bytes": 118258
- },
- {
-  "name": "Wrist Curl Machine",
-  "file": "wrist-curl-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "antebraco",
-  "bytes": 158471
- },
- {
-  "name": "Wrist Extension Machine",
-  "file": "wrist-extension-machine.gif",
-  "motion": "curl",
-  "equipment": "machine",
-  "group": "antebraco",
-  "bytes": 158471
+  "name": "Tríceps testa",
+  "file": "triceps-testa.gif",
+  "motion": "extend",
+  "equipment": "bar",
+  "group": "biceps",
+  "bytes": 111741
  }
 ]

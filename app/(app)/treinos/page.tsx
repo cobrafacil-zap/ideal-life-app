@@ -44,7 +44,7 @@ export default async function TreinosPage() {
     supabase
       .from("exercises")
       .select(
-        "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, category, aliases, machine_type, instructions",
+        "id, user_id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, demonstration_url, demonstration_type, category, aliases, machine_type, instructions, common_mistakes",
       )
       .or(`user_id.is.null,user_id.eq.${user.id}`)
       .order("name", { ascending: true })

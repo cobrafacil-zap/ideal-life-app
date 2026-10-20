@@ -30,6 +30,8 @@ import type {
   PrimaryMuscleGroup,
 } from "@/types/database";
 import { ZoomableMedia } from "@/components/ui/ZoomableMedia";
+import { DemonstrationMedia } from "@/components/ui/DemonstrationMedia";
+import { hasDemonstration, getDemonstrationUrl } from "@/lib/exercise-utils";
 import {
   createExercise,
   deleteExercise,
@@ -328,7 +330,17 @@ function ExerciseRow({
   const isMine = exercise.user_id != null;
   return (
     <div className="flex items-start gap-3 rounded-2xl border border-line/60 bg-surface p-3">
-      <ZoomableMedia exercise={exercise} signedUrl={signedUrl} size="md" />
+      {hasDemonstration(exercise) ? (
+        <DemonstrationMedia
+          src={getDemonstrationUrl(exercise, { [exercise.id]: signedUrl }) ?? ""}
+          type={exercise.demonstration_type === "video" ? "video" : "gif"}
+          alt={`Demonstração de ${exercise.name}`}
+          className="h-16 w-16 shrink-0"
+          aspect="aspect-square"
+        />
+      ) : (
+        <ZoomableMedia exercise={exercise} signedUrl={signedUrl} size="md" />
+      )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <p className="truncate font-display text-sm font-semibold text-ink">

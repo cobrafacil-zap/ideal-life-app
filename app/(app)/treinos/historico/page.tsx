@@ -27,6 +27,7 @@ type ExerciseMediaRow = {
   equipment: string | null;
   image_url: string | null;
   animation_url: string | null;
+  demonstration_url: string | null;
   user_id: string | null;
 };
 
@@ -56,7 +57,7 @@ export default async function HistoricoPage({
     const { data } = await supabase
       .from("exercises")
       .select(
-        "id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, user_id",
+        "id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, demonstration_url, user_id",
       )
       .in("id", exerciseIds)
       .or(`user_id.is.null,user_id.eq.${user.id}`);
@@ -87,6 +88,7 @@ export default async function HistoricoPage({
         row.image_url,
         row.animation_url,
         row.name,
+        row.demonstration_url,
       );
     }),
   );
@@ -176,6 +178,7 @@ export default async function HistoricoPage({
                 equipment: null,
                 image_url: null,
                 animation_url: null,
+                demonstration_url: null,
                 user_id: null,
               };
               return (

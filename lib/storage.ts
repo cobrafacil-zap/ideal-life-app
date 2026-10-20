@@ -90,7 +90,11 @@ export async function uploadMealPhoto(
  */
 export async function getSignedFileUrl(
   supabase: SupabaseClient<Database>,
-  bucket: "avatars" | "meal-photos" | "workout-images",
+  bucket:
+    | "avatars"
+    | "meal-photos"
+    | "workout-images"
+    | "exercise-demonstrations",
   path: string,
   expiresIn = 3600,
 ): Promise<string | null> {

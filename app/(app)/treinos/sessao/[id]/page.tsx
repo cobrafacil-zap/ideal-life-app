@@ -66,6 +66,7 @@ export default async function SessaoPage({
         ex.image_url,
         ex.animation_url,
         ex.name,
+        ex.demonstration_url,
       ),
     })),
   );

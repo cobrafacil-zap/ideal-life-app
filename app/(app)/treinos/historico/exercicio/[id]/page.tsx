@@ -33,6 +33,7 @@ export default async function HistoricoExercicioPage({
     equipment: string | null;
     image_url: string | null;
     animation_url: string | null;
+    demonstration_url: string | null;
     user_id: string | null;
   } | null = null;
 
@@ -46,13 +47,14 @@ export default async function HistoricoExercicioPage({
       equipment: null,
       image_url: null,
       animation_url: null,
+      demonstration_url: null,
       user_id: null,
     };
   } else {
     const { data } = await supabase
       .from("exercises")
       .select(
-        "id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, user_id",
+        "id, name, primary_muscle, secondary_muscles, equipment, image_url, animation_url, demonstration_url, user_id",
       )
       .eq("id", params.id)
       .or(`user_id.is.null,user_id.eq.${user.id}`)
@@ -69,6 +71,7 @@ export default async function HistoricoExercicioPage({
         exerciseForImage.image_url,
         exerciseForImage.animation_url,
         exerciseForImage.name,
+        exerciseForImage.demonstration_url,
       )
     : null;
 

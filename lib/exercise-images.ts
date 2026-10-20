@@ -38,8 +38,27 @@ export async function getExerciseMediaSignedUrl(
   imagePath: string | null | undefined,
   animationPath: string | null | undefined,
   fallbackName?: string | null,
+  demonstrationPath?: string | null | undefined,
 ): Promise<string | null> {
-  // Prioridade: animation_url > image_url > mapa padrão por nome.
+  // Prioridade: demonstration_url (GIF/vídeo curto) > animation_url > image_url
+  // > mapa padrão por nome.
+  //
+  // A demonstração animada vive no bucket `exercise-demonstrations`
+  // (privado), separado do `workout-images` onde ficam as thumbnails
+  // estáticas. Por isso o bucket muda conforme a origem do path.
+  if (demonstrationPath) {
+    // Asset estático do app — servido direto pelo CDN, sem signed URL.
+    if (demonstrationPath.startsWith("/")) return demonstrationPath;
+    if (isAbsoluteHttpUrl(demonstrationPath)) {
+      return proxyExternalImageUrl(demonstrationPath);
+    }
+    return getSignedFileUrl(
+      supabase,
+      "exercise-demonstrations",
+      demonstrationPath,
+      3600,
+    );
+  }
   const chosen = animationPath ?? imagePath ?? null;
   if (chosen) {
     if (isAbsoluteHttpUrl(chosen)) return proxyExternalImageUrl(chosen);

@@ -350,7 +350,8 @@ export function ExercisePicker({
                           src={getDemonstrationUrl(ex, signedUrls) ?? ""}
                           type={ex.demonstration_type === "video" ? "video" : "gif"}
                           alt={`Demonstração de ${ex.name}`}
-                          className="h-20 w-20 shrink-0 object-cover"
+                          className="h-20 w-20 shrink-0"
+                          aspect="aspect-square"
                         />
                       ) : (
                         <ZoomableMedia

@@ -137,12 +137,13 @@ export function ExerciseDetailModal({
                   src={demonstrationUrl!}
                   type="gif"
                   alt={`Demonstração de ${exercise.name}`}
-                  className="aspect-video w-full"
+                  className="aspect-square w-full"
+                  mediaClassName="object-contain"
                 />
               )}
             </div>
           ) : (
-            <div className="flex aspect-video w-full items-center justify-center rounded-2xl bg-line/30">
+            <div className="flex aspect-square w-full items-center justify-center rounded-2xl bg-line/30">
               <div className="text-center">
                 <ZoomableMedia
                   exercise={exercise}
@@ -150,7 +151,7 @@ export function ExerciseDetailModal({
                   size="lg"
                 />
                 <p className="mt-2 text-[12px] text-ink-faint">
-                  Demonstração em breve
+                  Sem demonstração animada
                 </p>
               </div>
             </div>

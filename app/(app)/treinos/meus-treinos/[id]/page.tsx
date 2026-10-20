@@ -44,6 +44,7 @@ export default async function PlanoDetalhePage({
             ex.image_url,
             ex.animation_url,
             ex.name,
+            ex.demonstration_url,
           ),
         };
       } catch {

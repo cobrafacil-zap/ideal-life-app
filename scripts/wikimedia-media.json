@@ -1,0 +1,854 @@
+{
+ "Wide_grip_lat_pull_down": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Wide grip lat pull down 1.svg",
+   "File:Wide grip lat pull down 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wide_grip_lat_pull_down_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 793,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Wide_grip_lat_pull_down_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 793,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Upright_barbell_rows": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Upright barbell rows 1.svg",
+   "File:Upright barbell rows 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Upright_barbell_rows_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1013,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Upright_barbell_rows_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1013,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Upright_cable_row": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Upright cable row 1.svg",
+   "File:Upright cable row 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Upright_cable_row_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 620,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Upright_cable_row_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 620,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Bench_press": {
+  "gif": "File:Bench press.gif",
+  "gif_info": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Bench_press.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "width": 1000,
+   "height": 565,
+   "mime": "image/png"
+  },
+  "frames": [
+   "File:Bench press 1.svg",
+   "File:Bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/74/Bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1120,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1120,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Bench_press_dumbbell": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Bench press dumbbell 1.svg",
+   "File:Bench press dumbbell 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Bench_press_dumbbell_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 860,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Bench_press_dumbbell_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 860,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Incline_bench_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Incline bench press 1.svg",
+   "File:Incline bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/71/Incline_bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1023,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Incline_bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1023,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Dumbbell_incline_bench_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Dumbbell incline bench press 1.svg",
+   "File:Dumbbell incline bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Dumbbell_incline_bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 819,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/64/Dumbbell_incline_bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 819,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Decline_barbell_bench_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Decline barbell bench press 1.svg",
+   "File:Decline barbell bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Decline_barbell_bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 994,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Decline_barbell_bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 994,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Close_grip_barbell_bench_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Close grip barbell bench press 1.svg",
+   "File:Close grip barbell bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Close_grip_barbell_bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1180,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Close_grip_barbell_bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1180,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Decline_dumbbell_bench_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Decline dumbbell bench press 1.svg",
+   "File:Decline dumbbell bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Decline_dumbbell_bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1126,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/16/Decline_dumbbell_bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1126,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Flat_bench_cable_flys": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Flat bench cable flys 1.svg",
+   "File:Flat bench cable flys 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/36/Flat_bench_cable_flys_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1153,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Flat_bench_cable_flys_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1153,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Incline_cable_flys": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Incline cable flys 1.svg",
+   "File:Incline cable flys 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/95/Incline_cable_flys_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1159,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Incline_cable_flys_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1159,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Cable_crossover": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Cable crossover 1.svg",
+   "File:Cable crossover 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Cable_crossover_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1030,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Cable_crossover_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1030,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Bosu_ball_push_up": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Bosu ball push up 1.svg",
+   "File:Bosu ball push up 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Bosu_ball_push_up_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 639,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Bosu_ball_push_up_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 639,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "One_arm_bench_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:One arm bench press 1.svg",
+   "File:One arm bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/26/One_arm_bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 788,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/One_arm_bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 788,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Overhead_squat_with_barbell": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Overhead squat with barbell 1.svg",
+   "File:Overhead squat with barbell 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/43/Overhead_squat_with_barbell_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1039,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Overhead_squat_with_barbell_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1039,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Smith_machine_hack_squat": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Smith machine hack squat 1.svg",
+   "File:Smith machine hack squat 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Smith_machine_hack_squat_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 893,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Smith_machine_hack_squat_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 893,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Hack_squat_with_barbell": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Hack squat with barbell 1.svg",
+   "File:Hack squat with barbell 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Hack_squat_with_barbell_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 993,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/58/Hack_squat_with_barbell_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 993,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Lying_squat": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Lying squat 1.svg",
+   "File:Lying squat 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Lying_squat_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1161,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lying_squat_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1161,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Single_leg_squat_with_barbell": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Single leg squat with barbell 1.svg",
+   "File:Single leg squat with barbell 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Single_leg_squat_with_barbell_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 998,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Single_leg_squat_with_barbell_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 998,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Weighted_sissy_squat_with_weight_plate": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Weighted sissy squat with weight plate 1.svg",
+   "File:Weighted sissy squat with weight plate 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/57/Weighted_sissy_squat_with_weight_plate_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 661,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Weighted_sissy_squat_with_weight_plate_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 661,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Seated_leg_curl": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Seated leg curl 1.svg",
+   "File:Seated leg curl 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Seated_leg_curl_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 800,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Seated_leg_curl_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 800,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Seated_calf_raise_using_machine": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Seated calf raise using machine 1.svg",
+   "File:Seated calf raise using machine 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Seated_calf_raise_using_machine_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 826,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Seated_calf_raise_using_machine_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 826,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Squat_to_bench_with_barbell": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Squat to bench with barbell 1.svg",
+   "File:Squat to bench with barbell 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Squat_to_bench_with_barbell_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 996,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Squat_to_bench_with_barbell_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 996,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Hyperextensions": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Hyperextensions 1.svg",
+   "File:Hyperextensions 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Hyperextensions_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1020,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/60/Hyperextensions_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1020,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Dumbbell_shoulder_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Dumbbell shoulder press 1.svg",
+   "File:Dumbbell shoulder press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Dumbbell_shoulder_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 724,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Dumbbell_shoulder_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 724,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Barbell_shoulder_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Barbell shoulder press 1.svg",
+   "File:Barbell shoulder press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Barbell_shoulder_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 896,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Barbell_shoulder_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 896,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Seated_shoulder_press_machine": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Seated shoulder press machine 1.svg",
+   "File:Seated shoulder press machine 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Seated_shoulder_press_machine_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 825,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Seated_shoulder_press_machine_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 825,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Arnold_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Arnold press 1.svg",
+   "File:Arnold press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/96/Arnold_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 661,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Arnold_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 661,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Lying_rear_lateral_raise": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Lying rear lateral raise 1.svg",
+   "File:Lying rear lateral raise 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/80/Lying_rear_lateral_raise_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 830,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/41/Lying_rear_lateral_raise_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 830,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Biceps_curl_with_dumbbell": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Biceps curl with dumbbell 1.svg",
+   "File:Biceps curl with dumbbell 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Biceps_curl_with_dumbbell_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 645,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Biceps_curl_with_dumbbell_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 645,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Biceps_curl_reverse_with_dumbbells": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Biceps curl reverse with dumbbells 1.svg",
+   "File:Biceps curl reverse with dumbbells 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Biceps_curl_reverse_with_dumbbells_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 575,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Biceps_curl_reverse_with_dumbbells_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 575,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Standing_biceps_curl_with_cable": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Standing biceps curl with cable 1.svg",
+   "File:Standing biceps curl with cable 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Standing_biceps_curl_with_cable_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 555,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/58/Standing_biceps_curl_with_cable_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 555,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Wide_grip_standing_biceps_curl_with_barbell": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Wide grip standing biceps curl with barbell 1.svg",
+   "File:Wide grip standing biceps curl with barbell 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Wide_grip_standing_biceps_curl_with_barbell_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1106,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Wide_grip_standing_biceps_curl_with_barbell_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 1106,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "One_arm_tricep_extension_with_cable": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:One arm tricep extension with cable 1.svg",
+   "File:One arm tricep extension with cable 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/One_arm_tricep_extension_with_cable_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 391,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/One_arm_tricep_extension_with_cable_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 391,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Crunch": {
+  "gif": "File:Crunch.gif",
+  "gif_info": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Sit-up_on_the_bench_draw_%28animated%29.gif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "width": 528,
+   "height": 269,
+   "mime": "image/gif"
+  },
+  "frames": [],
+  "frames_info": []
+ },
+ "Side_plank": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Side plank 1.svg",
+   "File:Side plank 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Side_plank_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 554,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Side_plank_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1200,
+    "height": 554,
+    "mime": "image/svg+xml"
+   }
+  ]
+ },
+ "Pullup": {
+  "gif": "File:Pullup.gif",
+  "gif_info": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Pullup.gif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "width": 152,
+   "height": 168,
+   "mime": "image/gif"
+  },
+  "frames": [],
+  "frames_info": []
+ },
+ "French_press": {
+  "gif": "File:French press.gif",
+  "gif_info": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/French_press.gif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "width": 441,
+   "height": 582,
+   "mime": "image/gif"
+  },
+  "frames": [],
+  "frames_info": []
+ },
+ "Machine_bench_press": {
+  "gif": null,
+  "gif_info": null,
+  "frames": [
+   "File:Machine bench press 1.svg",
+   "File:Machine bench press 2.svg"
+  ],
+  "frames_info": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Machine_bench_press_1.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1024,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Machine_bench_press_2.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "width": 1024,
+    "height": 1200,
+    "mime": "image/svg+xml"
+   }
+  ]
+ }
+}

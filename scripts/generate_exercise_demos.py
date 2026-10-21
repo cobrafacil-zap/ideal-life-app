@@ -48,6 +48,13 @@ try:
 except ImportError:  # pragma: no cover
     sys.exit("Pillow é obrigatório: python3 -m pip install Pillow")
 
+# Motor de mídia Wikimedia Commons (personagem anatômico + máquina visível).
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+try:
+    import exercise_media as em
+except Exception:  # pragma: no cover - fallback local continua funcionando
+    em = None
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Paleta — espelha `lib/exercise-image-map.ts` (STROKE) e o design do app.
@@ -363,6 +370,25 @@ def p_abduct() -> Poses:
     return a, b
 
 
+def p_adduct() -> Poses:
+    """Adução de quadril — pernas fecham para dentro."""
+    a = _rig(
+        head=(180, 58), hip=(180, 152), shoulder=(180, 86),
+        elbow_l=(158, 116), elbow_r=(202, 116),
+        hand_l=(152, 146), hand_r=(208, 146),
+        knee_l=(128, 216), knee_r=(232, 216),
+        foot_l=(100, 296), foot_r=(260, 296),
+    )
+    b = _rig(
+        head=(180, 58), hip=(180, 152), shoulder=(180, 86),
+        elbow_l=(158, 116), elbow_r=(202, 116),
+        hand_l=(152, 146), hand_r=(208, 146),
+        knee_l=(168, 208), knee_r=(192, 208),
+        foot_l=(158, 296), foot_r=(202, 296),
+    )
+    return a, b
+
+
 def p_hip_flex() -> Poses:
     """Flexão de quadril (GHD) — quadril sobe de quadrupede."""
     a = _rig(
@@ -674,6 +700,7 @@ MOTIONS: Dict[str, MotionFn] = {
     "lateral_raise": p_lateral_raise,
     "overhead_press": p_overhead_press,
     "abduct": p_abduct,
+    "adduct": p_adduct,
     "hip_flex": p_hip_flex,
     "bridge": p_bridge,
     "calf_raise": p_calf_raise,
@@ -701,7 +728,9 @@ Rule = Tuple[str, str, str, Optional[str]]
 RULES: List[Rule] = [
     # ── Panturrilha ──
     (r"panturrilha|calcanhar|calf", "calf_raise", "none", "panturrilha"),
-    # ── Abdução de quadril ──
+    # ── Abdução / adução de quadril ──
+    (r"abdu[çc][ãa]o.*m[áa]quina|abdutora|abduction machine", "abduct", "machine", "gluteos"),
+    (r"adutora|aduction|ad[úu]tor", "adduct", "machine", "gluteos"),
     (r"abdu[çc][ãa]o|abduct", "abduct", "none", "gluteos"),
     # ── Flexão de quadril (GHD) — antes de "glúteo", senão "flexão de
     #    quadril no cabo" cairia em bridge. ──
@@ -709,6 +738,7 @@ RULES: List[Rule] = [
     # ── Glúteos ──
     (r"gl[úu]teo.*m[áa]quina|multi-hip|hip.?thrust machine|glute machine",
      "bridge", "machine", "gluteos"),
+    (r"panturrilha.*m[áa]quina", "calf_raise", "machine", "panturrilha"),
     (r"hip.?thrust|ponte de gl[úu]teo|glute drive|glute kickback|coice",
      "bridge", "bar", "gluteos"),
     (r"elev[ãa][çc][ãa]o p[ée]lvica|gl[úu]teo quatro apoios|extens[ãa]o de quadril|pelvic bridge|quadruped|frog.?pump",
@@ -797,7 +827,7 @@ RULES: List[Rule] = [
     (r"wood chop|rotation|rota[çc][ãa]o|twist|pallof|farmer", "twist", "none", "abdomen"),
     (r"r[óo]tula do tronco|sant[óo]rio lateral", "twist", "none", "abdomen"),
     # ── Cardio / alongamento ──
-    (r"corrida|run|skip|p[óo]lite|cardio|rem[óo]|bike|bicicleta|el[íi]ptico|rowing|p[óo]mbora|step",
+    (r"caminhada|esteira|corrida|pular corda|skip|rem[óo]|bike|bicicleta|el[íi]ptic|rowing|p[óo]mbora|cardio|p[óo]lite|step",
      "cardio", "none", "cardio"),
     (r"alongamento|stretch|flex[ãa]o|distens[ãa]o|mobilidade", "stretch", "none", "cardio"),
     (r"kettlebell swing|balanço|swing", "kettlebell_swing", "kettlebell", "cardio"),
@@ -905,17 +935,28 @@ def draw_frame(
 
 
 def _draw_machine(d: ImageDraw.ImageDraw, rig: Rig, stroke: str) -> None:
-    """Desenha o equipamento de máquina (trilho + assento + peso)."""
+    """Desenha o equipamento de máquina (trilho + assento + peso).
+
+    A máquina é o elemento que identifica o aparelho no GIF, então é
+    desenhada com traço grosso e bem visível — como nas ilustrações do
+    Wikimedia (puxador alto, leg press, etc.).
+    """
     hipx, hipy = rig.hip
-    # Trilho vertical do aparelho
     rail_x = CANVAS - 26
-    d.line([(rail_x, 30), (rail_x, CANVAS - 40)], fill=EQUIP, width=5)
-    # Suporte onde a pessoa se apoia
-    d.line([(rail_x, hipy + 6), (hipx + 30, hipy + 6)], fill=EQUIP, width=5)
-    # Peso/seletor no topo do trilho
+
+    # Trilho vertical do aparelho (duplo, como nas máquinas reais)
+    d.line([(rail_x, 26), (rail_x, CANVAS - 38)], fill=EQUIP, width=7)
+    d.line([(rail_x - 13, 26), (rail_x - 13, CANVAS - 38)], fill=EQUIP, width=4)
+
+    # Suporte onde a pessoa se apoia (assento encosto)
+    d.line([(rail_x, hipy + 8), (hipx + 34, hipy + 8)], fill=EQUIP, width=7)
+
+    # Seletor de peso no topo do trilho
     d.rounded_rectangle(
-        [rail_x - 15, 46, rail_x + 15, 74], radius=6, fill=EQUIP
+        [rail_x - 17, 44, rail_x + 17, 78], radius=7, fill=EQUIP
     )
+    # Pé/encosto do aparelho
+    d.line([(rail_x - 22, CANVAS - 38), (rail_x + 22, CANVAS - 38)], fill=EQUIP, width=7)
 
 
 # Onde a barra é fixada, por padrão de movimento.
@@ -1055,6 +1096,13 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="Gera apenas N exercícios")
     ap.add_argument("--dry-run", action="store_true", help="Só mostra o mapeamento")
     ap.add_argument("--only", default="", help="Filtra por nome (regex)")
+    ap.add_argument(
+        "--source",
+        choices=["auto", "wiki", "local"],
+        default="auto",
+        help="auto = Wikimedia Commons quando houver, senão vetor local; "
+             "wiki = só Wikimedia; local = só vetor local",
+    )
     args = ap.parse_args()
 
     catalog_path = Path(args.catalog)
@@ -1075,8 +1123,12 @@ def main() -> int:
 
     # Cache: um GIF por combinação (motion, equipment, group) — evita duplicatas.
     cache: Dict[Tuple[str, str, str], bytes] = {}
+    # Cache do Wikimedia: um GIF por base de ilustração.
+    wiki_cache: Dict[str, bytes] = {}
+    media = em.load_media() if em else {}
     manifest: List[dict] = []
     total_bytes = 0
+    stats = {"wiki": 0, "local": 0}
 
     for entry in catalog:
         name = entry.get("name") or ""
@@ -1087,10 +1139,33 @@ def main() -> int:
         motion, eq, grp = classify(name, category, equipment)
         key = (motion, eq, grp)
 
-        if key not in cache:
-            cache[key] = build_gif(motion, eq, grp)
+        # ── Fonte preferida: Wikimedia Commons (personagem + máquina) ──
+        source = "local"
+        data: Optional[bytes] = None
+        if em is not None and args.source in ("auto", "wiki"):
+            base = em.wiki_base_for(name)
+            if base and base in media:
+                if base not in wiki_cache:
+                    try:
+                        wiki_cache[base] = em.build_wikimedia_gif(base, media)
+                    except Exception:
+                        wiki_cache[base] = b""
+                if wiki_cache.get(base):
+                    data = wiki_cache[base]
+                    source = "wiki"
 
-        data = cache[key]
+        # ── Fallback: vetor local ──
+        if data is None and args.source in ("auto", "local"):
+            if key not in cache:
+                cache[key] = build_gif(motion, eq, grp)
+            data = cache[key]
+            source = "local"
+
+        if data is None:
+            print(f"  ! sem GIF para {name}", file=sys.stderr)
+            continue
+
+        stats[source] = stats.get(source, 0) + 1
         fname = f"{slugify(name)}.gif"
         path = out_dir / fname
         if not args.dry_run:
@@ -1102,6 +1177,7 @@ def main() -> int:
             "motion": motion,
             "equipment": eq,
             "group": grp,
+            "source": source,
             "bytes": len(data),
         })
 
@@ -1112,7 +1188,8 @@ def main() -> int:
 
     uniq = len(cache)
     avg = (total_bytes // len(manifest)) if manifest else 0
-    print(f"Exercícios: {len(manifest)}  |  GIFs únicos: {uniq}  |  média: {avg/1024:.1f} KB")
+    print(f"Exercícios: {len(manifest)}  |  GIFs únicos (local): {uniq}  |  média: {avg/1024:.1f} KB")
+    print(f"  fonte Wikimedia Commons: {stats.get('wiki', 0)}  |  vetor local: {stats.get('local', 0)}")
     print(f"Duração: {DURATION_S}s @ {FPS}fps (limite {MAX_DURATION_S}s)  |  sem áudio  |  loop infinito")
     if not args.dry_run:
         print(f"Saída: {out_dir}/")

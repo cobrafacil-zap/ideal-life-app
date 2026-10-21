@@ -140,6 +140,18 @@ export function ExercisePicker({
   const [detailExercise, setDetailExercise] = useState<ExerciseForPicker | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Garante foco no input quando o modal monta. O `autoFocus` no JSX
+  // pode ser consumido pelo browser antes do componente terminar de
+  // montar em alguns navegadores; este useEffect re-aplica o foco
+  // imediatamente após a montagem.
+  //
+  // Precisa ficar ANTES de qualquer early return: hooks condicionais
+  // quebram a ordem de renderização do React (erro #300) quando o
+  // estado `detailExercise` alterna entre null e objeto.
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   // Modal de detalhes do exercício
   if (detailExercise) {
     return (
@@ -155,14 +167,6 @@ export function ExercisePicker({
       />
     );
   }
-
-  // Garante foco no input quando o modal monta. O `autoFocus` no JSX
-  // pode ser consumido pelo browser antes do componente terminar de
-  // montar em alguns navegadores; este useEffect re-aplica o foco
-  // imediatamente após a montagem.
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
 
   // Filtro reativo: recalcula a cada render (sem useMemo) para garantir
   // que a lista visível sempre reflita `query` + chip de categoria.

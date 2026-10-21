@@ -85,6 +85,19 @@ python3 scripts/apply_demonstration_migration.py
 python3 scripts/upload_exercise_demos.py   # requer SUPABASE_SERVICE_ROLE_KEY
 ```
 
+### Instruções de execução
+
+O detalhe do exercício mostra o bloco **"Como executar"** depois das
+séries/reps. O texto de cada movimento fica em
+`scripts/exercise_instructions.py` e é gravado no catálogo pela migration
+`20261021_populate_exercise_instructions.sql`.
+
+```bash
+python3 scripts/populate_instructions.py           # só gera a migration
+python3 scripts/populate_instructions.py --apply   # gera e aplica
+python3 scripts/populate_instructions.py --verify  # confere o estado
+```
+
 ### Administração do banco
 
 `scripts/supabase_admin.py` cria (sob demanda) um RPC auxiliar que devolve

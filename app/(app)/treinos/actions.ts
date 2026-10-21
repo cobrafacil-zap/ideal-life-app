@@ -13,10 +13,12 @@ import type {
   MachineType,
   PrimaryMuscleGroup,
 } from "@/types/database";
-import { hasDemonstration, getDemonstrationUrl } from "@/lib/exercise-utils";
 import type { ExerciseListItem } from "@/lib/exercise-utils";
 
-export { hasDemonstration, getDemonstrationUrl };
+// Helpers puros vivem em `@/lib/exercise-utils`. NÃO re-exporte funções
+// síncronas deste arquivo ("use server"): o Next as transformaria em
+// Server Action references (Promises) para os client components, quebrando
+// o `src` das <img> de demonstração.
 export type { ExerciseListItem };
 
 const PRIMARY_MUSCLE_VALUES: PrimaryMuscleGroup[] = [

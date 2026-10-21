@@ -19,7 +19,10 @@ import {
   PRIMARY_MUSCLE_ORDER,
 } from "@/lib/workout";
 import { rankExercisesByQuery, splitByMatch } from "@/lib/text-search";
-import { hasDemonstration, getDemonstrationUrl } from "./actions";
+// Helpers puros (sem "use server") — importar de um arquivo "use server"
+// faria o Next transformar isto em Server Action reference (uma Promise),
+// quebrando o `src` do <img>.
+import { hasDemonstration, getDemonstrationUrl } from "@/lib/exercise-utils";
 
 type ExerciseForPicker = Pick<
   Exercise,

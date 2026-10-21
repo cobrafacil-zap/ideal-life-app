@@ -59,9 +59,19 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/perfil");
 
   if (!user && isAppRoute) {
+    // Sessão inválida: o cookie pode existir mas o usuário não (expirou,
+    // foi removido ou o token foi revogado). Sem limpar o cookie, a página
+    // de login veria a "sessão" do cookie e redirecionaria de volta — um
+    // loop de redirecionamento que deixaria o usuário preso no app.
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    return NextResponse.redirect(url);
+    const redirect = NextResponse.redirect(url);
+    for (const cookie of request.cookies.getAll()) {
+      if (cookie.name.includes("auth-token")) {
+        redirect.cookies.set(cookie.name, "", { maxAge: 0, path: "/" });
+      }
+    }
+    return redirect;
   }
 
   if (user && isAuthRoute) {

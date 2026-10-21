@@ -172,6 +172,20 @@ export function ExerciseDetailModal({
             )}
           </div>
 
+          {/* Músculos secundários + sugestão de séries/reps */}
+          <div className="flex flex-col gap-2 border-t border-line/60 pt-3 text-[12px] text-ink-soft">
+            {exercise.secondary_muscles?.length ? (
+              <p className="flex flex-wrap items-baseline gap-1.5">
+                <span className="font-semibold text-ink">Músculos secundários:</span>
+                <span>{exercise.secondary_muscles.join(" · ")}</span>
+              </p>
+            ) : null}
+            <p className="flex flex-wrap items-baseline gap-1.5">
+              <span className="font-semibold text-ink">Séries e repetições:</span>
+              <span>3–4 séries · 8–12 reps</span>
+            </p>
+          </div>
+
           {/* Instruções */}
           {exercise.instructions && (
             <div>

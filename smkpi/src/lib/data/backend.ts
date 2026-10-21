@@ -158,12 +158,14 @@ export const cloudBackend: CloudBackend = {
     const collections = Object.keys(TABLE_MAP) as Array<
       keyof typeof TABLE_MAP
     >;
+    const nextState = next as unknown as Record<string, Row[]>;
+    const prevState = prev as unknown as Record<string, Row[]>;
 
     for (const key of collections) {
       const table = TABLE_MAP[key];
       const columns = COLUMNS[key];
-      const nextItems = (next[key] as unknown as Row[]) ?? [];
-      const prevItems = (prev[key] as unknown as Row[]) ?? [];
+      const nextItems = nextState[key] ?? [];
+      const prevItems = prevState[key] ?? [];
       const prevMap = new Map(prevItems.map((i) => [i.id as string, i]));
 
       const changed = nextItems.filter((item) => {

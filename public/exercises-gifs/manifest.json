@@ -5,8 +5,8 @@
   "motion": "crunch",
   "equipment": "none",
   "group": "abdomen",
-  "source": "wiki",
-  "bytes": 36965
+  "source": "local",
+  "bytes": 91308
  },
  {
   "name": "Abdominal canivete",
@@ -15,7 +15,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 36965
+  "bytes": 37949
  },
  {
   "name": "Abdominal crunch",
@@ -24,7 +24,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 36965
+  "bytes": 37949
  },
  {
   "name": "Abdominal na roda",
@@ -33,7 +33,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 36965
+  "bytes": 37949
  },
  {
   "name": "Abdominal supra",
@@ -42,7 +42,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 36965
+  "bytes": 37949
  },
  {
   "name": "Abdução de quadril",
@@ -177,7 +177,7 @@
   "equipment": "machine",
   "group": "costas",
   "source": "wiki",
-  "bytes": 723132
+  "bytes": 4102701
  },
  {
   "name": "Bicicleta ergométrica",

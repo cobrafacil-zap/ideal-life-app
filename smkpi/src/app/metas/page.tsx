@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { LayoutGrid, List, Plus, Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Segmented } from "@/components/ui/Field";
@@ -20,13 +19,10 @@ type StatusFilter = "todas" | GoalStatus;
 
 export default function MetasPage() {
   const { state } = useStore();
-  const params = useSearchParams();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("todas");
-  const [status, setStatus] = useState<StatusFilter>(
-    (params.get("status") as StatusFilter) ?? "todas",
-  );
+  const [status, setStatus] = useState<StatusFilter>("todas");
   const [priority, setPriority] = useState<GoalPriority | "todas">("todas");
   const [cadence, setCadence] = useState<GoalCadence | "todas">("todas");
   const [sort, setSort] = useState<SortKey>("prazo");
@@ -34,6 +30,14 @@ export default function MetasPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [progressTarget, setProgressTarget] = useState<GoalView | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // "?status=ativa" (links do dashboard) pré-filtram a lista
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get("status");
+    if (param === "ativa" || param === "concluida" || param === "pausada") {
+      setStatus(param);
+    }
+  }, []);
 
   const views = useMemo(() => buildGoalViews(state), [state]);
 

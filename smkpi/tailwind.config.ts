@@ -14,7 +14,10 @@ const config: Config = {
           soft: "var(--ink-soft)",
           faint: "var(--ink-faint)",
         },
-        line: "var(--line)",
+        line: {
+          DEFAULT: "var(--line)",
+          strong: "var(--line-strong)",
+        },
         iris: {
           DEFAULT: "var(--iris)",
           soft: "var(--iris-soft)",

@@ -17,6 +17,7 @@ import type {
   Dream,
   Goal,
   Habit,
+  HabitLog,
   ProgressEntry,
   Settings,
   Step,

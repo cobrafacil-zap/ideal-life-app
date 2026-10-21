@@ -245,6 +245,7 @@ WIKI_RULES: List[Tuple[str, str]] = [
     # ── Core ──
     (r"prancha lateral|side plank", "Side_plank"),
     (r"prancha|plank|dead bug", "Bosu_ball_push_up"),
+    (r"abdominal.*bicicleta", "Abdominal_bicycle"),  # sem equivalente próprio
     (r"abdominal|crunch|oblique|sant[óo]rio|roll up", "Crunch"),
     (r"wood chop|rotation|rota[çc][ãa]o|twist|pallof", "Overhead_squat_with_barbell"),
     (r"kettlebell swing|balanço|swing", "Kettlebell_swing"),
@@ -271,13 +272,41 @@ def load_media() -> Dict[str, Dict]:
     return json.loads(MEDIA_JSON.read_text(encoding="utf-8"))
 
 
+def normalize_gif(data: bytes, size: int = CANVAS, bg: str = BG) -> bytes:
+    """Normaliza um GIF externo (Wikimedia) para o canvas quadrado do app.
+
+    Os GIFs oficiais do Commons têm proporções variadas (ex.: 528x269). Para
+    manter o estilo visual padronizado — e não cortar nada do movimento —
+    compomos cada frame sobre o fundo do app e centralizamos mantendo a
+    proporção original.
+    """
+    src = Image.open(io.BytesIO(data))
+    frames: List[Image.Image] = []
+    n = getattr(src, "n_frames", 1)
+    for i in range(n):
+        src.seek(i)
+        frame = src.convert("RGBA")
+        w, h = frame.size
+        if w == 0 or h == 0:
+            continue
+        scale = min(size / w, size / h)
+        nw, nh = max(1, int(w * scale)), max(1, int(h * scale))
+        frame = frame.resize((nw, nh), Image.LANCZOS)
+        canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        canvas.paste(frame, ((size - nw) // 2, (size - nh) // 2), frame)
+        frames.append(canvas)
+    if not frames:
+        return data
+    return build_gif_from_frames(frames, bg=bg)
+
+
 def build_wikimedia_gif(base: str, media: Dict[str, Dict]) -> Optional[bytes]:
     """Gera o GIF a partir dos frames do Commons. Retorna None se falhar."""
     entry = media.get(base)
     if not entry:
         return None
 
-    # 1) GIF oficial do Commons (melhor caso)
+    # 1) GIF oficial do Commons (melhor caso: já é loop pronto)
     gif_title = entry.get("gif")
     if gif_title:
         url = filepath_url(gif_title, width=CANVAS * 2)
@@ -285,7 +314,7 @@ def build_wikimedia_gif(base: str, media: Dict[str, Dict]) -> Optional[bytes]:
             try:
                 r = S.get(url, timeout=70, allow_redirects=True)
                 if r.status_code == 200 and r.content[:6] in (b"GIF87a", b"GIF89a"):
-                    return r.content
+                    return normalize_gif(r.content)
             except Exception:
                 pass
             time.sleep(1.2 * (attempt + 1))

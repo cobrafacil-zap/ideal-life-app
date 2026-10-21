@@ -48,7 +48,7 @@ export function MobileNav() {
             <span className="mt-0.5 text-[10px] font-semibold text-ink-faint">Nova</span>
           </button>
 
-          {MOBILE_ITEMS.slice(2).map((href) => {
+          {MOBILE_ITEMS.slice(2, 4).map((href) => {
             const item = navItems.find((n) => n.href === href)!;
             const active = isActivePath(pathname, href);
             const Icon = item.icon;

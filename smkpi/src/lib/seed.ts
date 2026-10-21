@@ -213,7 +213,7 @@ export function buildSeedState(now: Date = new Date()): AppState {
       dueDate: monthEnd(now, 0),
       parentGoalId: "g_faturar_1m",
       metricStart: 0,
-      metricCurrent: 54000,
+      metricCurrent: 72000,
       metricTarget: 83000,
       metricUnit: "R$",
       metricDirection: "increase",
@@ -563,7 +563,7 @@ export function buildSeedState(now: Date = new Date()): AppState {
 
   push("g_faturar_mes", d(-20, now), 21000, "Primeira semana");
   push("g_faturar_mes", d(-10, now), 38000, "Dois contratos novos");
-  push("g_faturar_mes", d(-1, now), 54000, "Fechamento parcial");
+  push("g_faturar_mes", d(-1, now), 72000, "Contrato de retainer assinado");
 
   push("g_leads_semana", d(-6, now), 9, "Semana passada");
   push("g_leads_semana", d(-1, now), 14, "Até hoje");
@@ -706,7 +706,7 @@ export function buildSeedState(now: Date = new Date()): AppState {
       userId: USER,
       title: "Viajar para a Europa",
       description:
-        "Três semanas por mês: Portugal, Espanha, França e Itália. ComArte e história no roteiro.",
+        "Três semanas por mês: Portugal, Espanha, França e Itália. Com arte e história no roteiro.",
       imageUrl: null,
       estimatedValue: 40000,
       desiredDate: `${now.getFullYear() + 1}-09-30`,

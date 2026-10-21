@@ -60,13 +60,23 @@ def filepath_url(title: str, width: int = 720) -> str:
 
 
 def fetch_png(title: str, width: int = 720) -> Optional[Image.Image]:
-    """Baixa (com cache em disco) e devolve o PNG do arquivo do Commons."""
+    """Baixa (com cache em disco) e devolve a imagem do arquivo do Commons.
+
+    Aceita SVG (rasterizado pelo Commons), PNG e GIF — a série de ilustrações
+    usa os três formatos para o mesmo desenho.
+    """
     CACHE.mkdir(parents=True, exist_ok=True)
-    key = re.sub(r"[^A-Za-z0-9]+", "_", title.replace("File:", ""))[:110]
-    cached = CACHE / f"{key}.png"
+    name = title.replace("File:", "")
+    ext = name.rsplit(".", 1)[-1].lower() if "." in name else "png"
+    if ext not in ("svg", "png", "gif", "jpg", "jpeg"):
+        ext = "png"
+    key = re.sub(r"[^A-Za-z0-9]+", "_", name)[:110]
+    cached = CACHE / f"{key}.{ext}"
     if cached.exists():
         try:
-            return Image.open(cached).convert("RGBA")
+            im = Image.open(cached)
+            im.seek(0)
+            return im.convert("RGBA")
         except Exception:
             cached.unlink(missing_ok=True)
 
@@ -75,9 +85,11 @@ def fetch_png(title: str, width: int = 720) -> Optional[Image.Image]:
         try:
             r = S.get(url, timeout=70, allow_redirects=True)
             if r.status_code == 200 and r.content:
-                im = Image.open(io.BytesIO(r.content)).convert("RGBA")
+                im = Image.open(io.BytesIO(r.content))
+                im.seek(0)
+                out = im.convert("RGBA")
                 cached.write_bytes(r.content)
-                return im
+                return out
         except Exception:
             pass
         time.sleep(1.4 * (attempt + 1) + random.random())
@@ -157,17 +169,39 @@ def frames_from_pair(a: Image.Image, b: Image.Image) -> List[Image.Image]:
     return seq[:FRAMES]
 
 
-def build_gif_from_frames(frames: Sequence[Image.Image], bg: str = BG) -> bytes:
-    """Monta o GIF (loop infinito, sem áudio) com fundo opaco."""
+def build_gif_from_frames(
+    frames: Sequence[Image.Image], bg: str = BG, colors: int = 64
+) -> bytes:
+    """Monta o GIF (loop infinito, sem áudio) com fundo opaco.
+
+    As ilustrações são traço preto sobre fundo creme, então uma paleta
+    compartilhada de poucas cores reduz o arquivo sem perder qualidade.
+    A paleta é única para todos os frames — assim o dithering não pisca
+    entre um frame e outro.
+    """
     rgb = [Image.alpha_composite(
         Image.new("RGBA", f.size, bg), f
     ).convert("RGB") for f in frames]
+    if not rgb:
+        return b""
+
+    # Paleta compartilhada, construída a partir de uma amostra dos frames.
+    sample = rgb[:: max(1, len(rgb) // 6)][:6]
+    w, h = rgb[0].size
+    strip = Image.new("RGB", (w, h * len(sample)))
+    for i, f in enumerate(sample):
+        strip.paste(f, (0, i * h))
+    palette = strip.quantize(colors=colors, method=Image.MEDIANCUT)
+
+    indexed = [
+        f.quantize(palette=palette, dither=Image.FLOYDSTEINBERG) for f in rgb
+    ]
     buf = io.BytesIO()
-    rgb[0].save(
+    indexed[0].save(
         buf,
         format="GIF",
         save_all=True,
-        append_images=rgb[1:],
+        append_images=indexed[1:],
         duration=int(1000 / FPS),
         loop=0,
         optimize=True,
@@ -179,86 +213,197 @@ def build_gif_from_frames(frames: Sequence[Image.Image], bg: str = BG) -> bytes:
 # ─────────────────────────────────────────────────────────────────────────────
 # Mapeamento exercício → base Wikimedia
 # ─────────────────────────────────────────────────────────────────────────────
+# Mapeamento exato do catálogo (nome do exercício → base na série de
+# ilustrações "Weight training diagrams" do Wikimedia Commons).
+#
+# Cada base tem 2 frames SVG (pose inicial e pose final) que são
+# interpolados para formar o GIF. As ilustrações já trazem o personagem
+# anatômico e o equipamento/máquina do exercício.
+WIKI_EXACT: Dict[str, str] = {
+    # ── Abdômen / core ──
+    "Abdominal canivete": "Cross body crunch",
+    "Abdominal crunch": "Crunches",
+    "Abdominal na roda": "Flutter kicks",
+    "Abdominal supra": "Stability ball abdominal crunch",
+    "Dead bug": "Ab rollout with barbell",
+    "Elevação de pernas": "Flat bench leg raises",
+    "Prancha lateral": "Side plank",
+    # ── Coxas / glúteos ──
+    "Abdução de quadril": "Thigh abductor",
+    "Abdução de quadril com elástico": "Thigh abductor",
+    "Afundo búlgaro": "Single leg squat with barbell",
+    "Afundo com halteres": "Lunges",
+    "Agachamento búlgaro com halteres": "Single leg squat with barbell",
+    "Agachamento com elástico": "Squats with exercise bands",
+    "Agachamento com halteres": "Squats using dumbbells",
+    "Agachamento livre": "Wide stance squat with barbell",
+    "Agachamento no hack": "Hack squat with barbell",
+    "Agachamento no smith": "Smith machine squats",
+    "Agachamento smith sumô": "Wide stance squat with barbell",
+    "Agachamento sumô": "Wide stance squat with barbell",
+    "Avanço": "Walking lunges",
+    "Bom dia": "Good-mornings",
+    "Cadeira abdutora": "Thigh abductor",
+    "Cadeira adutora": "Hip adduction",
+    "Cadeira extensora": "Leg extensions",
+    "Coice com elástico": "One legged cable kickback",
+    "Elevação pélvica": "Bent knee hip raise",
+    "Extensão de quadril no cabo": "One legged cable kickback",
+    "Flexora em pé": "Standing leg curls",
+    "Flexora em pé unilateral": "Standing leg curls",
+    "Hack squat": "Hack squat with barbell",
+    "Hip thrust": "Bridging",
+    "Leg press 45": "Lying squat",
+    "Leg press 45 unilateral": "Lying squat",
+    "Mesa flexora": "Lying leg curl machine",
+    "Mesa flexora unilateral": "Lying leg curl machine",
+    "Panturrilha em pé": "Standing-calf-raises",
+    "Panturrilha no leg press": "Calves press on leg machine",
+    "Panturrilha sentada": "Seated calf raise using machine",
+    "Ponte de glúteo com barra": "Bridging",
+    "Ponte de glúteo com halteres": "Bridging",
+    "Sissy squat": "Weighted sissy squat with weight plate",
+    "Step up com halteres": "Step ups with dumbbells",
+    "Stiff": "Romanian dead lift",
+    "Stiff com halteres": "Romanian dead lift",
+    # ── Costas ──
+    "Barra fixa": "Pull ups",
+    "Face pull": "Bent over rear deltoid raise with head on bench",
+    "Hiperextensão": "Hyperextensions",
+    "Pulldown com corda": "V bar pull down",
+    "Puxada frontal": "Wide grip lat pull down",
+    "Puxada frontal pegada supinada": "Underhand pull downs",
+    "Remada alta": "Upright barbell rows",
+    "Remada baixa no cabo": "Seated cable rows",
+    "Remada cavalinho": "T bar rows",
+    "Remada curvada": "Reverse grips bent over barbell rows",
+    "Remada unilateral": "One arm upright row",
+    # ── Peito ──
+    "Crossover": "Cable crossover",
+    "Crucifixo inclinado": "Incline dumbbell flys",
+    "Crucifixo reto": "Dumbbell flys",
+    "Flexão de braço": "Push ups",
+    "Flexão declinada": "Push up feet elevated 2",
+    "Mergulho": "Chest dips",
+    "Peck deck": "Butterfly machine",
+    "Supino declinado": "Decline barbell bench press",
+    "Supino inclinado com barra": "Incline bench press",
+    "Supino inclinado com halteres": "Dumbbell incline bench press",
+    "Supino reto com barra": "Bench press",
+    "Supino reto com halteres": "Bench press dumbbell",
+    # ── Ombros ──
+    "Crucifixo inverso": "Bent over rear deltoid raise with head on bench",
+    "Crucifixo inverso na máquina": "Lying rear lateral raise",
+    "Desenvolvimento com barra": "Barbell shoulder press",
+    "Desenvolvimento com halteres": "Dumbbell shoulder press",
+    "Desenvolvimento máquina": "Seated shoulder press machine",
+    "Elevação frontal": "Front raises",
+    "Elevação frontal com barra": "Front barbell raises",
+    "Elevação lateral": "Lateral dumbbell raises",
+    "Elevação lateral unilateral no cabo": "Cable-seated-rear-lateral-raise",
+    "Encolhimento": "Barbell shrugs",
+    "Remada alta": "Upright barbell rows",
+    # ── Braços ──
+    "Rosca alternada": "Alternating bicep curl with dumbbell",
+    "Rosca concentrada": "Concentration curls with dumbbell",
+    "Rosca direta": "Bicep curls with barbell",
+    "Rosca inversa": "Biceps curl reverse with dumbbells",
+    "Rosca martelo": "Bicep hammer curl with dumbbell",
+    "Rosca no cabo": "Standing biceps curl with cable",
+    "Rosca scott": "Preacher curl with machine",
+    "Supino fechado": "Close grip barbell bench press",
+    "Tríceps coice": "Triceps kickback with dumbbell",
+    "Tríceps francês": "Lying triceps extension with dumbbells",
+    "Tríceps na polia": "Triceps pushdown with cable",
+    "Tríceps testa": "Lying close grip triceps extension behind the head with barbell",
+    # ── Costas / posterior ──
+    "Levantamento terra": "Barbell dead lifts",
+    "Levantamento terra com halteres": "Dumbbell dead lifts",
+    # ── Cardio ──
+    "Bicicleta ergométrica": "Air bike",
+    "Remo ergométrico": "Body row",
+}
+
+# Regras por padrão, usadas quando o nome não está no mapa exato.
 # (regex do nome do exercício, base no Commons)
 WIKI_RULES: List[Tuple[str, str]] = [
-    # ── Puxada frontal ──
-    (r"puxada frontal|pulldown|pull.?down", "Wide_grip_lat_pull_down"),
-    (r"puxada.*alta|high row", "Upright_barbell_rows"),
-    (r"puxada.*cabo", "Wide_grip_lat_pull_down"),
-    (r"barra fixa|pull.?up|chin.?up", "Pullup"),
-    # ── Remada ──
-    (r"remada baixa no cabo|low row", "Upright_cable_row"),
-    (r"remada.*cabo|face pull|pullover", "Upright_cable_row"),
-    (r"remada curvada|remada unilateral|remada com barra|barbell row", "Upright_barbell_rows"),
-    (r"remada", "Upright_cable_row"),
-    # ── Peito ──
-    (r"supino.*(barra|com barra)", "Bench_press"),
-    (r"supino.*halter", "Bench_press_dumbbell"),
-    (r"supino.*cabo|peck deck", "Flat_bench_cable_flys"),
-    (r"supino inclinado.*(barra|com barra)", "Incline_bench_press"),
-    (r"supino inclinado.*halter", "Dumbbell_incline_bench_press"),
-    (r"supino inclinado", "Incline_bench_press"),
-    (r"supino declinado", "Decline_barbell_bench_press"),
-    (r"supino fechado|close grip", "Close_grip_barbell_bench_press"),
-    (r"crucifixo|crossover|voador|fly", "Cable_crossover"),
-    (r"flex[ãa]o de bra[çc]o|flex[ãa]o|push.?up|mergulho|dip", "Bosu_ball_push_up"),
-    # ── Pernas ──
-    (r"agachamento.*(cabo|polia|el[áa]stico)", "Lying_squat"),
-    (r"agachamento no hack|hack squat", "Hack_squat_with_barbell"),
-    (r"agachamento.*(smith|m[áa]quina)", "Smith_machine_hack_squat"),
-    (r"agachamento.*(barra|halter)", "Overhead_squat_with_barbell"),
-    (r"agachamento|squat|sissy|sum[óo]", "Squat_to_bench_with_barbell"),
-    (r"leg press|pressa de perna", "Lying_squat"),
-    (r"cadeira extensora|leg extension|extens[ãa]o de joelho", "Lying_squat"),
-    (r"afundo|avanço|lunge|step.?up|b[úu]lgaro", "Single_leg_squat_with_barbell"),
-    (r"stiff|romeno|deadlift|levantamento terra|bom dia|good morning|pull through|reverse hyper|nordic|glute ham",
-     "Squat_to_bench_with_barbell"),
-    (r"mesa flexora|cadeira flexora|flexora|leg curl|flex[ãa]o de joelho|hamstring", "Seated_leg_curl"),
-    (r"panturrilha.*sentada", "Seated_calf_raise_using_machine"),
-    (r"panturrilha|calcanhar|calf", "Standing_calf_raises"),
-    (r"elev[ãa][çc][ãa]o p[ée]lvica|gl[úu]teo quatro apoios|pelvic bridge|frog.?pump",
-     "Squat_to_bench_with_barbell"),
-    (r"hip.?thrust|ponte de gl[úu]teo|glute drive|glute kickback|coice", "Squat_to_bench_with_barbell"),
-    (r"gl[úu]teo na m[áa]quina|multi-hip|glute machine", "Machine_glute_bridge"),
-    (r"extens[ãa]o de quadril no cabo|cable hip extension", "Cable_hip_extension"),
-    (r"back extension|hiperextens|ghd|flex[ãa]o do quadril", "Hyperextensions"),
-    # ── Quadril / abdutores ──
-    (r"abdu[çc][ãa]o|abdutora|abductor", "Hip_abduction_machine"),
-    (r"adutora|adduction", "Hip_adduction_machine"),
-    # ── Ombros ──
-    (r"desenvolvimento.*(barra|com barra)", "Barbell_shoulder_press"),
-    (r"desenvolvimento.*halter", "Dumbbell_shoulder_press"),
-    (r"desenvolvimento.*cabo|elev[ãa][çc][ãa]o frontal", "Seated_shoulder_press_machine"),
-    (r"desenvolvimento|shoulder press|military press|overhead press", "Barbell_shoulder_press"),
-    (r"elev[ãa][çc][ãa]o lateral|ar{ñn}o lateral|elev[ãa][çc][ãa]o de bra[çc]o", "Lying_rear_lateral_raise"),
-    (r"encolhimento|shrug|upright row|remada alta", "Upright_barbell_rows"),
-    # ── Braços ──
-    (r"rosca.*(cabo|polia|corda)", "Standing_biceps_curl_with_cable"),
-    (r"rosca.*(barra|com barra)", "Wide_grip_standing_biceps_curl_with_barbell"),
-    (r"rosca.*halter", "Biceps_curl_with_dumbbell"),
-    (r"rosca|curl|biceps", "Biceps_curl_with_dumbbell"),
-    (r"tr[íi]ceps.*(barra|com barra|testa)|close grip", "Close_grip_barbell_bench_press"),
-    (r"tr[íi]ceps fran[çc]eis|french press", "French_press"),
-    (r"tr[íi]ceps.*(cabo|polia)|pushdown", "One_arm_tricep_extension_with_cable"),
-    (r"tr[íi]ceps|tricep", "One_arm_tricep_extension_with_cable"),
-    (r"antec|br[çc]ao|wrist", "Biceps_curl_reverse_with_dumbbells"),
-    # ── Core ──
-    (r"prancha lateral|side plank", "Side_plank"),
-    (r"prancha|plank|dead bug", "Bosu_ball_push_up"),
-    (r"abdominal.*bicicleta", "Abdominal_bicycle"),  # sem equivalente próprio
-    (r"abdominal|crunch|oblique|sant[óo]rio|roll up", "Crunch"),
-    (r"wood chop|rotation|rota[çc][ãa]o|twist|pallof", "Overhead_squat_with_barbell"),
-    (r"kettlebell swing|balanço|swing", "Kettlebell_swing"),
-    (r"elev[ãa][çc][ãa]o de pernas|leg raise|reverse crunch", "Leg_raise"),
-    # ── Cardio ──
-    (r"corrida|run|caminhada|jog", "Jogging"),
-    (r"pular corda|skip|jump rope", "Jump_rope"),
-    (r"bicicleta|el[íi]ptico|bike|remo ergom[ôo]rico|remador", "Exercise_bike"),
-    (r"esteira", "Treadmill"),
+    (r"barra fixa|pull.?up|chin.?up", "Pull ups"),
+    (r"puxada frontal|pulldown|pull.?down", "Wide grip lat pull down"),
+    (r"supino.*(barra|com barra)", "Bench press"),
+    (r"supino.*halter", "Bench press dumbbell"),
+    (r"supino inclinado", "Incline bench press"),
+    (r"supino declinado", "Decline barbell bench press"),
+    (r"supino fechado", "Close grip barbell bench press"),
+    (r"crucifixo reto", "Dumbbell flys"),
+    (r"crucifixo inclinado", "Incline dumbbell flys"),
+    (r"crossover|voador", "Cable crossover"),
+    (r"peck deck", "Butterfly machine"),
+    (r"flex[ãa]o de bra[çc]o|flex[ãa]o|push.?up", "Push ups"),
+    (r"mergulho|dip", "Chest dips"),
+    (r"agachamento.*(hack)", "Hack squat with barbell"),
+    (r"agachamento.*smith", "Smith machine squats"),
+    (r"agachamento", "Wide stance squat with barbell"),
+    (r"afundo|lunge|avanço", "Lunges"),
+    (r"step up", "Step ups with dumbbells"),
+    (r"leg press", "Lying squat"),
+    (r"cadeira extensora|extens[ãa]o de joelho", "Leg extensions"),
+    (r"mesa flexora|flexora", "Lying leg curl machine"),
+    (r"panturrilha.*sentada", "Seated calf raise using machine"),
+    (r"panturrilha", "Standing-calf-raises"),
+    (r"elev[ãa][çc][ãa]o p[ée]lvica", "Bent knee hip raise"),
+    (r"ponte de gl[úu]teo|bridging", "Bridging"),
+    (r"stiff|romeno|romanian", "Romanian dead lift"),
+    (r"levantamento terra|deadlift|dead lift", "Barbell dead lifts"),
+    (r"bom dia|good morning", "Good-mornings"),
+    (r"remada alta|remada alta", "Upright barbell rows"),
+    (r"remada cavalinho|t bar|t-bar", "T bar rows"),
+    (r"remada curvada", "Reverse grips bent over barbell rows"),
+    (r"remada baixa", "Seated cable rows"),
+    (r"remada unilateral", "One arm upright row"),
+    (r"remada", "Seated cable rows"),
+    (r"desenvolvimento.*barra", "Barbell shoulder press"),
+    (r"desenvolvimento.*halter", "Dumbbell shoulder press"),
+    (r"desenvolvimento", "Seated shoulder press machine"),
+    (r"elev[ãa][çc][ãa]o frontal", "Front raises"),
+    (r"elev[ãa][çc][ãa]o lateral", "Lateral dumbbell raises"),
+    (r"encolhimento|shrug", "Barbell shrugs"),
+    (r"rosca.*(cabo|polia)", "Standing biceps curl with cable"),
+    (r"rosca.*(barra|com barra)", "Bicep curls with barbell"),
+    (r"rosca concentrada", "Concentration curls with dumbbell"),
+    (r"rosca alternada", "Alternating bicep curl with dumbbell"),
+    (r"rosca inversa", "Biceps curl reverse with dumbbells"),
+    (r"rosca martelo|hammer", "Bicep hammer curl with dumbbell"),
+    (r"rosca|preacher|scott", "Preacher curl with machine"),
+    (r"tr[íi]ceps coice|kickback", "Triceps kickback with dumbbell"),
+    (r"tr[íi]ceps fran[çc]eis|french press", "Lying triceps extension with dumbbells"),
+    (r"tr[íi]ceps testa|skull", "Lying close grip triceps extension behind the head with barbell"),
+    (r"tr[íi]ceps.*(cabo|polia)|pushdown", "Triceps pushdown with cable"),
+    (r"tr[íi]ceps", "Triceps pushdown with cable"),
+    (r"hiperextens", "Hyperextensions"),
+    (r"abdu[çc][ãa]o|abdutora|abductor", "Thigh abductor"),
+    (r"adutora|adduction", "Hip adduction"),
+    (r"bicicleta|air bike", "Air bike"),
+    (r"remo ergom", "Body row"),
+    (r"abdominal|obl[íi]quo", "Crunches"),
+    (r"prancha lateral|side plank", "Side plank"),
+    (r"dead bug|ab rollout", "Ab rollout with barbell"),
 ]
 
 
 def wiki_base_for(name: str) -> Optional[str]:
+    """Base da ilustração do Commons para um exercício do catálogo.
+
+    Primeiro tenta o mapa exato (nome do catálogo → base) e, se não houver,
+    cai nas regras por padrão de nome.
+    """
+    key = name.strip()
+    if key in WIKI_EXACT:
+        return WIKI_EXACT[key]
+    # tolerância a variações de caixa/espaços do catálogo
+    norm = re.sub(r"\s+", " ", key).casefold()
+    for k, v in WIKI_EXACT.items():
+        if re.sub(r"\s+", " ", k).casefold() == norm:
+            return v
     n = name.lower()
     for pattern, base in WIKI_RULES:
         if re.search(pattern, n, re.I):
@@ -300,26 +445,30 @@ def normalize_gif(data: bytes, size: int = CANVAS, bg: str = BG) -> bytes:
     return build_gif_from_frames(frames, bg=bg)
 
 
+def _norm_base(name: str) -> str:
+    """Normaliza o rótulo da base para comparar variantes de nome."""
+    return re.sub(r"[^a-z0-9]+", "", name.lower())
+
+
+def resolve_base(base: str, media: Dict[str, Dict]) -> Optional[str]:
+    """Encontra a chave real da base no inventário (aceita variações de nome)."""
+    if base in media:
+        return base
+    target = _norm_base(base)
+    for key in media:
+        if _norm_base(key) == target:
+            return key
+    return None
+
+
 def build_wikimedia_gif(base: str, media: Dict[str, Dict]) -> Optional[bytes]:
     """Gera o GIF a partir dos frames do Commons. Retorna None se falhar."""
-    entry = media.get(base)
+    key = resolve_base(base, media)
+    entry = media.get(key) if key else None
     if not entry:
         return None
 
-    # 1) GIF oficial do Commons (melhor caso: já é loop pronto)
-    gif_title = entry.get("gif")
-    if gif_title:
-        url = filepath_url(gif_title, width=CANVAS * 2)
-        for attempt in range(3):
-            try:
-                r = S.get(url, timeout=70, allow_redirects=True)
-                if r.status_code == 200 and r.content[:6] in (b"GIF87a", b"GIF89a"):
-                    return normalize_gif(r.content)
-            except Exception:
-                pass
-            time.sleep(1.2 * (attempt + 1))
-
-    # 2) Interpola os frames SVG numerados
+    # Interpola os frames numerados da ilustração (personagem + máquina).
     frames = entry.get("frames") or []
     if len(frames) < 2:
         return None

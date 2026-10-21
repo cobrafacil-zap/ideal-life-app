@@ -28,6 +28,7 @@ import { CATEGORY_PALETTE } from "@/lib/constants";
 import { cn, toISODate } from "@/lib/utils";
 
 const WEEKDAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+const WEEKDAYS_SHORT = ["SE", "TE", "QU", "QI", "SX", "SA", "DO"];
 
 export default function HabitosPage() {
   const { state, addHabit, deleteHabit, toggleHabitDay } = useStore();
@@ -240,7 +241,7 @@ export default function HabitosPage() {
                           style={done ? { background: habit.color } : undefined}
                           title={iso}
                         >
-                          {WEEKDAYS[(d.getDay() + 6) % 7][0]}
+                          {WEEKDAYS_SHORT[(d.getDay() + 6) % 7]}
                         </button>
                       );
                     })}
@@ -283,12 +284,12 @@ export default function HabitosPage() {
                 >
                   ‹
                 </button>
-                <span className="w-32 text-center text-[12px] font-semibold capitalize text-ink">
-                  {new Date(
-                    today.getFullYear(),
-                    today.getMonth() + monthOffset,
-                    1,
-                  ).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
+                <span className="w-32 text-center text-[12px] font-semibold text-ink">
+                  {(() => {
+                    const d = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+                    const month = d.toLocaleDateString("pt-BR", { month: "long" });
+                    return `${month.charAt(0).toUpperCase()}${month.slice(1)} de ${d.getFullYear()}`;
+                  })()}
                 </span>
                 <button
                   onClick={() => setMonthOffset((v) => Math.min(0, v + 1))}

@@ -574,6 +574,25 @@ def p_twist() -> Poses:
     return a, b
 
 
+def p_russian_twist() -> Poses:
+    """Russian twist — sentado, tronco girando com o haltere nas mãos."""
+    a = _rig(
+        head=(202, 132), hip=(180, 212), shoulder=(198, 160),
+        elbow_l=(222, 182), elbow_r=(230, 198),
+        hand_l=(240, 188), hand_r=(242, 204),
+        knee_l=(210, 246), knee_r=(238, 242),
+        foot_l=(218, 296), foot_r=(250, 292),
+    )
+    b = _rig(
+        head=(158, 132), hip=(180, 212), shoulder=(162, 160),
+        elbow_l=(138, 182), elbow_r=(130, 198),
+        hand_l=(120, 188), hand_r=(118, 204),
+        knee_l=(210, 246), knee_r=(238, 242),
+        foot_l=(218, 296), foot_r=(250, 292),
+    )
+    return a, b
+
+
 def p_cardio() -> Poses:
     """Corrida / skipping — passadas alternadas."""
     a = _rig(
@@ -593,8 +612,140 @@ def p_cardio() -> Poses:
     return a, b
 
 
+def p_walk() -> Poses:
+    """Caminhada — passada curta, braços alternando com as pernas."""
+    a = _rig(
+        head=(180, 58), hip=(180, 152), shoulder=(180, 86),
+        elbow_l=(154, 118), elbow_r=(206, 112),
+        hand_l=(150, 146), hand_r=(212, 138),
+        knee_l=(152, 210), knee_r=(202, 208),
+        foot_l=(136, 290), foot_r=(228, 286),
+    )
+    b = _rig(
+        head=(180, 58), hip=(180, 152), shoulder=(180, 86),
+        elbow_l=(154, 112), elbow_r=(206, 118),
+        hand_l=(148, 138), hand_r=(210, 146),
+        knee_l=(158, 208), knee_r=(208, 210),
+        foot_l=(132, 286), foot_r=(224, 290),
+    )
+    return a, b
+
+
+def p_run() -> Poses:
+    """Corrida — joelho alto, tronco levemente inclinado, braços dobrados."""
+    a = _rig(
+        head=(176, 58), hip=(180, 150), shoulder=(178, 84),
+        elbow_l=(150, 110), elbow_r=(206, 108),
+        hand_l=(162, 136), hand_r=(200, 134),
+        knee_l=(150, 196), knee_r=(210, 212),
+        foot_l=(140, 258), foot_r=(238, 282),
+    )
+    b = _rig(
+        head=(184, 58), hip=(180, 150), shoulder=(182, 84),
+        elbow_l=(154, 108), elbow_r=(210, 110),
+        hand_l=(146, 134), hand_r=(198, 136),
+        knee_l=(150, 212), knee_r=(210, 196),
+        foot_l=(142, 282), foot_r=(220, 258),
+    )
+    return a, b
+
+
+def p_jump_rope() -> Poses:
+    """Pular corda — salto curto com os braços abertos segurando a corda."""
+    a = _rig(
+        head=(180, 58), hip=(180, 152), shoulder=(180, 86),
+        elbow_l=(148, 112), elbow_r=(212, 112),
+        hand_l=(122, 104), hand_r=(238, 104),
+        knee_l=(166, 204), knee_r=(194, 204),
+        foot_l=(160, 272), foot_r=(200, 272),
+    )
+    b = _rig(
+        head=(180, 58), hip=(180, 154), shoulder=(180, 88),
+        elbow_l=(150, 116), elbow_r=(210, 116),
+        hand_l=(124, 110), hand_r=(236, 110),
+        knee_l=(166, 208), knee_r=(194, 208),
+        foot_l=(158, 298), foot_r=(202, 298),
+    )
+    return a, b
+
+
+def p_treadmill() -> Poses:
+    """Esteira — caminhada sobre a esteira rolante."""
+    a = _rig(
+        head=(180, 58), hip=(180, 152), shoulder=(180, 86),
+        elbow_l=(154, 118), elbow_r=(206, 112),
+        hand_l=(150, 146), hand_r=(212, 138),
+        knee_l=(152, 210), knee_r=(202, 208),
+        foot_l=(136, 282), foot_r=(228, 278),
+    )
+    b = _rig(
+        head=(180, 58), hip=(180, 152), shoulder=(180, 86),
+        elbow_l=(154, 112), elbow_r=(206, 118),
+        hand_l=(148, 138), hand_r=(210, 146),
+        knee_l=(158, 208), knee_r=(208, 210),
+        foot_l=(132, 278), foot_r=(224, 282),
+    )
+    return a, b
+
+
+def p_elliptical() -> Poses:
+    """Elíptico — pernas alternando nos pedais, braços no manípulo."""
+    a = _rig(
+        head=(180, 60), hip=(180, 156), shoulder=(180, 90),
+        elbow_l=(152, 116), elbow_r=(208, 116),
+        hand_l=(140, 138), hand_r=(220, 138),
+        knee_l=(158, 208), knee_r=(202, 208),
+        foot_l=(150, 268), foot_r=(210, 268),
+    )
+    b = _rig(
+        head=(180, 60), hip=(180, 156), shoulder=(180, 90),
+        elbow_l=(152, 116), elbow_r=(208, 116),
+        hand_l=(140, 138), hand_r=(220, 138),
+        knee_l=(202, 208), knee_r=(158, 208),
+        foot_l=(210, 268), foot_r=(150, 268),
+    )
+    return a, b
+
+
+def p_row_ergometer() -> Poses:
+    """Remo ergométrico — sentado, puxando a barra do remo."""
+    a = _rig(
+        head=(146, 96), hip=(196, 176), shoulder=(162, 118),
+        elbow_l=(196, 136), elbow_r=(204, 168),
+        hand_l=(228, 158), hand_r=(232, 190),
+        knee_l=(238, 210), knee_r=(242, 226),
+        foot_l=(258, 268), foot_r=(262, 284),
+    )
+    b = _rig(
+        head=(140, 92), hip=(190, 174), shoulder=(156, 114),
+        elbow_l=(188, 132), elbow_r=(196, 164),
+        hand_l=(220, 154), hand_r=(224, 186),
+        knee_l=(232, 208), knee_r=(236, 224),
+        foot_l=(252, 266), foot_r=(256, 282),
+    )
+    return a, b
+
+
+def p_bike() -> Poses:
+    """Bicicleta ergométrica — sentado, pedalando."""
+    a = _rig(
+        head=(160, 88), hip=(186, 168), shoulder=(168, 116),
+        elbow_l=(196, 138), elbow_r=(214, 150),
+        hand_l=(214, 160), hand_r=(226, 168),
+        knee_l=(206, 206), knee_r=(224, 214),
+        foot_l=(212, 262), foot_r=(236, 274),
+    )
+    b = _rig(
+        head=(160, 88), hip=(186, 168), shoulder=(168, 116),
+        elbow_l=(196, 138), elbow_r=(214, 150),
+        hand_l=(214, 160), hand_r=(226, 168),
+        knee_l=(224, 214), knee_r=(206, 206),
+        foot_l=(236, 274), foot_r=(212, 262),
+    )
+    return a, b
+
+
 def p_stretch() -> Poses:
-    """Alongamento / braço cruza o peito."""
     a = _rig(
         head=(180, 60), hip=(180, 156), shoulder=(180, 88),
         elbow_l=(154, 118), elbow_r=(206, 118),
@@ -712,6 +863,14 @@ MOTIONS: Dict[str, MotionFn] = {
     "dip": p_dip,
     "twist": p_twist,
     "cardio": p_cardio,
+    "walk": p_walk,
+    "run": p_run,
+    "jump_rope": p_jump_rope,
+    "treadmill": p_treadmill,
+    "elliptical": p_elliptical,
+    "row_ergometer": p_row_ergometer,
+    "bike": p_bike,
+    "russian_twist": p_russian_twist,
     "stretch": p_stretch,
     "kettlebell_swing": p_kettlebell_swing,
     "leg_press": p_leg_press,
@@ -930,8 +1089,90 @@ def draw_frame(
         d.line([(anchor_x, anchor_y), hand], fill=EQUIP, width=3)
     elif equipment == "machine":
         _draw_machine(d, rig, stroke)
+    elif equipment == "treadmill":
+        _draw_treadmill(d, rig)
+    elif equipment == "elliptical":
+        _draw_elliptical(d, rig)
+    elif equipment == "rope":
+        _draw_rope(d, rig, motion)
+    elif equipment == "rower":
+        _draw_rower(d, rig)
+    elif equipment == "bike":
+        _draw_bike(d, rig)
 
     return img
+
+
+def _draw_rower(d: ImageDraw.ImageDraw, rig: Rig) -> None:
+    """Remo ergométrico — trilho com o carrinho e o cabo da barra."""
+    base_y = 296
+    d.line([(40, base_y + 18), (CANVAS - 46, base_y + 18)], fill=EQUIP, width=9)
+    d.line([(40, base_y + 18), (40, base_y - 26)], fill=EQUIP, width=6)
+    # Corrente da barra
+    hand = rig.hand_l
+    d.line([(CANVAS - 50, base_y - 20), hand], fill=EQUIP, width=3)
+    # Seletor
+    d.rounded_rectangle(
+        [CANVAS - 62, base_y - 44, CANVAS - 34, base_y - 16], radius=5, fill=EQUIP
+    )
+
+
+def _draw_bike(d: ImageDraw.ImageDraw, rig: Rig) -> None:
+    """Bicicleta ergométrica — quadro, pedais e guidão."""
+    cx = (rig.foot_l[0] + rig.foot_r[0]) // 2
+    base_y = 292
+    # Quadro
+    d.ellipse([cx - 30, base_y - 34, cx + 8, base_y + 8], outline=EQUIP, width=5)
+    d.line([(cx - 12, base_y - 12), (cx + 34, base_y - 12)], fill=EQUIP, width=6)
+    # Guidão
+    d.line([(cx + 34, base_y - 12), (cx + 40, base_y - 62)], fill=EQUIP, width=6)
+    d.line([(cx + 26, base_y - 64), (cx + 54, base_y - 64)], fill=EQUIP, width=5)
+    # Suporte
+    d.line([(cx - 26, base_y + 8), (cx + 44, base_y + 8)], fill=EQUIP, width=7)
+
+
+def _draw_treadmill(d: ImageDraw.ImageDraw, rig: Rig) -> None:
+    """Esteira: esteira rolante sob os pés + console na frente."""
+    left = min(rig.foot_l[0], rig.foot_r[0])
+    right = max(rig.foot_l[0], rig.foot_r[0])
+    cx = (left + right) // 2
+    belt_y = 288
+    # Base (esteira rolante) em perspectiva, com a faixa logo sob os pés
+    d.line([(cx - 86, belt_y + 12), (cx + 74, belt_y + 12)], fill=EQUIP, width=9)
+    d.line([(cx - 78, belt_y), (cx + 66, belt_y)], fill=EQUIP, width=6)
+    d.line([(cx + 66, belt_y), (cx + 74, belt_y + 12)], fill=EQUIP, width=5)
+    # Haste e console
+    d.line([(cx + 68, belt_y + 4), (cx + 82, belt_y - 74)], fill=EQUIP, width=6)
+    d.line([(cx + 64, belt_y - 78), (cx + 104, belt_y - 78)], fill=EQUIP, width=7)
+
+
+def _draw_elliptical(d: ImageDraw.ImageDraw, rig: Rig) -> None:
+    """Elíptico: base, pedais e braços de impulso."""
+    cx = (rig.foot_l[0] + rig.foot_r[0]) // 2
+    base_y = 300
+    # Pedais (dois, linked)
+    d.ellipse([cx - 46, base_y - 12, cx - 14, base_y + 6], outline=EQUIP, width=5)
+    d.ellipse([cx + 14, base_y - 12, cx + 46, base_y + 6], outline=EQUIP, width=5)
+    # Haste central + braços de impulso
+    d.line([(cx, base_y - 4), (cx, base_y - 92)], fill=EQUIP, width=6)
+    d.line([(cx - 6, base_y - 92), (cx - 54, base_y - 108)], fill=EQUIP, width=5)
+    d.line([(cx + 6, base_y - 92), (cx + 54, base_y - 108)], fill=EQUIP, width=5)
+    # Punhos
+    for px, py in ((cx - 54, base_y - 108), (cx + 54, base_y - 108)):
+        d.line([(px, py), (px, py - 12)], fill=EQUIP, width=6)
+
+
+def _draw_rope(d: ImageDraw.ImageDraw, rig: Rig, motion: str) -> None:
+    """Corda de pular: arco que passa por cima e por baixo do corpo."""
+    hl, hr = rig.hand_l, rig.hand_r
+    top = min(hl[1], hr[1]) - 56
+    bottom = min(max(rig.foot_l[1], rig.foot_r[1]) + 14, 288)
+    airborne = rig.foot_l[1] < 292 and rig.foot_r[1] < 292
+    if airborne:
+        # No ar: a corda passa por baixo do corpo.
+        d.arc([hl[0], top, hr[0], bottom], 180, 360, fill=EQUIP, width=5)
+    else:
+        d.arc([hl[0], top, hr[0], bottom], 0, 180, fill=EQUIP, width=5)
 
 
 def _draw_machine(d: ImageDraw.ImageDraw, rig: Rig, stroke: str) -> None:
@@ -1030,6 +1271,25 @@ def build_gif(
 # ─────────────────────────────────────────────────────────────────────────────
 # Classificação
 # ─────────────────────────────────────────────────────────────────────────────
+# Exercícios sem ilustração equivalente no Wikimedia Commons: cada um
+# recebe um movimento e equipamento próprios, para que a animação mostre
+# o movimento correto (e o aparelho, quando existir).
+SPECIAL_MOTIONS: Dict[str, Tuple[str, str, str]] = {
+    "caminhada": ("walk", "none", "cardio"),
+    "caminhada com elástico": ("walk", "band", "cardio"),
+    "corrida": ("run", "none", "cardio"),
+    "esteira": ("treadmill", "treadmill", "cardio"),
+    "elíptico": ("elliptical", "elliptical", "cardio"),
+    "pular corda": ("jump_rope", "rope", "cardio"),
+    "remo ergométrico": ("row_ergometer", "rower", "cardio"),
+    "bicicleta ergométrica": ("bike", "bike", "cardio"),
+    "prancha": ("plank", "none", "abdomen"),
+    "russian twist": ("russian_twist", "dumbbell", "abdomen"),
+    "swing de kettlebell": ("kettlebell_swing", "kettlebell", "posterior"),
+    "glúteo na máquina": ("bridge", "machine", "gluteos"),
+}
+
+
 def classify(name: str, category: Optional[str], equipment: Optional[str]) -> Tuple[str, str, str]:
     """Retorna (motion, equipment, group) para um exercício."""
     n = name.lower()
@@ -1073,6 +1333,13 @@ def classify(name: str, category: Optional[str], equipment: Optional[str]) -> Tu
     # Movimento padrão quando nada casou
     if motion is None:
         motion = "squat" if grp in ("pernas", "gluteos") else "curl"
+
+    # ── Casos sem ilustração equivalente no Commons ──
+    # Cada um tem o próprio movimento/equipamento, para que a animação
+    # corresponda ao movimento real (nada de genérico).
+    special = SPECIAL_MOTIONS.get(n.strip())
+    if special:
+        motion, eq, grp = special
 
     return motion, eq, grp
 
@@ -1144,14 +1411,15 @@ def main() -> int:
         data: Optional[bytes] = None
         if em is not None and args.source in ("auto", "wiki"):
             base = em.wiki_base_for(name)
-            if base and base in media:
-                if base not in wiki_cache:
+            wiki_key = em.resolve_base(base, media) if base else None
+            if wiki_key:
+                if wiki_key not in wiki_cache:
                     try:
-                        wiki_cache[base] = em.build_wikimedia_gif(base, media)
+                        wiki_cache[wiki_key] = em.build_wikimedia_gif(wiki_key, media)
                     except Exception:
-                        wiki_cache[base] = b""
-                if wiki_cache.get(base):
-                    data = wiki_cache[base]
+                        wiki_cache[wiki_key] = b""
+                if wiki_cache.get(wiki_key):
+                    data = wiki_cache[wiki_key]
                     source = "wiki"
 
         # ── Fallback: vetor local ──

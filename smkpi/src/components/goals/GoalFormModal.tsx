@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Trash2, Check } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
+import { suggestSteps } from "@/app/actions/ai";
 import { Button } from "@/components/ui/Button";
 import { Field, Input, Label, Segmented, Select, Textarea } from "@/components/ui/Field";
 import { Icon, ICON_NAMES } from "@/components/ui/Icon";
@@ -60,6 +61,8 @@ export function GoalFormModal({ open, onClose, goal, defaultCategoryId }: Props)
   const [notes, setNotes] = useState("");
   const [stepsText, setStepsText] = useState("");
   const [error, setError] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiMessage, setAiMessage] = useState("");
   const [newCategory, setNewCategory] = useState<string | null>(null);
 
   const isEdit = Boolean(goal);
@@ -166,6 +169,25 @@ export function GoalFormModal({ open, onClose, goal, defaultCategoryId }: Props)
       toast("Meta criada com sucesso!");
     }
     onClose();
+  };
+
+  const handleSuggestSteps = async () => {
+    setAiLoading(true);
+    setAiMessage("");
+    const result = await suggestSteps({
+      title,
+      description,
+      category: category?.name,
+      dueDate,
+    });
+    setAiLoading(false);
+    if (!result.available || !result.data?.steps?.length) {
+      setAiMessage(result.message);
+      return;
+    }
+    setStepsText(result.data.steps.join("\n"));
+    setMode((m) => (m === "valor" ? "misto" : m));
+    setAiMessage("Etapas sugeridas pela IA — revise e ajuste como quiser.");
   };
 
   const handleCategoryChange = (id: string) => {
@@ -373,6 +395,21 @@ export function GoalFormModal({ open, onClose, goal, defaultCategoryId }: Props)
               onChange={(e) => setStepsText(e.target.value)}
               placeholder={"Criar ideia\nDefinir produto\nCriar página de vendas"}
             />
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                loading={aiLoading}
+                leadingIcon={<Sparkles className="h-3.5 w-3.5" />}
+                onClick={handleSuggestSteps}
+              >
+                Sugerir etapas com IA
+              </Button>
+              {aiMessage ? (
+                <span className="text-[12px] text-ink-faint">{aiMessage}</span>
+              ) : null}
+            </div>
           </Field>
         ) : null}
 

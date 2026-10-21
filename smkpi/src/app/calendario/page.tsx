@@ -17,7 +17,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useStore } from "@/lib/data/store";
 import { cn, formatDate, formatMetric, toISODate } from "@/lib/utils";
 
-const WEEKDAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+const WEEKDAYS = ["SE", "TE", "QU", "QI", "SX", "SA", "DO"];
 
 interface EventItem {
   id: string;
@@ -154,12 +154,12 @@ export default function CalendarioPage() {
               >
                 ‹
               </button>
-              <span className="w-36 text-center text-[13px] font-semibold capitalize text-ink">
-                {new Date(
-                  today.getFullYear(),
-                  today.getMonth() + monthOffset,
-                  1,
-                ).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
+              <span className="w-36 text-center text-[13px] font-semibold text-ink">
+                {(() => {
+                  const d = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+                  const month = d.toLocaleDateString("pt-BR", { month: "long" });
+                  return `${month.charAt(0).toUpperCase()}${month.slice(1)} de ${d.getFullYear()}`;
+                })()}
               </span>
               <button
                 onClick={() => setMonthOffset((v) => Math.min(0, v + 1))}

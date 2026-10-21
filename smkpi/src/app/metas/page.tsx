@@ -59,7 +59,11 @@ export default function MetasPage() {
     });
 
     const priorityRank: Record<GoalPriority, number> = { urgente: 0, alta: 1, media: 2, baixa: 3 };
+    const statusRank: Record<GoalStatus, number> = { ativa: 0, pausada: 1, concluida: 2 };
     list = [...list].sort((a, b) => {
+      if (a.goal.status !== b.goal.status) {
+        return statusRank[a.goal.status] - statusRank[b.goal.status];
+      }
       if (sort === "prazo") {
         const ad = a.deadline.daysLeft ?? 99999;
         const bd = b.deadline.daysLeft ?? 99999;

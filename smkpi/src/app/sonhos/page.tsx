@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useToast } from "@/components/ui/Toast";
 import { GoalFormModal } from "@/components/goals/GoalFormModal";
 import { useStore } from "@/lib/data/store";
+import { suggestGoalsFromDream } from "@/app/actions/ai";
 import type { Dream } from "@/lib/types";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
 
@@ -29,6 +30,8 @@ export default function SonhosPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Dream | null>(null);
   const [converting, setConverting] = useState<Dream | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -75,6 +78,40 @@ export default function SonhosPage() {
       toast("Sonho registrado ✨");
     }
     setFormOpen(false);
+  };
+
+  const handleSuggest = async (dream: Dream) => {
+    setAiLoading(true);
+    setAiError("");
+    const result = await suggestGoalsFromDream({
+      title: dream.title,
+      description: dream.description,
+      estimatedValue: dream.estimatedValue,
+    });
+    setAiLoading(false);
+    if (!result.available || !result.data?.goals?.length) {
+      setAiError(result.message);
+      return;
+    }
+    const [first] = result.data.goals;
+    const created = addGoal({
+      title: first.title,
+      description: first.description,
+      categoryId: state.categories[0]?.id ?? "",
+      scope: "neutro",
+      priority: "media",
+      cadence: "sem-prazo",
+      startDate: new Date().toISOString().slice(0, 10),
+      dueDate: dream.desiredDate,
+      metricStart: 0,
+      metricCurrent: 0,
+      metricTarget: first.metricTarget,
+      metricUnit: first.metricUnit ?? "",
+      icon: "sparkles",
+    });
+    updateDream(dream.id, { status: "em_andamento", goalId: created.id });
+    setConverting(null);
+    toast("Sonho transformado em meta com IA! 🚀");
   };
 
   const convertToGoal = (dream: Dream) => {
@@ -350,6 +387,25 @@ export default function SonhosPage() {
             <p className="text-[12px] text-ink-faint">
               Depois de criada, você poderá ajustar categoria, prioridade e etapas na página da meta.
             </p>
+            <div className="rounded-xl border border-dashed border-line p-4">
+              <p className="text-[13px] font-semibold text-ink">Ou deixe a IA decompor o sonho</p>
+              <p className="mt-1 text-[12px] text-ink-faint">
+                O Gemini transforma o sonho em uma meta mensurável com título e indicador.
+              </p>
+              <Button
+                className="mt-3"
+                size="sm"
+                variant="secondary"
+                loading={aiLoading}
+                leadingIcon={<Sparkles className="h-3.5 w-3.5" />}
+                onClick={() => converting && handleSuggest(converting)}
+              >
+                Sugerir meta com IA
+              </Button>
+              {aiError ? (
+                <p className="mt-2 text-[12px] text-ink-faint">{aiError}</p>
+              ) : null}
+            </div>
           </div>
         ) : null}
       </Modal>

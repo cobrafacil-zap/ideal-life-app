@@ -12,7 +12,7 @@ import { useStore } from "@/lib/data/store";
 import { CADENCE_LABEL, PRIORITY_LABEL, PRIORITY_TONE } from "@/lib/constants";
 import { DEADLINE_TONE_CLASS } from "@/lib/progress";
 import type { GoalView } from "@/lib/selectors";
-import { cn, formatMetric } from "@/lib/utils";
+import { cn, formatDate, formatMetric } from "@/lib/utils";
 import { GoalFormModal } from "./GoalFormModal";
 
 export function GoalCard({
@@ -165,15 +165,22 @@ export function GoalCard({
         ) : null}
 
         <div className="mt-4 flex items-center justify-between gap-2 border-t border-line pt-3">
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1 text-[11px] font-semibold",
-              DEADLINE_TONE_CLASS[deadline.tone],
-            )}
-          >
-            <CalendarClock className="h-3 w-3" />
-            {deadline.label}
-          </span>
+          {goal.status === "concluida" ? (
+            <span className="inline-flex items-center gap-1.5 rounded-pill bg-jade-soft px-2.5 py-1 text-[11px] font-semibold text-jade-dark">
+              <CheckCircle2 className="h-3 w-3" />
+              Concluída{goal.completedAt ? ` · ${formatDate(goal.completedAt)}` : ""}
+            </span>
+          ) : (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1 text-[11px] font-semibold",
+                DEADLINE_TONE_CLASS[deadline.tone],
+              )}
+            >
+              <CalendarClock className="h-3 w-3" />
+              {deadline.label}
+            </span>
+          )}
           {parent ? (
             <span
               className="inline-flex max-w-[45%] items-center gap-1 truncate text-[11px] text-ink-faint"

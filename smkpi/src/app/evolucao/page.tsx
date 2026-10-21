@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { ProgressBar, ProgressRing } from "@/components/ui/Progress";
 import { Icon } from "@/components/ui/Icon";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CategoryChart, CompletedChart, ScopeChart } from "@/components/charts/Charts";
+import { CategoryChart, CompletedChart, ScopeChart, TrendChart } from "@/components/charts/Charts";
 import { useStore } from "@/lib/data/store";
 import {
   buildGoalViews,
@@ -216,9 +216,7 @@ export default function EvolucaoPage() {
             description="Média de todas as metas ao longo do tempo"
             icon={<Award className="h-4 w-4" />}
           />
-          <ScopeChart
-            data={series.map((s) => ({ label: s.label, pessoal: s.geral, profissional: 0 }))}
-          />
+          <TrendChart data={series.map((s) => ({ label: s.label, value: s.geral }))} />
         </Card>
       </section>
 

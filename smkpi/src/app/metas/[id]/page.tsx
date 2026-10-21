@@ -35,7 +35,7 @@ import {
   SCOPE_LABEL,
 } from "@/lib/constants";
 import { DEADLINE_TONE_CLASS, paceLabel } from "@/lib/progress";
-import { cn, formatDate, formatMetric, formatNumber } from "@/lib/utils";
+import { cn, formatDate, formatMetric } from "@/lib/utils";
 
 export default function GoalDetailPage() {
   const params = useParams<{ id: string }>();
@@ -278,7 +278,7 @@ export default function GoalDetailPage() {
         <Card>
           <CardHeader
             title="Relacionadas"
-            description="MetasKvam"
+            description="Metas relacionadas"
             icon={<Link2 className="h-4 w-4" />}
           />
           <div className="space-y-3">

@@ -5,8 +5,8 @@
   "motion": "crunch",
   "equipment": "none",
   "group": "abdomen",
-  "source": "local",
-  "bytes": 91308
+  "source": "wiki",
+  "bytes": 83269
  },
  {
   "name": "Abdominal canivete",
@@ -15,7 +15,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 37949
+  "bytes": 91587
  },
  {
   "name": "Abdominal crunch",
@@ -24,7 +24,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 37949
+  "bytes": 93133
  },
  {
   "name": "Abdominal na roda",
@@ -33,7 +33,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 37949
+  "bytes": 88525
  },
  {
   "name": "Abdominal supra",
@@ -42,7 +42,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 37949
+  "bytes": 90766
  },
  {
   "name": "Abdução de quadril",
@@ -50,8 +50,8 @@
   "motion": "abduct",
   "equipment": "machine",
   "group": "quadriceps",
-  "source": "local",
-  "bytes": 170739
+  "source": "wiki",
+  "bytes": 348586
  },
  {
   "name": "Abdução de quadril com elástico",
@@ -59,8 +59,8 @@
   "motion": "abduct",
   "equipment": "band",
   "group": "abdutores",
-  "source": "local",
-  "bytes": 115621
+  "source": "wiki",
+  "bytes": 348586
  },
  {
   "name": "Afundo búlgaro",
@@ -69,7 +69,7 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 106107
+  "bytes": 116065
  },
  {
   "name": "Afundo com halteres",
@@ -78,7 +78,7 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 106107
+  "bytes": 418846
  },
  {
   "name": "Agachamento búlgaro com halteres",
@@ -87,7 +87,7 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 90468
+  "bytes": 116065
  },
  {
   "name": "Agachamento com elástico",
@@ -96,7 +96,7 @@
   "equipment": "band",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 172135
+  "bytes": 114564
  },
  {
   "name": "Agachamento com halteres",
@@ -105,7 +105,7 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 90468
+  "bytes": 99083
  },
  {
   "name": "Agachamento com kettlebell",
@@ -114,7 +114,7 @@
   "equipment": "kettlebell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 113624
  },
  {
   "name": "Agachamento livre",
@@ -123,7 +123,7 @@
   "equipment": "bar",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 113624
  },
  {
   "name": "Agachamento no hack",
@@ -132,7 +132,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 103780
+  "bytes": 114636
  },
  {
   "name": "Agachamento no smith",
@@ -141,7 +141,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 132825
+  "bytes": 141515
  },
  {
   "name": "Agachamento smith sumô",
@@ -150,7 +150,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 132825
+  "bytes": 113624
  },
  {
   "name": "Agachamento sumô",
@@ -159,7 +159,7 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 113624
  },
  {
   "name": "Avanço",
@@ -168,7 +168,7 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 106107
+  "bytes": 106867
  },
  {
   "name": "Barra fixa",
@@ -177,16 +177,16 @@
   "equipment": "machine",
   "group": "costas",
   "source": "wiki",
-  "bytes": 4102701
+  "bytes": 91212
  },
  {
   "name": "Bicicleta ergométrica",
   "file": "bicicleta-ergometrica.gif",
-  "motion": "cardio",
-  "equipment": "machine",
+  "motion": "bike",
+  "equipment": "bike",
   "group": "cardio",
-  "source": "local",
-  "bytes": 160922
+  "source": "wiki",
+  "bytes": 83269
  },
  {
   "name": "Bom dia",
@@ -195,7 +195,7 @@
   "equipment": "bar",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 370189
  },
  {
   "name": "Cadeira abdutora",
@@ -203,8 +203,8 @@
   "motion": "abduct",
   "equipment": "machine",
   "group": "abdutores",
-  "source": "local",
-  "bytes": 170739
+  "source": "wiki",
+  "bytes": 348586
  },
  {
   "name": "Cadeira adutora",
@@ -212,8 +212,8 @@
   "motion": "adduct",
   "equipment": "machine",
   "group": "adutores",
-  "source": "local",
-  "bytes": 170739
+  "source": "wiki",
+  "bytes": 126926
  },
  {
   "name": "Cadeira extensora",
@@ -222,25 +222,25 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 172135
+  "bytes": 130722
  },
  {
   "name": "Caminhada",
   "file": "caminhada.gif",
-  "motion": "cardio",
+  "motion": "walk",
   "equipment": "none",
   "group": "cardio",
   "source": "local",
-  "bytes": 104714
+  "bytes": 55031
  },
  {
   "name": "Caminhada com elástico",
   "file": "caminhada-com-elastico.gif",
-  "motion": "cardio",
+  "motion": "walk",
   "equipment": "band",
-  "group": "gluteos",
+  "group": "cardio",
   "source": "local",
-  "bytes": 106962
+  "bytes": 56570
  },
  {
   "name": "Coice com elástico",
@@ -249,16 +249,16 @@
   "equipment": "band",
   "group": "gluteos",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 98641
  },
  {
   "name": "Corrida",
   "file": "corrida.gif",
-  "motion": "cardio",
+  "motion": "run",
   "equipment": "none",
   "group": "cardio",
   "source": "local",
-  "bytes": 104714
+  "bytes": 102271
  },
  {
   "name": "Crossover",
@@ -267,7 +267,7 @@
   "equipment": "cable",
   "group": "peito",
   "source": "wiki",
-  "bytes": 89221
+  "bytes": 101947
  },
  {
   "name": "Crucifixo inclinado",
@@ -276,7 +276,7 @@
   "equipment": "dumbbell",
   "group": "peito",
   "source": "wiki",
-  "bytes": 89221
+  "bytes": 116338
  },
  {
   "name": "Crucifixo inverso",
@@ -285,7 +285,7 @@
   "equipment": "dumbbell",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 89221
+  "bytes": 146300
  },
  {
   "name": "Crucifixo inverso na máquina",
@@ -294,7 +294,7 @@
   "equipment": "machine",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 89221
+  "bytes": 114251
  },
  {
   "name": "Crucifixo reto",
@@ -303,7 +303,7 @@
   "equipment": "dumbbell",
   "group": "peito",
   "source": "wiki",
-  "bytes": 89221
+  "bytes": 113859
  },
  {
   "name": "Dead bug",
@@ -312,7 +312,7 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 85864
+  "bytes": 102729
  },
  {
   "name": "Desenvolvimento com barra",
@@ -321,7 +321,7 @@
   "equipment": "bar",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 104727
+  "bytes": 115731
  },
  {
   "name": "Desenvolvimento com halteres",
@@ -330,7 +330,7 @@
   "equipment": "dumbbell",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 101196
+  "bytes": 112539
  },
  {
   "name": "Desenvolvimento máquina",
@@ -339,7 +339,7 @@
   "equipment": "machine",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 104727
+  "bytes": 118655
  },
  {
   "name": "Elevação de pernas",
@@ -347,8 +347,8 @@
   "motion": "leg_raise",
   "equipment": "none",
   "group": "abdomen",
-  "source": "local",
-  "bytes": 88642
+  "source": "wiki",
+  "bytes": 85909
  },
  {
   "name": "Elevação frontal",
@@ -357,7 +357,7 @@
   "equipment": "dumbbell",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 107549
+  "bytes": 98243
  },
  {
   "name": "Elevação frontal com barra",
@@ -366,7 +366,7 @@
   "equipment": "bar",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 107549
+  "bytes": 111421
  },
  {
   "name": "Elevação lateral",
@@ -375,7 +375,7 @@
   "equipment": "dumbbell",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 102671
+  "bytes": 108338
  },
  {
   "name": "Elevação lateral unilateral no cabo",
@@ -384,7 +384,7 @@
   "equipment": "cable",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 102671
+  "bytes": 321707
  },
  {
   "name": "Elevação pélvica",
@@ -393,16 +393,16 @@
   "equipment": "none",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 103518
  },
  {
   "name": "Elíptico",
   "file": "eliptico.gif",
-  "motion": "cardio",
-  "equipment": "machine",
+  "motion": "elliptical",
+  "equipment": "elliptical",
   "group": "cardio",
   "source": "local",
-  "bytes": 160922
+  "bytes": 137227
  },
  {
   "name": "Encolhimento",
@@ -411,16 +411,16 @@
   "equipment": "dumbbell",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 103173
+  "bytes": 111580
  },
  {
   "name": "Esteira",
   "file": "esteira.gif",
-  "motion": "cardio",
-  "equipment": "none",
+  "motion": "treadmill",
+  "equipment": "treadmill",
   "group": "cardio",
   "source": "local",
-  "bytes": 104714
+  "bytes": 64440
  },
  {
   "name": "Extensão de quadril no cabo",
@@ -428,8 +428,8 @@
   "motion": "bridge",
   "equipment": "cable",
   "group": "gluteos",
-  "source": "local",
-  "bytes": 121689
+  "source": "wiki",
+  "bytes": 98641
  },
  {
   "name": "Face pull",
@@ -438,7 +438,7 @@
   "equipment": "cable",
   "group": "costas",
   "source": "wiki",
-  "bytes": 96740
+  "bytes": 146300
  },
  {
   "name": "Flexão de braço",
@@ -447,7 +447,7 @@
   "equipment": "none",
   "group": "peito",
   "source": "wiki",
-  "bytes": 85864
+  "bytes": 92556
  },
  {
   "name": "Flexão declinada",
@@ -456,7 +456,7 @@
   "equipment": "none",
   "group": "peito",
   "source": "wiki",
-  "bytes": 85864
+  "bytes": 109602
  },
  {
   "name": "Flexora em pé",
@@ -465,7 +465,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 123773
+  "bytes": 129485
  },
  {
   "name": "Flexora em pé unilateral",
@@ -474,14 +474,14 @@
   "equipment": "machine",
   "group": "posterior",
   "source": "wiki",
-  "bytes": 123773
+  "bytes": 129485
  },
  {
   "name": "Glúteo na máquina",
   "file": "gluteo-na-maquina.gif",
   "motion": "bridge",
   "equipment": "machine",
-  "group": "quadriceps",
+  "group": "gluteos",
   "source": "local",
   "bytes": 140940
  },
@@ -492,7 +492,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 103780
+  "bytes": 114636
  },
  {
   "name": "Hip thrust",
@@ -501,7 +501,7 @@
   "equipment": "bar",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 98828
  },
  {
   "name": "Hiperextensão",
@@ -510,7 +510,7 @@
   "equipment": "none",
   "group": "costas",
   "source": "wiki",
-  "bytes": 96019
+  "bytes": 107865
  },
  {
   "name": "Leg press 45",
@@ -519,7 +519,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 172135
+  "bytes": 180954
  },
  {
   "name": "Leg press 45 unilateral",
@@ -528,7 +528,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 172135
+  "bytes": 180954
  },
  {
   "name": "Levantamento terra",
@@ -537,7 +537,7 @@
   "equipment": "bar",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 102531
  },
  {
   "name": "Levantamento terra com halteres",
@@ -546,7 +546,7 @@
   "equipment": "dumbbell",
   "group": "posterior",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 89098
  },
  {
   "name": "Mergulho",
@@ -555,7 +555,7 @@
   "equipment": "none",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 85864
+  "bytes": 119864
  },
  {
   "name": "Mesa flexora",
@@ -564,7 +564,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 123773
+  "bytes": 99915
  },
  {
   "name": "Mesa flexora unilateral",
@@ -573,7 +573,7 @@
   "equipment": "machine",
   "group": "posterior",
   "source": "wiki",
-  "bytes": 123773
+  "bytes": 99915
  },
  {
   "name": "Panturrilha em pé",
@@ -581,8 +581,8 @@
   "motion": "calf_raise",
   "equipment": "machine",
   "group": "quadriceps",
-  "source": "local",
-  "bytes": 81112
+  "source": "wiki",
+  "bytes": 104220
  },
  {
   "name": "Panturrilha no leg press",
@@ -591,7 +591,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 172135
+  "bytes": 123219
  },
  {
   "name": "Panturrilha sentada",
@@ -600,7 +600,7 @@
   "equipment": "machine",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 113648
+  "bytes": 124249
  },
  {
   "name": "Peck deck",
@@ -609,7 +609,7 @@
   "equipment": "machine",
   "group": "peito",
   "source": "wiki",
-  "bytes": 109119
+  "bytes": 129597
  },
  {
   "name": "Ponte de glúteo com barra",
@@ -618,7 +618,7 @@
   "equipment": "bar",
   "group": "gluteos",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 98828
  },
  {
   "name": "Ponte de glúteo com halteres",
@@ -627,7 +627,7 @@
   "equipment": "dumbbell",
   "group": "gluteos",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 98828
  },
  {
   "name": "Prancha",
@@ -635,8 +635,8 @@
   "motion": "plank",
   "equipment": "none",
   "group": "abdomen",
-  "source": "wiki",
-  "bytes": 85864
+  "source": "local",
+  "bytes": 11490
  },
  {
   "name": "Prancha lateral",
@@ -645,16 +645,16 @@
   "equipment": "none",
   "group": "abdomen",
   "source": "wiki",
-  "bytes": 81485
+  "bytes": 93766
  },
  {
   "name": "Pular corda",
   "file": "pular-corda.gif",
-  "motion": "cardio",
-  "equipment": "none",
+  "motion": "jump_rope",
+  "equipment": "rope",
   "group": "cardio",
   "source": "local",
-  "bytes": 104714
+  "bytes": 112525
  },
  {
   "name": "Pulldown com corda",
@@ -663,7 +663,7 @@
   "equipment": "cable",
   "group": "costas",
   "source": "wiki",
-  "bytes": 107524
+  "bytes": 110996
  },
  {
   "name": "Puxada frontal",
@@ -672,7 +672,7 @@
   "equipment": "cable",
   "group": "costas",
   "source": "wiki",
-  "bytes": 107524
+  "bytes": 118578
  },
  {
   "name": "Puxada frontal pegada supinada",
@@ -681,7 +681,7 @@
   "equipment": "cable",
   "group": "costas",
   "source": "wiki",
-  "bytes": 107524
+  "bytes": 111094
  },
  {
   "name": "Remada alta",
@@ -690,7 +690,7 @@
   "equipment": "bar",
   "group": "ombros",
   "source": "wiki",
-  "bytes": 96740
+  "bytes": 114047
  },
  {
   "name": "Remada baixa no cabo",
@@ -699,7 +699,7 @@
   "equipment": "cable",
   "group": "costas",
   "source": "wiki",
-  "bytes": 96740
+  "bytes": 98844
  },
  {
   "name": "Remada cavalinho",
@@ -708,7 +708,7 @@
   "equipment": "machine",
   "group": "costas",
   "source": "wiki",
-  "bytes": 96740
+  "bytes": 139223
  },
  {
   "name": "Remada curvada",
@@ -717,7 +717,7 @@
   "equipment": "bar",
   "group": "costas",
   "source": "wiki",
-  "bytes": 103173
+  "bytes": 129422
  },
  {
   "name": "Remada unilateral",
@@ -726,16 +726,16 @@
   "equipment": "dumbbell",
   "group": "costas",
   "source": "wiki",
-  "bytes": 103173
+  "bytes": 113257
  },
  {
   "name": "Remo ergométrico",
   "file": "remo-ergometrico.gif",
-  "motion": "cardio",
-  "equipment": "machine",
+  "motion": "row_ergometer",
+  "equipment": "rower",
   "group": "cardio",
-  "source": "local",
-  "bytes": 160922
+  "source": "wiki",
+  "bytes": 131660
  },
  {
   "name": "Rosca alternada",
@@ -744,7 +744,7 @@
   "equipment": "dumbbell",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 102625
+  "bytes": 113732
  },
  {
   "name": "Rosca concentrada",
@@ -753,7 +753,7 @@
   "equipment": "dumbbell",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 102625
+  "bytes": 129479
  },
  {
   "name": "Rosca direta",
@@ -762,7 +762,7 @@
   "equipment": "bar",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 102625
+  "bytes": 127174
  },
  {
   "name": "Rosca inversa",
@@ -771,7 +771,7 @@
   "equipment": "bar",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 102625
+  "bytes": 107648
  },
  {
   "name": "Rosca martelo",
@@ -780,7 +780,7 @@
   "equipment": "dumbbell",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 102625
+  "bytes": 111759
  },
  {
   "name": "Rosca no cabo",
@@ -789,7 +789,7 @@
   "equipment": "cable",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 100417
+  "bytes": 111403
  },
  {
   "name": "Rosca scott",
@@ -798,16 +798,16 @@
   "equipment": "machine",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 102625
+  "bytes": 142353
  },
  {
   "name": "Russian twist",
   "file": "russian-twist.gif",
-  "motion": "twist",
+  "motion": "russian_twist",
   "equipment": "dumbbell",
   "group": "abdomen",
-  "source": "wiki",
-  "bytes": 90468
+  "source": "local",
+  "bytes": 95449
  },
  {
   "name": "Sissy squat",
@@ -816,7 +816,7 @@
   "equipment": "none",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 105481
  },
  {
   "name": "Step up com halteres",
@@ -825,7 +825,7 @@
   "equipment": "dumbbell",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 106107
+  "bytes": 98632
  },
  {
   "name": "Stiff",
@@ -834,7 +834,7 @@
   "equipment": "bar",
   "group": "quadriceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 103779
  },
  {
   "name": "Stiff com halteres",
@@ -843,7 +843,7 @@
   "equipment": "dumbbell",
   "group": "posterior",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 103779
  },
  {
   "name": "Stiff com kettlebell",
@@ -852,7 +852,7 @@
   "equipment": "kettlebell",
   "group": "posterior",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 103779
  },
  {
   "name": "Supino declinado",
@@ -861,7 +861,7 @@
   "equipment": "bar",
   "group": "peito",
   "source": "wiki",
-  "bytes": 118831
+  "bytes": 129166
  },
  {
   "name": "Supino fechado",
@@ -870,7 +870,7 @@
   "equipment": "bar",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 115341
+  "bytes": 124927
  },
  {
   "name": "Supino inclinado com barra",
@@ -879,7 +879,7 @@
   "equipment": "bar",
   "group": "peito",
   "source": "wiki",
-  "bytes": 115747
+  "bytes": 122083
  },
  {
   "name": "Supino inclinado com halteres",
@@ -888,7 +888,7 @@
   "equipment": "dumbbell",
   "group": "peito",
   "source": "wiki",
-  "bytes": 105788
+  "bytes": 117130
  },
  {
   "name": "Supino reto com barra",
@@ -897,7 +897,7 @@
   "equipment": "bar",
   "group": "peito",
   "source": "wiki",
-  "bytes": 115747
+  "bytes": 125978
  },
  {
   "name": "Supino reto com halteres",
@@ -906,7 +906,7 @@
   "equipment": "dumbbell",
   "group": "peito",
   "source": "wiki",
-  "bytes": 105788
+  "bytes": 116975
  },
  {
   "name": "Swing de kettlebell",
@@ -924,7 +924,7 @@
   "equipment": "dumbbell",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 118880
+  "bytes": 132297
  },
  {
   "name": "Tríceps francês",
@@ -933,7 +933,7 @@
   "equipment": "dumbbell",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 84834
+  "bytes": 128249
  },
  {
   "name": "Tríceps na polia",
@@ -942,7 +942,7 @@
   "equipment": "cable",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 84834
+  "bytes": 94793
  },
  {
   "name": "Tríceps testa",
@@ -951,6 +951,6 @@
   "equipment": "bar",
   "group": "biceps",
   "source": "wiki",
-  "bytes": 115341
+  "bytes": 97424
  }
 ]

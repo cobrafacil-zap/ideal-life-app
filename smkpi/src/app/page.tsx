@@ -22,6 +22,7 @@ import { Icon } from "@/components/ui/Icon";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { EvolutionChart } from "@/components/charts/Charts";
 import { GoalFormModal } from "@/components/goals/GoalFormModal";
+import { analyzeProgress } from "@/app/actions/ai";
 import { ProgressUpdateModal } from "@/components/goals/ProgressUpdateModal";
 import { useStore } from "@/lib/data/store";
 import {
@@ -70,7 +71,7 @@ function StatCard({
         {icon}
       </span>
       <div className="min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">{label}</p>
+        <p className="text-[10.5px] font-semibold uppercase leading-tight tracking-[0.06em] text-ink-faint sm:text-[11px] sm:tracking-[0.08em]">{label}</p>
         <p className="mt-0.5 font-display text-2xl font-bold tabular leading-none text-ink">{value}</p>
         {hint ? <p className="mt-1 truncate text-[11px] text-ink-faint">{hint}</p> : null}
       </div>
@@ -130,6 +131,13 @@ export default function DashboardPage() {
   const { state } = useStore();
   const [formOpen, setFormOpen] = useState(false);
   const [progressTarget, setProgressTarget] = useState<GoalView | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiInsight, setAiInsight] = useState<{
+    headline: string;
+    bullets: string[];
+    focus: string;
+  } | null>(null);
+  const [aiError, setAiError] = useState("");
 
   const views = useMemo(() => buildGoalViews(state), [state]);
   const summary = useMemo(() => summarize(state, views), [state, views]);
@@ -143,6 +151,33 @@ export default function DashboardPage() {
   const late = views.filter((v) => v.deadline.tone === "late");
 
   const name = state.settings.displayName?.trim();
+
+  const runAi = async () => {
+    setAiLoading(true);
+    setAiError("");
+    const result = await analyzeProgress({
+      overall: summary.overallProgress,
+      ativas: summary.ativas,
+      concluidas: summary.concluidas,
+      atrasadas: summary.atrasadas,
+      proximas: summary.proximas,
+      goals: views
+        .filter((v) => v.goal.status === "ativa")
+        .slice(0, 12)
+        .map((v) => ({
+          title: v.goal.title,
+          progress: v.breakdown.total,
+          deadline: v.deadline.label,
+          priority: v.goal.priority,
+        })),
+    });
+    setAiLoading(false);
+    if (!result.available || !result.data?.headline) {
+      setAiError(result.message);
+      return;
+    }
+    setAiInsight(result.data);
+  };
 
   return (
     <div className="space-y-5">
@@ -420,6 +455,53 @@ export default function DashboardPage() {
           </Card>
         </section>
       )}
+
+      {/* Insight com IA */}
+      <section>
+        <Card className="surface-grid">
+          <CardHeader
+            title="Insight da semana"
+            description="Leitura do Gemini sobre o seu momento atual"
+            icon={<Sparkles className="h-4 w-4" />}
+            action={
+              <Button
+                size="sm"
+                variant="secondary"
+                loading={aiLoading}
+                leadingIcon={<Sparkles className="h-3.5 w-3.5" />}
+                onClick={runAi}
+              >
+                Analisar com IA
+              </Button>
+            }
+          />
+          {aiInsight ? (
+            <div>
+              <p className="font-display text-[15px] font-semibold text-ink">{aiInsight.headline}</p>
+              <ul className="mt-3 space-y-1.5">
+                {aiInsight.bullets.map((b, i) => (
+                  <li key={i} className="flex gap-2 text-[13px] leading-relaxed text-ink-soft">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-iris" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              {aiInsight.focus ? (
+                <p className="mt-3 rounded-xl bg-iris-soft px-3.5 py-2.5 text-[13px] font-medium text-iris-dark">
+                  Foque agora: {aiInsight.focus}
+                </p>
+              ) : null}
+            </div>
+          ) : aiError ? (
+            <p className="text-[13px] text-ink-faint">{aiError}</p>
+          ) : (
+            <p className="text-[13px] text-ink-faint">
+              Clique em “Analisar com IA” para receber uma leitura objective do seu
+              progresso, dos prazos apertados e do que merece atenção nesta semana.
+            </p>
+          )}
+        </Card>
+      </section>
 
       <GoalFormModal open={formOpen} onClose={() => setFormOpen(false)} />
       <ProgressUpdateModal
